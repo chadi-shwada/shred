@@ -2452,6 +2452,66 @@ fieldset:last-child {
   font-size: 0.6875rem;
 }
 
+/* Grand mot en bandes (décoratif) : gris, dégradé coloré sous le pointeur. */
+
+.site-footer {
+  overflow: hidden;
+  padding-bottom: 0;
+}
+
+.footer-word {
+  --x: 20%;
+  --y: 40%;
+  --stripes: repeating-linear-gradient(90deg, #000 0 0.017em, transparent 0.017em 0.03em);
+  position: relative;
+  display: grid;
+  margin-top: clamp(1rem, 3vw, 2rem);
+  height: 0.74em;
+  overflow: hidden;
+  font-family: var(--font-sans);
+  font-size: clamp(6rem, 27vw, 26rem);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.065em;
+  text-align: center;
+  white-space: nowrap;
+  user-select: none;
+  -webkit-mask-image: var(--stripes), linear-gradient(to bottom, #000 30%, transparent 95%);
+  -webkit-mask-composite: source-in;
+  mask-image: var(--stripes), linear-gradient(to bottom, #000 30%, transparent 95%);
+  mask-composite: intersect;
+}
+
+.footer-word > span {
+  grid-area: 1 / 1;
+}
+
+.footer-word__base {
+  color: #353a4a;
+}
+
+.footer-word__glow {
+  color: transparent;
+  background: linear-gradient(90deg, #3d58ea, #8b5cf6 35%, #d6589c 65%, #e05a6b);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-mask-image: radial-gradient(circle 1.5em at var(--x) var(--y), #000 20%, transparent 75%);
+  mask-image: radial-gradient(circle 1.5em at var(--x) var(--y), #000 20%, transparent 75%);
+  opacity: 0;
+  transition: opacity 400ms ease;
+}
+
+.footer-word:hover .footer-word__glow {
+  opacity: 1;
+}
+
+/* Écrans tactiles : pas de survol, un léger dégradé fixe. */
+@media (hover: none) {
+  .footer-word__glow {
+    opacity: 0.55;
+  }
+}
+
 /* ---------- Mouvement réduit ---------- */
 
 @media (prefers-reduced-motion: reduce) {

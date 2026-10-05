@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react';
 import { href, type RoutePath } from '../router';
+import { FooterWord } from './FooterWord';
 import { Icon } from './Icon';
 import { Logo } from './Logo';
 
@@ -128,6 +129,7 @@ export function Layout({ path, children }: LayoutProps) {
             <span>Aucune donnée ne quitte ton navigateur.</span>
           </div>
         </div>
+        <FooterWord />
       </footer>
     </>
   );

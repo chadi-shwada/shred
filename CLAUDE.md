@@ -18,7 +18,7 @@ npx prettier --write "src/**/*.{ts,tsx}"   # mise en forme (.prettierrc)
 - `src/useTracking.ts` : hook qui persiste le suivi dans `localStorage`.
 - `src/router.ts` : routage par fragment (`#/lettre`, `#/suivi`, `#/ressources`, `#/a-propos`).
 - `src/data/sites.ts` : sites connus. Source et date de vérification obligatoires (vérifié par `sites.test.ts`). Vide pour l'instant.
-- `src/pages/`, `src/components/` : interface. `ShredSheet`, `BinaryField`, `ScrambleText`, `DataStream` et `Logo` sont décoratifs (`aria-hidden`, figés si `prefers-reduced-motion`).
+- `src/pages/`, `src/components/` : interface. `ShredSheet`, `BinaryField`, `ScrambleText`, `DataStream`, `FooterWord` et `Logo` sont décoratifs (`aria-hidden`, figés si `prefers-reduced-motion`).
 - `src/styles/global.css` : tokens de couleur et de typographie, mode sombre inclus. Le site est entièrement sombre : `<html class="theme-dark">` dans `index.html` (choix de design). Les tokens clairs de `:root` restent comme base.
 - Identité : bleu `#2F4BDC` du logo (`public/logo.png`, tracé vectoriel dans `Logo.tsx` et `public/favicon.svg`), polices Inter et JetBrains Mono auto-hébergées via `@fontsource-variable` (OFL).
 - `src/security.ts` : source unique de la CSP. `vite.config.ts` l'injecte en `<meta>`, `vercel.json` l'envoie en en-tête HTTP (avec `frame-ancestors`) ; `security.test.ts` vérifie qu'elles restent alignées.
