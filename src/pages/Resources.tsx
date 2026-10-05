@@ -79,7 +79,11 @@ const LINKS = [
 export function Resources() {
   return (
     <>
-      <PageHead eyebrow="Ressources" title="Tes droits, étape par étape">
+      <PageHead
+        eyebrow="Ressources"
+        command={{ input: 'shred droits --aide', output: 'RGPD · CNIL · DSA' }}
+        title="Tes droits, étape par étape"
+      >
         Le RGPD te permet d'obtenir l'effacement de données publiées sans base légale. Voici comment t'y prendre, et
         vers qui te tourner.
       </PageHead>

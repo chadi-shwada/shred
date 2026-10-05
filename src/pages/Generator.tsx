@@ -217,7 +217,11 @@ export function Generator({ route }: { route: Route }) {
 
   return (
     <>
-      <PageHead eyebrow="Générateur" title="Écris ta lettre">
+      <PageHead
+        eyebrow="Générateur"
+        command={{ input: 'shred lettre --rgpd art.17', output: "modèle prêt · rien n'est envoyé" }}
+        title="Écris ta lettre"
+      >
         Remplis le formulaire : la lettre se met à jour en direct. Rien n'est envoyé, rien n'est enregistré tant que tu
         ne l'ajoutes pas au suivi.
       </PageHead>

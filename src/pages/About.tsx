@@ -6,7 +6,11 @@ import { KNOWN_SITES } from '../data/sites';
 export function About() {
   return (
     <>
-      <PageHead eyebrow="À propos" title="Un outil pour se défendre, pas pour surveiller">
+      <PageHead
+        eyebrow="À propos"
+        command={{ input: 'shred --a-propos', output: 'gratuit · sans compte · sans traceur' }}
+        title="Un outil pour se défendre, pas pour surveiller"
+      >
         Shred aide les personnes dont les données ont fuité à exercer leurs droits, sans rien leur demander en retour.
       </PageHead>
 

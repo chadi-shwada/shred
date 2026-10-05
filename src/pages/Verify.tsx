@@ -200,7 +200,11 @@ export function Verify() {
 
   return (
     <>
-      <PageHead eyebrow="Vérifier" title="Qu'est-ce qui a fuité ?">
+      <PageHead
+        eyebrow="Vérifier"
+        command={{ input: 'shred verifier --email ••••••', output: 'aucune donnée envoyée à Shred' }}
+        title="Qu'est-ce qui a fuité ?"
+      >
         Repère les fuites qui te concernent, vois quelles données sont exposées, puis écris à l'entreprise en un clic.
         Ton adresse e-mail ne passe jamais par Shred.
       </PageHead>

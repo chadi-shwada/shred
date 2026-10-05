@@ -31,6 +31,31 @@ const STEPS: { icon: IconName; title: string; text: string }[] = [
   },
 ];
 
+/** Exemples fictifs pour l'aperçu de la page Vérifier (aucune vraie fuite). */
+const MOCK_BREACHES = [
+  {
+    title: 'Exemple Réseau',
+    domain: 'exemple-reseau.test',
+    date: 'nov. 2025',
+    classes: ['adresses e-mail', 'mots de passe', 'téléphones'],
+    selected: true,
+  },
+  {
+    title: 'Exemple Boutique',
+    domain: 'exemple-boutique.test',
+    date: 'juin 2024',
+    classes: ['adresses e-mail', 'cartes bancaires', 'adresses postales'],
+    selected: true,
+  },
+  {
+    title: 'Exemple Forum',
+    domain: 'exemple-forum.test',
+    date: 'févr. 2023',
+    classes: ['identifiants', 'adresses IP'],
+    selected: false,
+  },
+];
+
 const FAQ = [
   {
     q: 'Est-ce que Shred voit mes données ?',
@@ -71,7 +96,7 @@ export function Home() {
           <div>
             <span className="pill">
               <span className="pill__tag">Sans traceur</span>
-              Gratuit, sans compte, sans publicité
+              <span className="pill__text">Gratuit, sans compte, sans publicité</span>
             </span>
             <h1 id="titre">
               Demande l'effacement de <ScrambleText className="accent" text="tes données" />
@@ -110,6 +135,78 @@ export function Home() {
       </section>
 
       <DataStream />
+
+      <section className="section section--glow" aria-labelledby="verifier">
+        <div className="container showcase showcase--reverse">
+          <div>
+            <span className="eyebrow">Vérifier</span>
+            <h2 id="verifier">Sais exactement ce qui a fuité</h2>
+            <p className="lead">
+              Repère les fuites qui contiennent ton e-mail, vois quelles données sont exposées, puis écris à
+              l'entreprise en un clic.
+            </p>
+            <ul className="checklist">
+              <li>
+                <Icon name="check" size={18} />
+                Plus de mille fuites connues, avec les types de données exposées.
+              </li>
+              <li>
+                <Icon name="check" size={18} />
+                Ton e-mail ne passe jamais par Shred : tu le cherches sur Have I Been Pwned.
+              </li>
+              <li>
+                <Icon name="check" size={18} />
+                Test de mot de passe sans le confier à personne (k‑anonymat).
+              </li>
+            </ul>
+            <a className="btn btn--primary btn--lg" href={href('/verifier')}>
+              <Icon name="search" size={18} />
+              Vérifier mes fuites
+            </a>
+          </div>
+          <div className="mock" aria-hidden="true">
+            <div className="mock__bar">
+              <span className="terminal__dot" />
+              <span className="terminal__dot" />
+              <span className="terminal__dot" />
+              <span className="mock__url">shred / vérifier</span>
+            </div>
+            <div className="mock__body">
+              <div className="mock__search">
+                <Icon name="search" size={16} />
+                exemple
+              </div>
+              {MOCK_BREACHES.map((b) => (
+                <div className="mock__row" data-selected={b.selected} key={b.title}>
+                  <span className="mock__check">{b.selected && <Icon name="check" size={12} />}</span>
+                  <div>
+                    <strong>{b.title}</strong>
+                    <span className="mock__meta">
+                      {b.domain} · {b.date}
+                    </span>
+                    <span className="mock__chips">
+                      {b.classes.map((c) => (
+                        <span
+                          key={c}
+                          className={`chip${c === 'mots de passe' || c === 'cartes bancaires' ? ' chip--danger' : ''}`}
+                        >
+                          {c}
+                        </span>
+                      ))}
+                    </span>
+                  </div>
+                </div>
+              ))}
+              <div className="mock__footer">
+                <span>2 fuites · 5 types de données exposés</span>
+                <span className="mock__cta">
+                  Écrire la lettre <Icon name="arrow" size={14} />
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
 
       <section className="section" aria-labelledby="zero">
         <div className="container">
@@ -151,12 +248,16 @@ export function Home() {
           <ol className="steps">
             {STEPS.map((step, i) => (
               <li className="step" key={step.title}>
-                <span className="step__icon">
-                  <Icon name={step.icon} />
+                <span className="step__node" aria-hidden="true">
+                  0{i + 1}
                 </span>
-                <span className="step__num">0{i + 1}</span>
-                <h3>{step.title}</h3>
-                <p>{step.text}</p>
+                <div className="step__card">
+                  <span className="step__icon">
+                    <Icon name={step.icon} />
+                  </span>
+                  <h3>{step.title}</h3>
+                  <p>{step.text}</p>
+                </div>
               </li>
             ))}
           </ol>

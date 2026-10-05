@@ -12,7 +12,11 @@ import { href } from '../router';
 export function LegalNotice() {
   return (
     <>
-      <PageHead eyebrow="Mentions légales" title="Qui édite et héberge Shred">
+      <PageHead
+        eyebrow="Mentions légales"
+        command={{ input: 'shred --mentions-legales', output: 'éditeur · hébergeur · données' }}
+        title="Qui édite et héberge Shred"
+      >
         Informations prévues par l'article 6 de la loi pour la confiance dans l'économie numérique (LCEN).
       </PageHead>
 

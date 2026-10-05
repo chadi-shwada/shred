@@ -166,7 +166,11 @@ export function Tracker() {
 
   return (
     <>
-      <PageHead eyebrow="Suivi" title="Tes demandes en cours">
+      <PageHead
+        eyebrow="Suivi"
+        command={{ input: 'shred suivi --echeances', output: 'délai légal : 1 mois (art. 12.3)' }}
+        title="Tes demandes en cours"
+      >
         Le site a un mois pour te répondre à compter de la réception (article 12.3 du RGPD), trois s'il t'a prévenu
         d'une prolongation. Le suivi reste dans ce navigateur.
       </PageHead>
