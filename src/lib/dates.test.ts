@@ -1,13 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  addDays,
-  addMonths,
-  daysBetween,
-  formatLongFr,
-  gdprDeadlines,
-  isValidIsoDate,
-  todayIso,
-} from './dates';
+import { addDays, addMonths, daysBetween, formatLongFr, gdprDeadlines, isValidIsoDate, todayIso } from './dates';
 
 describe('isValidIsoDate', () => {
   it('accepte une date réelle', () => {

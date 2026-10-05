@@ -22,7 +22,7 @@ describe('lettre d’effacement', () => {
 
   it('fonde la demande sur l’article 17.1 d) et le règlement complet', () => {
     expect(letter.body).toContain("l'article 17.1 du règlement (UE) 2016/679 (RGPD)");
-    expect(letter.body).toContain('point d) (données ayant fait l\'objet d\'un traitement illicite)');
+    expect(letter.body).toContain("point d) (données ayant fait l'objet d'un traitement illicite)");
   });
 
   it('demande l’information des autres responsables (17.2) et des destinataires (19)', () => {
@@ -37,12 +37,8 @@ describe('lettre d’effacement', () => {
   });
 
   it('liste les adresses et les données en ignorant les lignes vides', () => {
-    expect(letter.body).toContain(
-      '- https://exemple-fuites.test/dump/123\n- https://exemple-fuites.test/dump/456\n',
-    );
-    expect(letter.body).toContain(
-      '- adresse e-mail\n- mot de passe ou son empreinte (hash)\n- numéro client',
-    );
+    expect(letter.body).toContain('- https://exemple-fuites.test/dump/123\n- https://exemple-fuites.test/dump/456\n');
+    expect(letter.body).toContain('- adresse e-mail\n- mot de passe ou son empreinte (hash)\n- numéro client');
   });
 
   it('commence par la formule d’appel et finit par la signature datée', () => {
@@ -86,9 +82,7 @@ describe('lettre de relance', () => {
   const letter = generateLetter(input);
 
   it('rappelle la première demande et son fondement', () => {
-    expect(letter.subject).toBe(
-      "Relance : demande d'effacement de mes données personnelles (article 17 du RGPD)",
-    );
+    expect(letter.subject).toBe("Relance : demande d'effacement de mes données personnelles (article 17 du RGPD)");
     expect(letter.body).toContain('Le 31 janvier 2026, je vous ai adressé');
     expect(letter.body).toContain("fondée sur l'article 17 du règlement (UE) 2016/679 (RGPD)");
   });

@@ -2,6 +2,7 @@ import { useId, useMemo, useState, type ChangeEvent } from 'react';
 import { copyText, downloadText } from '../browser';
 import { Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
+import { PageHead } from '../components/PageHead';
 import { formatLongFr, gdprDeadlines, isValidIsoDate, todayIso, type IsoDate } from '../lib/dates';
 import {
   DATA_CATEGORIES,
@@ -173,21 +174,18 @@ export function Generator({ route }: { route: Route }) {
 
   return (
     <>
-      <div className="container page-head">
-        <span className="eyebrow">Générateur</span>
-        <h1>Écris ta lettre</h1>
-        <p className="lead">
-          Remplis le formulaire : la lettre se met à jour à droite. Rien n'est envoyé, rien n'est enregistré tant que
-          tu ne l'ajoutes pas au suivi.
-        </p>
-      </div>
+      <PageHead eyebrow="Générateur" title="Écris ta lettre">
+        Remplis le formulaire : la lettre se met à jour en direct. Rien n'est envoyé, rien n'est enregistré tant que tu
+        ne l'ajoutes pas au suivi.
+      </PageHead>
 
       <div className="container page-body">
         <div className="generator">
-          <form className="stack" onSubmit={(event) => event.preventDefault()} noValidate>
+          <form className="generator__form" onSubmit={(event) => event.preventDefault()} noValidate>
             <section className="card" aria-labelledby={fieldId('t1')}>
               <h2 className="card__title" id={fieldId('t1')}>
-                1. Type de demande
+                <span className="card__num">1</span>
+                Type de demande
               </h2>
               <fieldset>
                 <legend className="visually-hidden">Type de demande</legend>
@@ -239,7 +237,8 @@ export function Generator({ route }: { route: Route }) {
 
             <section className="card" aria-labelledby={fieldId('t2')}>
               <h2 className="card__title" id={fieldId('t2')}>
-                2. Le site concerné
+                <span className="card__num">2</span>
+                Le site concerné
               </h2>
               <div className="field">
                 <label htmlFor={fieldId('site')}>Nom ou adresse du site</label>
@@ -311,7 +310,8 @@ export function Generator({ route }: { route: Route }) {
 
             <section className="card" aria-labelledby={fieldId('t3')}>
               <h2 className="card__title" id={fieldId('t3')}>
-                3. Toi
+                <span className="card__num">3</span>
+                Toi
               </h2>
               <div className="field">
                 <label htmlFor={fieldId('name')}>Ton nom complet</label>
@@ -368,100 +368,109 @@ export function Generator({ route }: { route: Route }) {
           </form>
 
           <section className="generator__preview" aria-labelledby={fieldId('preview')}>
-            <div className="preview-bar">
-              <h2 id={fieldId('preview')}>Aperçu</h2>
-              {letter && (
-                <ul className="chips" aria-label="Articles du RGPD cités">
-                  {letter.articles.map((article) => (
-                    <li className="chip" key={article}>
-                      Art. {article}
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+            <div className="preview-window">
+              <div className="preview-bar">
+                <h2 id={fieldId('preview')}>Aperçu en direct</h2>
+                {letter && (
+                  <ul className="chips" aria-label="Articles du RGPD cités">
+                    {letter.articles.map((article) => (
+                      <li className="chip" key={article}>
+                        Art. {article}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
 
-            <article className="paper" aria-live="polite" aria-atomic="false">
-              {letter ? (
-                <>
-                  <p className="paper__subject">Objet : {letter.subject}</p>
-                  <pre className="paper__body">{letter.body}</pre>
-                </>
-              ) : (
-                <p className="paper__empty">Pour afficher ta lettre, indique {result.missing.join(', ')}.</p>
-              )}
-            </article>
-
-            <div className="preview-actions stack">
-              {relanceTooEarly && (
-                <Notice tone="warn">
-                  <p>
-                    Le délai d'un mois court jusqu'au {formatLongFr(gdprDeadlines(form.previousRequestDate).standard)}{' '}
-                    environ. Une relance avant cette date reste possible, mais elle a moins de poids.
-                  </p>
-                </Notice>
-              )}
-
-              <div className="btn-row">
-                <button type="button" className="btn btn--primary" onClick={onCopy} disabled={!letter}>
-                  <Icon name="copy" size={18} />
-                  Copier
-                </button>
+              <article className="paper" aria-live="polite" aria-atomic="false">
                 {letter ? (
-                  <a className="btn" href={mailtoHref(letter, form.contact)}>
-                    <Icon name="mail" size={18} />
-                    Ouvrir dans ma messagerie
-                  </a>
+                  <>
+                    <p className="paper__subject">Objet : {letter.subject}</p>
+                    <pre className="paper__body">{letter.body}</pre>
+                  </>
                 ) : (
-                  <button type="button" className="btn" disabled>
-                    <Icon name="mail" size={18} />
-                    Ouvrir dans ma messagerie
-                  </button>
+                  <div className="paper__empty">
+                    <div className="bits-art" aria-hidden="true">
+                      {'01001100 01100101 01110100\n01110100 01110010 01100101\n00100000 01110000 01110010'}
+                    </div>
+                    <p>Pour afficher ta lettre, indique {result.missing.join(', ')}.</p>
+                  </div>
                 )}
-                <button type="button" className="btn" onClick={onDownload} disabled={!letter}>
-                  <Icon name="download" size={18} />
-                  Télécharger
-                </button>
-                <button type="button" className="btn" onClick={() => window.print()} disabled={!letter}>
-                  <Icon name="printer" size={18} />
-                  Imprimer
-                </button>
-              </div>
+              </article>
 
-              <div className="btn-row">
-                <button type="button" className="btn btn--ghost" onClick={onTrack} disabled={!letter || !canTrack}>
-                  <Icon name="plus" size={18} />
-                  {form.kind === 'relance' ? 'Marquer comme relancée dans le suivi' : 'Ajouter au suivi'}
-                </button>
-                <a className="btn btn--ghost" href={href('/suivi')}>
-                  Voir mon suivi
-                </a>
-              </div>
-
-              {form.kind === 'relance' && !tracked && (
-                <p className="small muted">
-                  Pour relier cette relance à ton suivi, lance-la depuis la page{' '}
-                  <a href={href('/suivi')}>Suivi</a>.
-                </p>
-              )}
-
-              <div aria-live="polite">
-                {feedback && (
-                  <Notice tone={feedback.tone}>
-                    <p>{feedback.text}</p>
-                  </Notice>
-                )}
-                {saveFailed && (
+              <div className="preview-actions">
+                {relanceTooEarly && (
                   <Notice tone="warn">
-                    <p>Ton navigateur refuse l'enregistrement local (navigation privée ?). Exporte ton suivi pour le garder.</p>
+                    <p>
+                      Le délai d'un mois court jusqu'au {formatLongFr(gdprDeadlines(form.previousRequestDate).standard)}{' '}
+                      environ. Une relance avant cette date reste possible, mais elle a moins de poids.
+                    </p>
                   </Notice>
                 )}
-              </div>
 
-              <p className="small muted">
-                Modèle indicatif, pas un conseil juridique. Relis la lettre avant de l'envoyer. Certains logiciels de
-                messagerie coupent les textes longs : si c'est le cas, utilise « Copier ».
-              </p>
+                <div className="btn-row">
+                  <button type="button" className="btn btn--primary" onClick={onCopy} disabled={!letter}>
+                    <Icon name="copy" size={18} />
+                    Copier
+                  </button>
+                  {letter ? (
+                    <a className="btn" href={mailtoHref(letter, form.contact)}>
+                      <Icon name="mail" size={18} />
+                      Ouvrir dans ma messagerie
+                    </a>
+                  ) : (
+                    <button type="button" className="btn" disabled>
+                      <Icon name="mail" size={18} />
+                      Ouvrir dans ma messagerie
+                    </button>
+                  )}
+                  <button type="button" className="btn" onClick={onDownload} disabled={!letter}>
+                    <Icon name="download" size={18} />
+                    Télécharger
+                  </button>
+                  <button type="button" className="btn" onClick={() => window.print()} disabled={!letter}>
+                    <Icon name="printer" size={18} />
+                    Imprimer
+                  </button>
+                </div>
+
+                <div className="btn-row">
+                  <button type="button" className="btn btn--ghost" onClick={onTrack} disabled={!letter || !canTrack}>
+                    <Icon name="plus" size={18} />
+                    {form.kind === 'relance' ? 'Marquer comme relancée dans le suivi' : 'Ajouter au suivi'}
+                  </button>
+                  <a className="btn btn--ghost" href={href('/suivi')}>
+                    Voir mon suivi
+                  </a>
+                </div>
+
+                {form.kind === 'relance' && !tracked && (
+                  <p className="small muted">
+                    Pour relier cette relance à ton suivi, lance-la depuis la page <a href={href('/suivi')}>Suivi</a>.
+                  </p>
+                )}
+
+                <div aria-live="polite">
+                  {feedback && (
+                    <Notice tone={feedback.tone}>
+                      <p>{feedback.text}</p>
+                    </Notice>
+                  )}
+                  {saveFailed && (
+                    <Notice tone="warn">
+                      <p>
+                        Ton navigateur refuse l'enregistrement local (navigation privée ?). Exporte ton suivi pour le
+                        garder.
+                      </p>
+                    </Notice>
+                  )}
+                </div>
+
+                <p className="small muted">
+                  Modèle indicatif, pas un conseil juridique. Relis la lettre avant de l'envoyer. Certains logiciels de
+                  messagerie coupent les textes longs : si c'est le cas, utilise « Copier ».
+                </p>
+              </div>
             </div>
           </section>
         </div>

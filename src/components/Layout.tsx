@@ -45,7 +45,7 @@ export function Layout({ path, children }: LayoutProps) {
       <a className="skip-link" href="#contenu" onClick={skipToContent}>
         Aller au contenu
       </a>
-      <header className="site-header">
+      <header className="site-header theme-dark">
         <div className="container site-header__inner">
           <a className="brand" href={href('/')} aria-label="Shred, accueil">
             <Logo />
@@ -71,6 +71,9 @@ export function Layout({ path, children }: LayoutProps) {
               ))}
             </ul>
           </nav>
+          <a className="btn btn--primary btn--sm header-cta" href={href('/lettre')}>
+            Écrire ma lettre
+          </a>
         </div>
       </header>
 
@@ -78,28 +81,52 @@ export function Layout({ path, children }: LayoutProps) {
         {children}
       </main>
 
-      <footer className="site-footer">
-        <div className="container site-footer__grid">
-          <div>
-            <p>
-              <strong>Shred</strong> est un outil libre et gratuit. Les modèles de lettres sont indicatifs et ne
-              remplacent pas un conseil juridique.
-            </p>
-            <p>Aucune donnée ne quitte ton navigateur : pas de compte, pas de serveur, pas de traceur.</p>
-          </div>
-          <ul>
-            <li>
-              <a href={href('/ressources')}>Ressources</a>
-            </li>
-            <li>
-              <a href={href('/a-propos')}>À propos</a>
-            </li>
-            <li>
-              <a href="https://github.com/chadi-shwada/shred" rel="noopener noreferrer">
-                Code source
+      <footer className="site-footer theme-dark">
+        <div className="container">
+          <div className="site-footer__grid">
+            <div className="site-footer__brand">
+              <a className="brand" href={href('/')} aria-label="Shred, accueil">
+                <Logo />
               </a>
-            </li>
-          </ul>
+              <p>
+                Outil libre et gratuit pour exercer tes droits RGPD face aux sites qui exposent des données issues de
+                fuites.
+              </p>
+            </div>
+            <div className="site-footer__cols">
+              <div>
+                <h2>Outil</h2>
+                <ul>
+                  <li>
+                    <a href={href('/lettre')}>Écrire une lettre</a>
+                  </li>
+                  <li>
+                    <a href={href('/suivi')}>Suivi</a>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h2>Comprendre</h2>
+                <ul>
+                  <li>
+                    <a href={href('/ressources')}>Ressources</a>
+                  </li>
+                  <li>
+                    <a href={href('/a-propos')}>À propos</a>
+                  </li>
+                  <li>
+                    <a href="https://github.com/chadi-shwada/shred" rel="noopener noreferrer">
+                      Code source
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div className="site-footer__legal">
+            <span>Modèles indicatifs, pas un conseil juridique.</span>
+            <span>Aucune donnée ne quitte ton navigateur.</span>
+          </div>
         </div>
       </footer>
     </>

@@ -37,6 +37,10 @@ export default defineConfig({
   // Chemins relatifs : le site marche sur GitHub Pages quel que soit le nom du dépôt.
   base: './',
   plugins: [react(), csp()],
+  build: {
+    // Pas de fichiers intégrés en data: : la CSP n'autorise que font-src 'self'.
+    assetsInlineLimit: 0,
+  },
   test: {
     environment: 'node',
     include: ['src/**/*.test.ts'],

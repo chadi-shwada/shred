@@ -1,16 +1,13 @@
 import { ExternalLink } from '../components/ExternalLink';
+import { PageHead } from '../components/PageHead';
 import { KNOWN_SITES } from '../data/sites';
 
 export function About() {
   return (
     <>
-      <div className="container page-head">
-        <span className="eyebrow">À propos</span>
-        <h1>Un outil pour se défendre, pas pour surveiller</h1>
-        <p className="lead">
-          Shred aide les personnes dont les données ont fuité à exercer leurs droits, sans rien leur demander en retour.
-        </p>
-      </div>
+      <PageHead eyebrow="À propos" title="Un outil pour se défendre, pas pour surveiller">
+        Shred aide les personnes dont les données ont fuité à exercer leurs droits, sans rien leur demander en retour.
+      </PageHead>
 
       <div className="container page-body">
         <div className="prose">
@@ -23,7 +20,9 @@ export function About() {
 
           <h2>Ce que Shred ne fera jamais</h2>
           <ul>
-            <li>Envoyer tes données à un serveur ou à un tiers. Le site est statique et n'a pas de serveur applicatif.</li>
+            <li>
+              Envoyer tes données à un serveur ou à un tiers. Le site est statique et n'a pas de serveur applicatif.
+            </li>
             <li>Héberger une base de fuites, même partielle, même hachée.</li>
             <li>Inventer le contact d'un responsable de traitement ou d'un DPO.</li>
             <li>Se présenter comme un conseil juridique : les modèles sont indicatifs.</li>

@@ -61,8 +61,7 @@ export interface Letter {
 }
 
 const SALUTATION = 'Madame, Monsieur,';
-const CLOSING =
-  "Je vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.";
+const CLOSING = "Je vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.";
 const RGPD = 'règlement (UE) 2016/679 (RGPD)';
 
 export class LetterInputError extends Error {}
@@ -112,9 +111,7 @@ function signature(input: LetterInput): string {
 }
 
 function assemble(paragraphs: (string | null)[], input: LetterInput): string {
-  return [SALUTATION, ...paragraphs.filter((p): p is string => p !== null), CLOSING, signature(input)].join(
-    '\n\n',
-  );
+  return [SALUTATION, ...paragraphs.filter((p): p is string => p !== null), CLOSING, signature(input)].join('\n\n');
 }
 
 function effacement(input: LetterInput): Letter {

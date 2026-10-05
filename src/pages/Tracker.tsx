@@ -2,6 +2,7 @@ import { useId, useRef, useState, type ChangeEvent, type FormEvent } from 'react
 import { downloadText } from '../browser';
 import { Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
+import { PageHead } from '../components/PageHead';
 import { formatLongFr, isValidIsoDate, todayIso } from '../lib/dates';
 import type { InitialKind } from '../lib/letters';
 import {
@@ -86,7 +87,15 @@ export function Tracker() {
     }
     update((list) => [
       ...list,
-      { id: newId(), site: draft.site.trim(), kind: draft.kind, channel: draft.channel, sentOn: draft.sentOn, status: 'envoyee', notes: draft.notes.trim() },
+      {
+        id: newId(),
+        site: draft.site.trim(),
+        kind: draft.kind,
+        channel: draft.channel,
+        sentOn: draft.sentOn,
+        status: 'envoyee',
+        notes: draft.notes.trim(),
+      },
     ]);
     setDraft(emptyDraft());
     setFeedback({ tone: 'ok', text: `Demande à ${draft.site.trim()} ajoutée.` });
@@ -113,11 +122,14 @@ export function Tracker() {
     try {
       const imported = parseExport(await file.text());
       update((list) => mergeRequests(list, imported));
-      setFeedback({ tone: 'ok', text: `${imported.length} demande${imported.length > 1 ? 's' : ''} importée${imported.length > 1 ? 's' : ''}.` });
+      setFeedback({
+        tone: 'ok',
+        text: `${imported.length} demande${imported.length > 1 ? 's' : ''} importée${imported.length > 1 ? 's' : ''}.`,
+      });
     } catch (error) {
       setFeedback({
         tone: 'danger',
-        text: error instanceof ImportError ? error.message : "Impossible de lire ce fichier.",
+        text: error instanceof ImportError ? error.message : 'Impossible de lire ce fichier.',
       });
     }
   };
@@ -130,27 +142,23 @@ export function Tracker() {
 
   return (
     <>
-      <div className="container page-head">
-        <span className="eyebrow">Suivi</span>
-        <h1>Tes demandes en cours</h1>
-        <p className="lead">
-          Le site a un mois pour te répondre à compter de la réception (article 12.3 du RGPD), trois mois s'il t'a
-          prévenu d'une prolongation. Le suivi reste dans ce navigateur.
-        </p>
-      </div>
+      <PageHead eyebrow="Suivi" title="Tes demandes en cours">
+        Le site a un mois pour te répondre à compter de la réception (article 12.3 du RGPD), trois s'il t'a prévenu
+        d'une prolongation. Le suivi reste dans ce navigateur.
+      </PageHead>
 
       <div className="container page-body">
         <div className="stats" role="group" aria-label="Résumé">
           {(['depassee', 'bientot', 'en-cours', 'close'] as const).map((u) => (
             <div className={`stat stat--${u}`} key={u}>
-              <span className="stat__value">{counts[u]}</span>
               <span className="stat__label">{URGENCY_LABELS[u]}</span>
+              <span className="stat__value">{counts[u]}</span>
             </div>
           ))}
         </div>
 
         <div className="tracker">
-          <div className="stack">
+          <div className="tracker__side">
             <form className="card" onSubmit={onAdd} noValidate aria-labelledby={fieldId('addTitle')}>
               <h2 className="card__title" id={fieldId('addTitle')}>
                 Ajouter une demande
@@ -181,7 +189,12 @@ export function Tracker() {
                 </div>
                 <div className="field">
                   <label htmlFor={fieldId('channel')}>Canal</label>
-                  <select id={fieldId('channel')} className="select" value={draft.channel} onChange={setField('channel')}>
+                  <select
+                    id={fieldId('channel')}
+                    className="select"
+                    value={draft.channel}
+                    onChange={setField('channel')}
+                  >
                     {(Object.keys(CHANNEL_LABELS) as Channel[]).map((c) => (
                       <option key={c} value={c}>
                         {CHANNEL_LABELS[c]}
@@ -281,13 +294,19 @@ export function Tracker() {
               )}
               {saveFailed && (
                 <Notice tone="warn">
-                  <p>Ton navigateur refuse l'enregistrement local (navigation privée ?). Exporte ton suivi pour le garder.</p>
+                  <p>
+                    Ton navigateur refuse l'enregistrement local (navigation privée ?). Exporte ton suivi pour le
+                    garder.
+                  </p>
                 </Notice>
               )}
             </div>
 
             {sorted.length === 0 ? (
               <div className="empty">
+                <span className="empty__icon">
+                  <Icon name="database" />
+                </span>
                 <h2>Aucune demande pour l'instant</h2>
                 <p>Ajoute une demande déjà envoyée, ou écris ta première lettre.</p>
                 <a className="btn btn--primary" href={href('/lettre')}>
@@ -355,7 +374,7 @@ export function Tracker() {
                         )}
                         <button
                           type="button"
-                          className="btn btn--sm btn--ghost btn--danger"
+                          className="btn btn--sm btn--ghost btn--danger request__delete"
                           onClick={() => remove(request)}
                           aria-label={`Supprimer la demande à ${request.site}`}
                         >

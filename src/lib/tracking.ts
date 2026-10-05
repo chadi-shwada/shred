@@ -8,13 +8,7 @@ import type { InitialKind } from './letters';
 
 export type Channel = 'email' | 'formulaire' | 'courrier';
 
-export type Status =
-  | 'envoyee'
-  | 'prolongee'
-  | 'relancee'
-  | 'reclamation'
-  | 'satisfaite'
-  | 'refusee';
+export type Status = 'envoyee' | 'prolongee' | 'relancee' | 'reclamation' | 'satisfaite' | 'refusee';
 
 export const STATUS_LABELS: Record<Status, string> = {
   envoyee: 'Envoyée',
@@ -124,11 +118,9 @@ function parseRequest(value: unknown, index: number): TrackedRequest {
   if (typeof id !== 'string' || !id) throw new ImportError(`${where} : identifiant manquant.`);
   if (typeof site !== 'string' || !site.trim()) throw new ImportError(`${where} : site manquant.`);
   if (typeof kind !== 'string' || !KINDS.includes(kind)) throw new ImportError(`${where} : type inconnu.`);
-  if (typeof channel !== 'string' || !CHANNELS.includes(channel))
-    throw new ImportError(`${where} : canal inconnu.`);
+  if (typeof channel !== 'string' || !CHANNELS.includes(channel)) throw new ImportError(`${where} : canal inconnu.`);
   if (!isValidIsoDate(sentOn)) throw new ImportError(`${where} : date d'envoi invalide.`);
-  if (typeof status !== 'string' || !STATUSES.includes(status))
-    throw new ImportError(`${where} : statut inconnu.`);
+  if (typeof status !== 'string' || !STATUSES.includes(status)) throw new ImportError(`${where} : statut inconnu.`);
   return {
     id,
     site: site.trim(),

@@ -61,7 +61,11 @@ describe('export et import', () => {
   });
 
   it('indique la demande fautive', () => {
-    const bad = JSON.stringify({ format: 'shred-suivi', version: 1, requests: [req(), { ...req(), id: 'b', sentOn: '2026-02-30' }] });
+    const bad = JSON.stringify({
+      format: 'shred-suivi',
+      version: 1,
+      requests: [req(), { ...req(), id: 'b', sentOn: '2026-02-30' }],
+    });
     expect(() => parseExport(bad)).toThrow("Demande n° 2 : date d'envoi invalide.");
   });
 
@@ -79,7 +83,11 @@ describe('export et import', () => {
 describe('stockage local', () => {
   const memory = () => {
     const data = new Map<string, string>();
-    return { getItem: (k: string) => data.get(k) ?? null, setItem: (k: string, v: string) => void data.set(k, v), data };
+    return {
+      getItem: (k: string) => data.get(k) ?? null,
+      setItem: (k: string, v: string) => void data.set(k, v),
+      data,
+    };
   };
 
   it('enregistre puis relit', () => {

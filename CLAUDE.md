@@ -8,6 +8,7 @@ Outil libre et gratuit pour exercer ses droits RGPD (effacement, accès, relance
 npm install
 npm run dev         # développement
 npm run typecheck && npm run lint && npm test && npm run build   # à lancer avant chaque commit
+npx prettier --write "src/**/*.{ts,tsx}"   # mise en forme (.prettierrc)
 ```
 
 ## Structure
@@ -17,9 +18,10 @@ npm run typecheck && npm run lint && npm test && npm run build   # à lancer ava
 - `src/useTracking.ts` : hook qui persiste le suivi dans `localStorage`.
 - `src/router.ts` : routage par fragment (`#/lettre`, `#/suivi`, `#/ressources`, `#/a-propos`).
 - `src/data/sites.ts` : sites connus. Source et date de vérification obligatoires (vérifié par `sites.test.ts`). Vide pour l'instant.
-- `src/pages/`, `src/components/` : interface. `ShredSheet` (accueil) et `Logo` sont décoratifs.
-- `src/styles/global.css` : tokens de couleur et de typographie, mode sombre inclus.
-- `vite.config.ts` : injecte au build une CSP stricte (`connect-src 'none'`). Toute fonctionnalité réseau future (Pwned Passwords) devra l'assouplir pour un seul domaine, explicitement.
+- `src/pages/`, `src/components/` : interface. `ShredSheet`, `BinaryField`, `ScrambleText`, `DataStream` et `Logo` sont décoratifs (`aria-hidden`, figés si `prefers-reduced-motion`).
+- `src/styles/global.css` : tokens de couleur et de typographie, mode sombre inclus. `.theme-dark` force le thème sombre localement (en-tête, pied de page, accueil, en-têtes de page) ; les pages outils suivent le thème de l'appareil.
+- Identité : bleu `#2F4BDC` du logo (`public/logo.png`, tracé vectoriel dans `Logo.tsx` et `public/favicon.svg`), polices Inter et JetBrains Mono auto-hébergées via `@fontsource-variable` (OFL).
+- `vite.config.ts` : injecte au build une CSP stricte (`connect-src 'none'`, `font-src 'self'`) et désactive l'intégration des fichiers en `data:` (`assetsInlineLimit: 0`), sinon la CSP bloque les petites polices. Toute fonctionnalité réseau future (Pwned Passwords) devra l'assouplir pour un seul domaine, explicitement.
 
 ## Règles non négociables
 
@@ -44,7 +46,7 @@ Fait :
 - pages ressources et à propos, logo, animation d'accueil ;
 - CI et déploiement GitHub Pages (sur `main`, source Pages « GitHub Actions » à activer).
 
-Vérifié dans Chromium (Playwright) : rendu bureau 1280 px et mobile 375 px, clair et sombre, sans débordement horizontal ; aucune violation CSP ni requête externe ; logo lisible à 16 px ; contrastes des tokens ≥ 4,5:1.
+Vérifié dans Chromium (Playwright) : rendu bureau 1440 px et mobile 390 px, clair, sombre et animations réduites, sans débordement horizontal ; aucune violation CSP ni requête externe ; contrastes des tokens ≥ 4,5:1 (clair, sombre, `.theme-dark`).
 
 Non vérifié : Safari et Firefox, lecteurs d'écran réels, appareils mobiles physiques.
 

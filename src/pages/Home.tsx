@@ -1,83 +1,102 @@
+import { BinaryField } from '../components/BinaryField';
+import { DataStream } from '../components/DataStream';
 import { Icon, type IconName } from '../components/Icon';
+import { ScrambleText } from '../components/ScrambleText';
 import { ShredSheet } from '../components/ShredSheet';
+import { formatLongFr, gdprDeadlines } from '../lib/dates';
+import { generateLetter } from '../lib/letters';
 import { href } from '../router';
 
-const STEPS = [
+const STEPS: { icon: IconName; title: string; text: string }[] = [
   {
+    icon: 'search',
     title: 'Repère tes données',
     text: 'Note les adresses des pages où apparaissent ton e-mail, ton mot de passe ou ton téléphone.',
   },
   {
+    icon: 'file',
     title: 'Génère ta lettre',
-    text: "Effacement (article 17), accès (article 15) ou relance : la lettre cite les bons articles du RGPD.",
+    text: 'Effacement, accès ou relance : la lettre cite les bons articles du RGPD.',
   },
   {
+    icon: 'send',
     title: 'Envoie-la toi-même',
-    text: 'Copie le texte, ouvre-le dans ta messagerie ou télécharge-le. Shred ne contacte personne à ta place.',
+    text: 'Copie le texte ou ouvre-le dans ta messagerie. Shred ne contacte personne à ta place.',
   },
   {
+    icon: 'bell',
     title: 'Suis le délai',
-    text: "Le site a un mois pour répondre. Shred te prévient quand l'échéance approche et prépare la relance.",
+    text: "Le site a un mois pour répondre. Shred calcule l'échéance et prépare la relance.",
   },
 ];
 
-const FEATURES: { icon: IconName; title: string; text: string }[] = [
+const FAQ = [
   {
-    icon: 'eyeOff',
-    title: 'Rien ne sort de ton navigateur',
-    text: "Pas de compte, pas de serveur, pas d'analytics. Une politique de sécurité bloque toute requête réseau depuis la page.",
+    q: 'Est-ce que Shred voit mes données ?',
+    a: "Non. Tout se passe dans ton navigateur : il n'y a pas de serveur applicatif, pas de compte, pas de traceur. La page interdit elle-même toute requête réseau grâce à sa politique de sécurité.",
   },
   {
-    icon: 'file',
-    title: 'Des lettres sourcées',
-    text: "Chaque lettre cite les articles du RGPD qu'elle invoque, sur la structure du modèle de la CNIL.",
+    q: 'Est-ce que Shred vérifie si mes données ont fuité ?',
+    a: "Non. Shred n'héberge aucune base de fuites, même partielle. Il t'aide à exercer tes droits auprès des sites qui t'exposent.",
   },
   {
-    icon: 'clock',
-    title: 'Le délai légal, calculé',
-    text: "Un mois à compter de la réception (article 12.3), trois si le site prolonge. Les dates sont calculées pour toi.",
+    q: 'Une lettre suffit-elle à faire supprimer mes données ?',
+    a: "Souvent, mais pas toujours. Le site doit répondre dans un délai d'un mois (article 12.3 du RGPD). Sans réponse, tu peux relancer puis saisir la CNIL. Les modèles sont indicatifs et ne remplacent pas un conseil juridique.",
   },
   {
-    icon: 'code',
-    title: 'Libre et gratuit',
-    text: "Le code est public. Tu peux le lire, le vérifier et l'héberger toi-même.",
+    q: "Dois-je joindre une pièce d'identité ?",
+    a: "Pas d'office. Le site ne peut te demander des informations supplémentaires qu'en cas de doute raisonnable sur ton identité (article 12.6 du RGPD).",
   },
 ];
+
+const SAMPLE_DATE = '2026-10-05';
+const SAMPLE = generateLetter({
+  kind: 'effacement',
+  fullName: 'Camille Martin',
+  siteName: 'exemple-fuites.test',
+  urls: ['https://exemple-fuites.test/dump/2026'],
+  dataCategories: ['email', 'motDePasse'],
+  date: SAMPLE_DATE,
+});
+const SAMPLE_EXCERPT = SAMPLE.body.split('\n\n').slice(0, 4).join('\n\n');
 
 export function Home() {
   return (
-    <>
-      <section className="hero">
+    <div className="theme-dark">
+      <section className="hero" aria-labelledby="titre">
+        <BinaryField />
+        <div className="hero__veil" />
         <div className="container hero__grid">
           <div>
-            <span className="eyebrow">Tes droits RGPD, sans intermédiaire</span>
-            <h1>
-              Demande l'effacement de <em>tes données</em>
+            <span className="pill">
+              <span className="pill__tag">100 % local</span>
+              Libre, gratuit, sans compte
+            </span>
+            <h1 id="titre">
+              Demande l'effacement de <ScrambleText className="accent" text="tes données" />
             </h1>
             <p className="lead">
-              Un site expose tes informations issues d'une fuite ? Shred t'aide à écrire une demande d'effacement
-              solide, à l'envoyer et à suivre la réponse. Gratuitement, et sans jamais voir tes données.
+              Un site expose tes informations issues d'une fuite ? Shred rédige ta demande RGPD, calcule les délais et
+              t'aide à relancer. Sans jamais voir tes données.
             </p>
             <div className="btn-row">
-              <a className="btn btn--primary btn--lg" href={href('/lettre')}>
+              <a className="btn btn--primary btn--lg btn--glow" href={href('/lettre')}>
                 Écrire ma lettre
                 <Icon name="arrow" size={18} />
               </a>
-              <a className="btn btn--lg" href={href('/ressources')}>
+              <a className="btn btn--outline btn--lg" href={href('/ressources')}>
                 Comprendre mes droits
               </a>
             </div>
             <ul className="hero__trust">
               <li>
-                <Icon name="check" size={16} />
-                Sans inscription
+                <Icon name="check" size={14} />0 serveur
               </li>
               <li>
-                <Icon name="check" size={16} />
-                Aucun traceur
+                <Icon name="check" size={14} />0 traceur
               </li>
               <li>
-                <Icon name="check" size={16} />
+                <Icon name="check" size={14} />
                 Code ouvert
               </li>
             </ul>
@@ -88,15 +107,52 @@ export function Home() {
         </div>
       </section>
 
-      <section className="section section--alt" aria-labelledby="comment">
+      <DataStream />
+
+      <section className="section" aria-labelledby="zero">
+        <div className="container">
+          <div className="section__head section__head--center">
+            <span className="eyebrow">Confidentialité</span>
+            <h2 id="zero">Tes données restent chez toi</h2>
+            <p className="lead">Shred n'a rien à protéger, parce qu'il ne garde rien.</p>
+          </div>
+          <dl className="zeros">
+            <div>
+              <dt>octet de tes données envoyé</dt>
+              <dd>0</dd>
+            </div>
+            <div>
+              <dt>cookie ou traceur</dt>
+              <dd>0</dd>
+            </div>
+            <div>
+              <dt>compte à créer</dt>
+              <dd>0</dd>
+            </div>
+            <div>
+              <dt>exécuté dans ton navigateur</dt>
+              <dd>
+                100<span>%</span>
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <section className="section section--subtle" aria-labelledby="comment">
         <div className="container">
           <div className="section__head">
-            <span className="eyebrow">Comment ça marche</span>
+            <span className="eyebrow">Méthode</span>
             <h2 id="comment">Quatre étapes, une dizaine de minutes</h2>
+            <p className="lead">De la page qui t'expose à la réponse du site, Shred t'accompagne à chaque étape.</p>
           </div>
           <ol className="steps">
-            {STEPS.map((step) => (
-              <li key={step.title}>
+            {STEPS.map((step, i) => (
+              <li className="step" key={step.title}>
+                <span className="step__icon">
+                  <Icon name={step.icon} />
+                </span>
+                <span className="step__num">0{i + 1}</span>
                 <h3>{step.title}</h3>
                 <p>{step.text}</p>
               </li>
@@ -109,21 +165,133 @@ export function Home() {
         <div className="container">
           <div className="section__head">
             <span className="eyebrow">Principes</span>
-            <h2 id="principes">Un outil qui t'aide à te défendre, et qui n'héberge rien</h2>
-            <p className="muted">
-              Shred ne contient aucune base de fuites, même partielle. Il ne cherche pas tes données : il t'aide à
-              exercer tes droits.
-            </p>
+            <h2 id="principes">Un outil pour te défendre, qui n'héberge rien</h2>
           </div>
-          <div className="features">
-            {FEATURES.map((feature) => (
-              <div className="feature" key={feature.title}>
-                <h3>
-                  <Icon name={feature.icon} size={22} />
-                  {feature.title}
-                </h3>
-                <p>{feature.text}</p>
+          <div className="bento">
+            <article className="tile tile--wide">
+              <h3>Rien ne quitte ton navigateur</h3>
+              <p>
+                La page déclare une politique de sécurité qui interdit toute requête réseau. Ce n'est pas une promesse :
+                c'est ton navigateur qui l'applique.
+              </p>
+              <div className="tile__visual">
+                <pre className="code-block">
+                  <span className="c">{'<!-- en-tête de chaque page publiée -->'}</span>
+                  {'\n'}
+                  <span className="k">Content-Security-Policy</span>
+                  {': '}
+                  {'\n  '}
+                  <span className="k">connect-src</span> <span className="v">'none'</span>
+                  {';\n  '}
+                  <span className="k">form-action</span> <span className="v">'none'</span>
+                  {';\n  '}
+                  <span className="k">default-src</span> <span className="v">'self'</span>;
+                </pre>
               </div>
+            </article>
+            <article className="tile tile--narrow">
+              <h3>Le délai légal, calculé</h3>
+              <p>Un mois à compter de la réception, trois si le site prolonge (article 12.3).</p>
+              <div className="tile__visual">
+                <ul className="mini-timeline">
+                  <li>
+                    Envoyée <span>{formatLongFr(SAMPLE_DATE)}</span>
+                  </li>
+                  <li>
+                    Échéance <span>{formatLongFr(gdprDeadlines(SAMPLE_DATE).standard)}</span>
+                  </li>
+                </ul>
+              </div>
+            </article>
+            <article className="tile tile--half">
+              <h3>Des lettres sourcées</h3>
+              <p>Chaque lettre cite les articles du RGPD qu'elle invoque, sur la structure du modèle de la CNIL.</p>
+              <div className="tile__visual">
+                <ul className="article-cloud">
+                  {['Art. 15', 'Art. 17.1', 'Art. 17.2', 'Art. 19', 'Art. 12.3', 'Art. 12.4', 'Art. 77'].map((a) => (
+                    <li key={a}>{a}</li>
+                  ))}
+                </ul>
+              </div>
+            </article>
+            <article className="tile tile--half">
+              <h3>Aucune base de fuites</h3>
+              <p>Shred ne stocke et ne recherche aucune donnée fuitée, même hachée. Il aide, il n'archive pas.</p>
+              <div className="tile__visual" aria-hidden="true">
+                <div className="bits-art">
+                  {'01101110 01101111 '}
+                  <b>00000000</b>
+                  {' 01101100 01100101\n'}
+                  {'01100001 01101011 01110011 '}
+                  <b>00000000</b>
+                  {' 01101000\n'}
+                  {'01100101 01110010 01100101 01101111 '}
+                  <b>00000000</b>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section className="section section--subtle" aria-labelledby="lettre">
+        <div className="container showcase">
+          <div>
+            <span className="eyebrow">Générateur</span>
+            <h2 id="lettre">Une lettre prête à envoyer, en quelques minutes</h2>
+            <ul className="checklist">
+              <li>
+                <Icon name="check" size={18} />
+                Effacement (article 17), accès (article 15) ou relance après un mois.
+              </li>
+              <li>
+                <Icon name="check" size={18} />
+                Copie, ouverture dans ta messagerie, téléchargement ou impression.
+              </li>
+              <li>
+                <Icon name="check" size={18} />
+                Ton nom et ton e-mail ne sont jamais enregistrés.
+              </li>
+            </ul>
+            <a className="btn btn--primary btn--lg" href={href('/lettre')}>
+              Ouvrir le générateur
+              <Icon name="arrow" size={18} />
+            </a>
+          </div>
+          <div className="preview-window" aria-label="Extrait d'une lettre d'effacement générée">
+            <div className="preview-bar">
+              <span className="small mono muted">lettre-effacement.txt</span>
+              <ul className="chips">
+                {SAMPLE.articles.slice(0, 4).map((a) => (
+                  <li className="chip" key={a}>
+                    Art. {a}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="paper">
+              <p className="paper__subject">Objet : {SAMPLE.subject}</p>
+              <pre className="paper__body">{SAMPLE_EXCERPT}</pre>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section" aria-labelledby="faq">
+        <div className="container">
+          <div className="section__head section__head--center">
+            <span className="eyebrow">Questions</span>
+            <h2 id="faq">Questions fréquentes</h2>
+          </div>
+          <div className="faq">
+            {FAQ.map((item) => (
+              <details key={item.q}>
+                <summary>
+                  {item.q}
+                  <Icon name="plus" size={18} />
+                </summary>
+                <p>{item.a}</p>
+              </details>
             ))}
           </div>
         </div>
@@ -132,17 +300,18 @@ export function Home() {
       <section className="section" aria-labelledby="commencer">
         <div className="container">
           <div className="cta-band">
-            <div>
-              <h2 id="commencer">Prêt à reprendre la main ?</h2>
-              <p>Ta lettre est prête en quelques minutes. Rien n'est enregistré sans ton accord.</p>
-            </div>
-            <a className="btn btn--primary btn--lg" href={href('/lettre')}>
-              Commencer
+            <BinaryField density={0.25} />
+            <div className="cta-band__veil" />
+            <span className="eyebrow">Passe à l'action</span>
+            <h2 id="commencer">Reprends le contrôle de tes données</h2>
+            <p>Ta lettre est prête en quelques minutes. Rien n'est enregistré sans ton accord.</p>
+            <a className="btn btn--primary btn--lg btn--glow" href={href('/lettre')}>
+              Écrire ma lettre
               <Icon name="arrow" size={18} />
             </a>
           </div>
         </div>
       </section>
-    </>
+    </div>
   );
 }

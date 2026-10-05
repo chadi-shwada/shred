@@ -1,5 +1,7 @@
 import { ExternalLink } from '../components/ExternalLink';
+import { Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
+import { PageHead } from '../components/PageHead';
 import { href } from '../router';
 
 const TIMELINE = [
@@ -9,7 +11,7 @@ const TIMELINE = [
   },
   {
     title: 'Trouve le bon contact',
-    text: 'Cherche un e-mail de DPO ou un formulaire « données personnelles » dans les mentions légales ou la politique de confidentialité. Sans contact, écris à l\'adresse de contact générale.',
+    text: "Cherche un e-mail de DPO ou un formulaire « données personnelles » dans les mentions légales ou la politique de confidentialité. Sans contact, écris à l'adresse de contact générale.",
   },
   {
     title: "Envoie ta demande d'effacement",
@@ -21,7 +23,7 @@ const TIMELINE = [
   },
   {
     title: 'Saisis la CNIL',
-    text: "Sans réponse satisfaisante, tu peux introduire une réclamation auprès de la CNIL (article 77). Joins ta demande, ta relance et tes preuves.",
+    text: 'Sans réponse satisfaisante, tu peux introduire une réclamation auprès de la CNIL (article 77). Joins ta demande, ta relance et tes preuves.',
   },
 ];
 
@@ -73,23 +75,21 @@ const LINKS = [
 export function Resources() {
   return (
     <>
-      <div className="container page-head">
-        <span className="eyebrow">Ressources</span>
-        <h1>Tes droits, étape par étape</h1>
-        <p className="lead">
-          Le RGPD te permet d'obtenir l'effacement de données publiées sans base légale. Voici comment t'y prendre, et
-          vers qui te tourner.
-        </p>
-      </div>
+      <PageHead eyebrow="Ressources" title="Tes droits, étape par étape">
+        Le RGPD te permet d'obtenir l'effacement de données publiées sans base légale. Voici comment t'y prendre, et
+        vers qui te tourner.
+      </PageHead>
 
       <div className="container page-body">
         <div className="content-grid">
           <div className="prose">
             <h2>La marche à suivre</h2>
             <ol className="timeline">
-              {TIMELINE.map((step) => (
+              {TIMELINE.map((step, i) => (
                 <li key={step.title}>
-                  <span className="timeline__dot" aria-hidden="true" />
+                  <span className="timeline__dot" aria-hidden="true">
+                    0{i + 1}
+                  </span>
                   <h3>{step.title}</h3>
                   <p>{step.text}</p>
                 </li>
@@ -105,7 +105,9 @@ export function Resources() {
             <ul>
               <li>Change le mot de passe exposé partout où tu l'utilises, et n'en réutilise plus.</li>
               <li>Active la double authentification sur tes comptes importants, en priorité ta messagerie.</li>
-              <li>Méfie-toi des e-mails, SMS et appels qui citent tes données : la fuite sert souvent à l'hameçonnage.</li>
+              <li>
+                Méfie-toi des e-mails, SMS et appels qui citent tes données : la fuite sert souvent à l'hameçonnage.
+              </li>
               <li>Si des coordonnées bancaires sont exposées, préviens ta banque.</li>
             </ul>
 
@@ -122,14 +124,14 @@ export function Resources() {
             </p>
             <h3>Est-ce que Shred vérifie si mes données ont fuité ?</h3>
             <p>
-              Non. Shred n'a aucune base de fuites et n'envoie aucune requête. Pour vérifier une adresse e-mail, tu
-              peux utiliser un service tiers comme Have I Been Pwned, en connaissance de cause.
+              Non. Shred n'a aucune base de fuites et n'envoie aucune requête. Pour vérifier une adresse e-mail, tu peux
+              utiliser un service tiers comme Have I Been Pwned, en connaissance de cause.
             </p>
 
             <Notice>
               <p>
-                Ces informations sont générales et ne remplacent pas un conseil juridique. En cas de doute, rapproche-toi
-                d'une association ou d'un professionnel du droit.
+                Ces informations sont générales et ne remplacent pas un conseil juridique. En cas de doute,
+                rapproche-toi d'une association ou d'un professionnel du droit.
               </p>
             </Notice>
           </div>
@@ -146,6 +148,7 @@ export function Resources() {
                       <strong>{link.title}</strong>
                       <span>{link.text}</span>
                       <span className="host">{link.host}</span>
+                      <Icon name="external" size={16} />
                     </ExternalLink>
                   </li>
                 ))}
