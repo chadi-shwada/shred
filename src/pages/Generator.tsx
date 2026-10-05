@@ -1,5 +1,6 @@
 import { useId, useMemo, useState, type ChangeEvent } from 'react';
 import { copyText, downloadText } from '../browser';
+import { ExternalLink } from '../components/ExternalLink';
 import { Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
 import { PageHead } from '../components/PageHead';
@@ -14,8 +15,10 @@ import {
   type InitialKind,
   type Letter,
   type LetterContext,
+  type ReportTarget,
   type LetterKind,
 } from '../lib/letters';
+import { CLOUDFLARE_ABUSE_URL, extractDomain, icannLookupUrl } from '../lib/domain';
 import { parseCategories } from '../lib/letterLink';
 import { slugify } from '../lib/slug';
 import { newId } from '../lib/tracking';
@@ -38,16 +41,24 @@ interface FormState {
   context: LetterContext;
   breachName: string;
   breachDate: IsoDate;
+  reportTarget: ReportTarget;
 }
 
 const KIND_OPTIONS: { value: LetterKind; label: string; hint: string }[] = [
   { value: 'effacement', label: 'Effacement', hint: 'Article 17' },
   { value: 'acces', label: 'Accès', hint: 'Article 15' },
   { value: 'relance', label: 'Relance', hint: 'Après un mois' },
+  { value: 'signalement', label: 'Signalement', hint: 'Hébergeur, registrar' },
+];
+
+const TARGET_OPTIONS: { value: ReportTarget; label: string }[] = [
+  { value: 'hebergeur', label: "L'hébergeur du site" },
+  { value: 'registrar', label: 'Le registrar du nom de domaine' },
+  { value: 'cloudflare', label: 'Cloudflare' },
 ];
 
 function asKind(value: string | null): LetterKind {
-  return value === 'acces' || value === 'relance' ? value : 'effacement';
+  return value === 'acces' || value === 'relance' || value === 'signalement' ? value : 'effacement';
 }
 
 function initialState(route: Route): FormState {
@@ -70,6 +81,10 @@ function initialState(route: Route): FormState {
     context: q.get('contexte') === 'violation' ? 'violation' : 'exposition',
     breachName: q.get('fuite') ?? '',
     breachDate: isValidIsoDate(breachDate) ? breachDate : '',
+    reportTarget:
+      q.get('cible') === 'registrar' || q.get('cible') === 'cloudflare'
+        ? (q.get('cible') as ReportTarget)
+        : 'hebergeur',
   };
 }
 
@@ -106,10 +121,16 @@ export function Generator({ route }: { route: Route }) {
     const missing: string[] = [];
     if (!form.fullName.trim()) missing.push('ton nom');
     if (!form.siteName.trim())
-      missing.push(form.context === 'violation' ? "le nom de l'entreprise" : 'le site concerné');
+      missing.push(
+        form.context === 'violation' && form.kind !== 'signalement' ? "le nom de l'entreprise" : 'le site concerné',
+      );
     if (form.kind === 'relance' && !isValidIsoDate(form.previousRequestDate))
       missing.push('la date de ta première demande');
     if (!isValidIsoDate(form.date)) missing.push('la date de la lettre');
+    if (form.kind === 'signalement') {
+      if (!form.urls.split('\n').some((u) => u.trim())) missing.push("l'adresse d'au moins une page");
+      if (!form.email.trim()) missing.push('ton adresse e-mail');
+    }
     if (missing.length > 0) return { letter: null, missing };
     try {
       const letter = generateLetter({
@@ -117,15 +138,16 @@ export function Generator({ route }: { route: Route }) {
         fullName: form.fullName,
         email: form.email,
         postalAddress: form.postalAddress,
-        siteName: form.siteName,
+        siteName: form.kind === 'signalement' ? (extractDomain(form.siteName) ?? form.siteName) : form.siteName,
         urls: form.urls.split('\n'),
         dataCategories: form.dataCategories,
         otherData: form.otherData,
         date: form.date,
         previousRequestDate: form.kind === 'relance' ? form.previousRequestDate : undefined,
         previousKind: form.kind === 'relance' ? form.previousKind : undefined,
-        context: form.context,
-        breachName: form.context === 'violation' ? form.breachName : undefined,
+        context: form.kind === 'signalement' ? 'exposition' : form.context,
+        reportTarget: form.reportTarget,
+        breachName: form.context === 'violation' && form.kind !== 'signalement' ? form.breachName : undefined,
         breachDate: form.context === 'violation' && isValidIsoDate(form.breachDate) ? form.breachDate : undefined,
       });
       return { letter, missing };
@@ -183,7 +205,10 @@ export function Generator({ route }: { route: Route }) {
     });
   };
 
-  const canTrack = form.kind !== 'relance' || Boolean(tracked);
+  const canTrack = form.kind === 'relance' ? Boolean(tracked) : form.kind !== 'signalement';
+  const isReport = form.kind === 'signalement';
+  const violation = form.context === 'violation' && !isReport;
+  const domain = extractDomain(form.siteName);
 
   return (
     <>
@@ -253,17 +278,33 @@ export function Generator({ route }: { route: Route }) {
                 <span className="card__num">2</span>
                 Le site concerné
               </h2>
+              {isReport ? (
+                <div className="field">
+                  <label htmlFor={fieldId('target')}>Destinataire du signalement</label>
+                  <select
+                    id={fieldId('target')}
+                    className="select"
+                    value={form.reportTarget}
+                    onChange={set('reportTarget')}
+                  >
+                    {TARGET_OPTIONS.map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <div className="field">
+                  <label htmlFor={fieldId('context')}>Situation</label>
+                  <select id={fieldId('context')} className="select" value={form.context} onChange={set('context')}>
+                    <option value="exposition">Un site publie mes données issues d'une fuite</option>
+                    <option value="violation">Une entreprise a subi une fuite de mes données</option>
+                  </select>
+                </div>
+              )}
               <div className="field">
-                <label htmlFor={fieldId('context')}>Situation</label>
-                <select id={fieldId('context')} className="select" value={form.context} onChange={set('context')}>
-                  <option value="exposition">Un site publie mes données issues d'une fuite</option>
-                  <option value="violation">Une entreprise a subi une fuite de mes données</option>
-                </select>
-              </div>
-              <div className="field">
-                <label htmlFor={fieldId('site')}>
-                  {form.context === 'violation' ? "Nom de l'entreprise" : 'Nom ou adresse du site'}
-                </label>
+                <label htmlFor={fieldId('site')}>{violation ? "Nom de l'entreprise" : 'Nom ou adresse du site'}</label>
                 <input
                   id={fieldId('site')}
                   className="input"
@@ -274,7 +315,7 @@ export function Generator({ route }: { route: Route }) {
                   spellCheck={false}
                 />
               </div>
-              {form.context === 'violation' && (
+              {violation && (
                 <div className="field-row">
                   <div className="field">
                     <label htmlFor={fieldId('breachName')}>
@@ -304,7 +345,8 @@ export function Generator({ route }: { route: Route }) {
               )}
               <div className="field">
                 <label htmlFor={fieldId('contact')}>
-                  E-mail du DPO ou du responsable <span className="optional">(facultatif)</span>
+                  {isReport ? "E-mail d'abus du destinataire" : 'E-mail du DPO ou du responsable'}{' '}
+                  <span className="optional">(facultatif)</span>
                 </label>
                 <input
                   id={fieldId('contact')}
@@ -318,10 +360,47 @@ export function Generator({ route }: { route: Route }) {
                   aria-describedby={fieldId('contactHint')}
                 />
                 <p className="hint" id={fieldId('contactHint')}>
-                  Cherche-le dans les mentions légales ou la politique de confidentialité du site. Il sert seulement à
-                  préremplir ton e-mail.
+                  {isReport
+                    ? 'Souvent de la forme abuse@… Il sert seulement à préremplir ton e-mail.'
+                    : 'Cherche-le dans les mentions légales ou la politique de confidentialité du site. Il sert seulement à préremplir ton e-mail.'}
                 </p>
               </div>
+              {!violation && (
+                <div className="finder">
+                  <p className="finder__title">
+                    <Icon name="search" size={16} />
+                    Trouver le bon contact
+                  </p>
+                  <ul>
+                    {!isReport && (
+                      <li>
+                        Le responsable du site : ses mentions légales ou sa politique de confidentialité (lien en bas de
+                        page, souvent).
+                      </li>
+                    )}
+                    <li>
+                      Le registrar et son e-mail d'abus :{' '}
+                      {domain ? (
+                        <ExternalLink href={icannLookupUrl(domain)}>recherche ICANN pour {domain}</ExternalLink>
+                      ) : (
+                        <ExternalLink href="https://lookup.icann.org/">recherche ICANN</ExternalLink>
+                      )}
+                      , rubrique « Registrar » puis « Abuse contact ».
+                    </li>
+                    <li>
+                      Le site passe par Cloudflare (serveurs de noms en *.ns.cloudflare.com) ? Utilise leur{' '}
+                      <ExternalLink href={CLOUDFLARE_ABUSE_URL}>formulaire d'abus</ExternalLink> : il transmet à
+                      l'hébergeur réel.
+                    </li>
+                    {!isReport && (
+                      <li>
+                        Personne ne répond ou le site est anonyme ? Choisis « Signalement » pour écrire à l'hébergeur ou
+                        au registrar.
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              )}
               <div className="field">
                 <label htmlFor={fieldId('urls')}>
                   Pages où tes données apparaissent <span className="optional">(une par ligne)</span>
@@ -375,7 +454,13 @@ export function Generator({ route }: { route: Route }) {
               </div>
               <div className="field">
                 <label htmlFor={fieldId('email')}>
-                  E-mail concerné par la fuite <span className="optional">(facultatif)</span>
+                  {isReport ? (
+                    'Ton adresse e-mail'
+                  ) : (
+                    <>
+                      E-mail concerné par la fuite <span className="optional">(facultatif)</span>
+                    </>
+                  )}
                 </label>
                 <input
                   id={fieldId('email')}
@@ -388,7 +473,9 @@ export function Generator({ route }: { route: Route }) {
                   aria-describedby={fieldId('emailHint')}
                 />
                 <p className="hint" id={fieldId('emailHint')}>
-                  Aide le site à retrouver tes données. N'ajoute pas de mot de passe.
+                  {isReport
+                    ? 'Obligatoire dans un signalement (article 16 du DSA) : le destinataire doit pouvoir te répondre.'
+                    : "Aide le site à retrouver tes données. N'ajoute pas de mot de passe."}
                 </p>
               </div>
               <div className="field">
@@ -518,7 +605,9 @@ export function Generator({ route }: { route: Route }) {
 
                 <p className="small muted">
                   Modèle indicatif, pas un conseil juridique. Relis la lettre avant de l'envoyer. Certains logiciels de
-                  messagerie coupent les textes longs : si c'est le cas, utilise « Copier ».
+                  messagerie coupent les textes longs : si c'est le cas, utilise « Copier ». Garde une preuve de l'envoi
+                  : le délai d'un mois court à partir de la réception.{' '}
+                  <a href={href('/ressources')}>Comment l'envoyer</a>
                 </p>
               </div>
             </div>

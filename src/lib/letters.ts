@@ -12,14 +12,24 @@
  * - « violation » : l'entreprise a elle-même subi la fuite. La lettre demande alors
  *   aussi la description de la violation (art. 34.2, qui renvoie à l'art. 33.3 b, c, d).
  *
+ * Signalements (hors RGPD pour la procédure, RGPD pour l'illégalité) :
+ * - hébergeur : notification au titre de l'article 16 du règlement (UE) 2022/2065
+ *   (DSA), avec ses quatre éléments obligatoires (art. 16.2) : explication de
+ *   l'illégalité, URL exactes, nom et e-mail, déclaration de bonne foi ;
+ * - registrar et Cloudflare : pas des hébergeurs au sens du DSA ; demande au titre
+ *   de leur politique anti-abus, de transmission et d'identification de l'hébergeur.
+ *
  * Toute modification d'une lettre cite l'article concerné et met à jour
  * letters.test.ts.
  */
 
 import { formatLongFr, gdprDeadlines, type IsoDate } from './dates';
 
-export type LetterKind = 'effacement' | 'acces' | 'relance';
-export type InitialKind = Exclude<LetterKind, 'relance'>;
+export type LetterKind = 'effacement' | 'acces' | 'relance' | 'signalement';
+/** Demandes RGPD avec délai légal de réponse (suivies dans le suivi). */
+export type InitialKind = 'effacement' | 'acces';
+/** Destinataire d'un signalement. */
+export type ReportTarget = 'hebergeur' | 'registrar' | 'cloudflare';
 export type LetterContext = 'exposition' | 'violation';
 
 export const DATA_CATEGORIES = {
@@ -63,6 +73,8 @@ export interface LetterInput {
   breachName?: string;
   /** Violation seulement : date de la fuite. */
   breachDate?: IsoDate;
+  /** Signalement seulement : à qui il est adressé. */
+  reportTarget?: ReportTarget;
 }
 
 export interface Letter {
@@ -285,6 +297,57 @@ function relance(input: LetterInput): Letter {
   };
 }
 
+const ILLEGALITY =
+  "Ces données sont diffusées sans mon consentement et sans aucune autre base légale prévue à l'article 6 du règlement (UE) 2016/679 (RGPD). Leur publication constitue un traitement illicite de données personnelles, contraire aux articles 5 et 6 du RGPD.";
+
+const GOOD_FAITH =
+  'Je déclare de bonne foi que les informations et allégations contenues dans ce signalement sont exactes et complètes.';
+
+function signalement(input: LetterInput): Letter {
+  const target = input.reportTarget ?? 'hebergeur';
+  if (urlList(input).length === 0) {
+    throw new LetterInputError("Un signalement doit indiquer l'adresse exacte (URL) d'au moins une page.");
+  }
+  if (!clean(input.email)) {
+    throw new LetterInputError('Un signalement doit indiquer ton adresse e-mail.');
+  }
+  const site = clean(input.siteName);
+  const intro: Record<ReportTarget, string> = {
+    hebergeur: `Votre service héberge le site ${site}, qui publie des données personnelles me concernant, issues selon toute vraisemblance d'une fuite de données.`,
+    registrar: `Le nom de domaine du site ${site} est enregistré auprès de vos services. Ce site publie des données personnelles me concernant, issues selon toute vraisemblance d'une fuite de données.`,
+    cloudflare: `Le site ${site} utilise vos services. Il publie des données personnelles me concernant, issues selon toute vraisemblance d'une fuite de données.`,
+  };
+  const request: Record<ReportTarget, string> = {
+    hebergeur:
+      "En application de l'article 16 du règlement (UE) 2022/2065 sur les services numériques (DSA), je vous notifie ce contenu illicite et vous demande de le retirer ou d'en rendre l'accès impossible dans les meilleurs délais, puis de m'informer de votre décision.",
+    registrar:
+      "Je vous demande de prendre les mesures prévues par vos conditions d'utilisation et votre politique de lutte contre les abus, de transmettre ce signalement au titulaire du nom de domaine et de m'informer des suites données.",
+    cloudflare:
+      "Je vous demande de transmettre ce signalement à l'hébergeur du site et au titulaire du compte, et de me communiquer l'identité de l'hébergeur afin que je puisse le saisir directement.",
+  };
+  const subject: Record<ReportTarget, string> = {
+    hebergeur:
+      "Signalement de contenu illicite : données personnelles issues d'une fuite (article 16 du règlement (UE) 2022/2065)",
+    registrar: "Signalement d'abus : publication de données personnelles issues d'une fuite",
+    cloudflare: "Signalement d'abus : publication de données personnelles issues d'une fuite",
+  };
+  const body = assemble(
+    [
+      intro[target],
+      locationParagraph(input, 'Les pages concernées sont les suivantes :'),
+      ILLEGALITY,
+      request[target],
+      GOOD_FAITH,
+    ],
+    input,
+  );
+  return {
+    subject: subject[target],
+    body,
+    articles: target === 'hebergeur' ? ['6 RGPD', '5 RGPD', '16 DSA'] : ['6 RGPD', '5 RGPD'],
+  };
+}
+
 export function generateLetter(input: LetterInput): Letter {
   if (!clean(input.fullName)) throw new LetterInputError('Le nom est obligatoire.');
   if (!clean(input.siteName)) throw new LetterInputError('Le nom du site est obligatoire.');
@@ -295,6 +358,8 @@ export function generateLetter(input: LetterInput): Letter {
       return acces(input);
     case 'relance':
       return relance(input);
+    case 'signalement':
+      return signalement(input);
   }
 }
 

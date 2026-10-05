@@ -1,4 +1,5 @@
 import { BinaryField } from '../components/BinaryField';
+import { SOURCE_CODE_URL } from '../config';
 import { DataStream } from '../components/DataStream';
 import { Icon, type IconName } from '../components/Icon';
 import { ScrambleText } from '../components/ScrambleText';
@@ -70,7 +71,7 @@ export function Home() {
           <div>
             <span className="pill">
               <span className="pill__tag">Sans traceur</span>
-              Libre, gratuit, sans compte
+              Gratuit, sans compte, sans publicité
             </span>
             <h1 id="titre">
               Demande l'effacement de <ScrambleText className="accent" text="tes données" />
@@ -98,7 +99,7 @@ export function Home() {
               </li>
               <li>
                 <Icon name="check" size={14} />
-                Code ouvert
+                {SOURCE_CODE_URL ? 'Code ouvert' : 'Gratuit'}
               </li>
             </ul>
           </div>

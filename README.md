@@ -2,8 +2,10 @@
 
 Outil libre et gratuit pour exercer ses droits RGPD (effacement, accès, relance) face aux sites qui exposent des données issues de fuites.
 
-- Générateur de lettres d'effacement (art. 17), d'accès (art. 15) et de relance (art. 12.3, 12.4, 77).
-- Suivi local des demandes avec calcul des délais légaux, export et import JSON.
+- Générateur de lettres d'effacement (art. 17), d'accès (art. 15), de relance (art. 12.3, 12.4, 77) et de
+  signalement à l'hébergeur (art. 16 du DSA), au registrar ou à Cloudflare.
+- Suivi local des demandes avec calcul des délais légaux, export et import JSON, rappel calendrier (.ics)
+  et récapitulatif de plainte CNIL.
 - Page « Vérifier » : recherche de l'e-mail sur Have I Been Pwned (lien sortant), choix des fuites dans le
   catalogue public HIBP téléchargé au build (CC BY 4.0), lettre pré-remplie ; test de mot de passe Pwned
   Passwords par k-anonymat (seuls 5 caractères du SHA-1 partent).

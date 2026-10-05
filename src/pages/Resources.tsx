@@ -11,7 +11,7 @@ const TIMELINE = [
   },
   {
     title: 'Trouve le bon contact',
-    text: "Cherche un e-mail de DPO ou un formulaire « données personnelles » dans les mentions légales ou la politique de confidentialité. Sans contact, écris à l'adresse de contact générale.",
+    text: "Cherche un e-mail de DPO ou un formulaire « données personnelles » dans les mentions légales ou la politique de confidentialité. Sans contact, écris à l'adresse de contact générale. Le générateur t'aide à trouver le registrar et l'hébergeur.",
   },
   {
     title: "Envoie ta demande d'effacement",
@@ -20,6 +20,10 @@ const TIMELINE = [
   {
     title: 'Relance après un mois',
     text: "Sans réponse, envoie une relance. S'il refuse, il doit te dire pourquoi (article 12.4).",
+  },
+  {
+    title: "Signale le contenu à l'hébergeur",
+    text: 'Site anonyme ou muet ? Écris à son hébergeur : il doit traiter les signalements de contenus illicites (article 16 du règlement européen sur les services numériques). Le registrar et Cloudflare peuvent aussi transmettre.',
   },
   {
     title: 'Saisis la CNIL',
@@ -100,6 +104,27 @@ export function Resources() {
                 Écrire ma lettre
               </a>
             </p>
+
+            <h2>Comment envoyer ta demande</h2>
+            <p>
+              Le RGPD n'impose pas de forme : un e-mail ou le formulaire du site suffisent. Ce qui compte, c'est de
+              pouvoir prouver la date de réception, car le délai d'un mois part de là.
+            </p>
+            <ul>
+              <li>
+                <strong>E-mail ou formulaire</strong> : garde une copie de ton message, la date d'envoi et tout accusé
+                de réception (capture d'écran de la confirmation, numéro de ticket).
+              </li>
+              <li>
+                <strong>Lettre recommandée avec accusé de réception</strong> : la preuve la plus solide, utile si le
+                site ne répond pas aux e-mails ou si tu prévois de saisir la CNIL. La Poste propose aussi un envoi
+                recommandé en ligne.
+              </li>
+              <li>
+                Note la date de réception dans le <a href={href('/suivi')}>suivi</a> : Shred calcule l'échéance et peut
+                l'ajouter à ton agenda.
+              </li>
+            </ul>
 
             <h2>Protège-toi en parallèle</h2>
             <ul>

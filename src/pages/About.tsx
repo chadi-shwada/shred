@@ -1,5 +1,6 @@
 import { ExternalLink } from '../components/ExternalLink';
 import { PageHead } from '../components/PageHead';
+import { AUTHOR, SOURCE_CODE_URL } from '../config';
 import { KNOWN_SITES } from '../data/sites';
 
 export function About() {
@@ -62,11 +63,18 @@ export function About() {
           </p>
 
           <h2>Contribuer</h2>
-          <p>
-            Le code est libre. Tu peux signaler une erreur dans une lettre, proposer une amélioration ou héberger ta
-            propre copie :{' '}
-            <ExternalLink href="https://github.com/chadi-shwada/shred">github.com/chadi-shwada/shred</ExternalLink>.
-          </p>
+          {SOURCE_CODE_URL ? (
+            <p>
+              Le code est libre. Tu peux signaler une erreur dans une lettre, proposer une amélioration ou héberger ta
+              propre copie :{' '}
+              <ExternalLink href={SOURCE_CODE_URL}>{SOURCE_CODE_URL.replace(/^https:\/\//, '')}</ExternalLink>.
+            </p>
+          ) : (
+            <p>
+              Tu as repéré une erreur dans une lettre ou tu as une idée d'amélioration ? Écris à{' '}
+              <ExternalLink href={AUTHOR.url}>{AUTHOR.name}</ExternalLink> sur X.
+            </p>
+          )}
         </div>
       </div>
     </>

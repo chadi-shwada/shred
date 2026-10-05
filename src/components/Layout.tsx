@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react';
+import { AUTHOR, SOURCE_CODE_URL } from '../config';
 import { href, type RoutePath } from '../router';
 import { ExternalLink } from './ExternalLink';
 import { FooterWord } from './FooterWord';
@@ -92,8 +93,7 @@ export function Layout({ path, children }: LayoutProps) {
                 <Logo />
               </a>
               <p>
-                Outil libre et gratuit pour exercer tes droits RGPD face aux sites qui exposent des données issues de
-                fuites.
+                Outil gratuit pour exercer tes droits RGPD face aux sites qui exposent des données issues de fuites.
               </p>
             </div>
             <div className="site-footer__cols">
@@ -121,10 +121,15 @@ export function Layout({ path, children }: LayoutProps) {
                     <a href={href('/a-propos')}>À propos</a>
                   </li>
                   <li>
-                    <a href="https://github.com/chadi-shwada/shred" rel="noopener noreferrer">
-                      Code source
-                    </a>
+                    <a href={href('/mentions-legales')}>Mentions légales</a>
                   </li>
+                  {SOURCE_CODE_URL && (
+                    <li>
+                      <a href={SOURCE_CODE_URL} rel="noopener noreferrer">
+                        Code source
+                      </a>
+                    </li>
+                  )}
                 </ul>
               </div>
             </div>
@@ -132,7 +137,7 @@ export function Layout({ path, children }: LayoutProps) {
           <div className="site-footer__legal">
             <span>Modèles indicatifs, pas un conseil juridique.</span>
             <span>
-              Conçu avec ❤️ par <ExternalLink href="https://x.com/Cha4Sh">Cha4Sh</ExternalLink> et l'IA · © 2026
+              Conçu avec ❤️ par <ExternalLink href={AUTHOR.url}>{AUTHOR.name}</ExternalLink> et l'IA · © 2026
             </span>
             <span>Aucune donnée personnelle ne quitte ton navigateur.</span>
           </div>

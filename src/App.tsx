@@ -3,11 +3,12 @@ import { Layout } from './components/Layout';
 import { About } from './pages/About';
 import { Generator } from './pages/Generator';
 import { Home } from './pages/Home';
+import { LegalNotice } from './pages/LegalNotice';
 import { NotFound } from './pages/NotFound';
 import { Resources } from './pages/Resources';
 import { Tracker } from './pages/Tracker';
 import { Verify } from './pages/Verify';
-import { useRoute, type Route } from './router';
+import { interceptLinks, upgradeLegacyUrl, useRoute, type Route } from './router';
 
 const TITLES: Record<string, string> = {
   '/': "Shred · Demande l'effacement de tes données",
@@ -16,6 +17,7 @@ const TITLES: Record<string, string> = {
   '/suivi': 'Suivi · Shred',
   '/ressources': 'Ressources · Shred',
   '/a-propos': 'À propos · Shred',
+  '/mentions-legales': 'Mentions légales · Shred',
 };
 
 function Page({ route }: { route: Route }) {
@@ -33,6 +35,8 @@ function Page({ route }: { route: Route }) {
       return <Resources />;
     case '/a-propos':
       return <About />;
+    case '/mentions-legales':
+      return <LegalNotice />;
     default:
       return <NotFound />;
   }
@@ -41,6 +45,16 @@ function Page({ route }: { route: Route }) {
 export function App() {
   const route = useRoute();
   const first = useRef(true);
+
+  useEffect(() => {
+    upgradeLegacyUrl();
+    window.addEventListener('hashchange', upgradeLegacyUrl);
+    document.addEventListener('click', interceptLinks);
+    return () => {
+      window.removeEventListener('hashchange', upgradeLegacyUrl);
+      document.removeEventListener('click', interceptLinks);
+    };
+  }, []);
 
   useEffect(() => {
     document.title = TITLES[route.path] ?? 'Page introuvable · Shred';

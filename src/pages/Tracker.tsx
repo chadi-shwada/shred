@@ -1,9 +1,13 @@
 import { useId, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
-import { downloadText } from '../browser';
+import { copyText, downloadText } from '../browser';
+import { ExternalLink } from '../components/ExternalLink';
 import { Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
 import { PageHead } from '../components/PageHead';
+import { CNIL_COMPLAINT_URL, complaintSummary } from '../lib/complaint';
 import { formatLongFr, isValidIsoDate, todayIso } from '../lib/dates';
+import { buildIcs } from '../lib/ics';
+import { slugify } from '../lib/slug';
 import type { InitialKind } from '../lib/letters';
 import {
   CHANNEL_LABELS,
@@ -60,6 +64,7 @@ export function Tracker() {
   const [draftError, setDraftError] = useState('');
   const [feedback, setFeedback] = useState<Feedback>(null);
   const fileInput = useRef<HTMLInputElement>(null);
+  const [complaintFor, setComplaintFor] = useState<string | null>(null);
   const uid = useId();
   const fieldId = (name: string) => `${uid}-${name}`;
 
@@ -109,6 +114,25 @@ export function Tracker() {
     if (!window.confirm(`Supprimer la demande à ${request.site} ?`)) return;
     update((list) => list.filter((r) => r.id !== request.id));
     setFeedback({ tone: 'ok', text: `Demande à ${request.site} supprimée.` });
+  };
+
+  const onReminder = (request: TrackedRequest, deadline: string) => {
+    const ics = buildIcs({
+      uid: request.id,
+      date: deadline,
+      summary: `Échéance RGPD : ${request.site}`,
+      description: `Demande (${KIND_LABELS[request.kind].toLowerCase()}) envoyée le ${formatLongFr(request.sentOn)}. Sans réponse satisfaisante, prépare une relance depuis le suivi de Shred.`,
+    });
+    downloadText(`shred-echeance-${slugify(request.site)}.ics`, ics, 'text/calendar');
+  };
+
+  const onCopyComplaint = async (text: string) => {
+    const ok = await copyText(text);
+    setFeedback(
+      ok
+        ? { tone: 'ok', text: 'Récapitulatif copié. Colle-le dans le formulaire de plainte de la CNIL.' }
+        : { tone: 'warn', text: 'La copie a échoué. Sélectionne le texte à la main.' },
+    );
   };
 
   const onExport = () => {
@@ -372,6 +396,27 @@ export function Tracker() {
                             Préparer une relance
                           </a>
                         )}
+                        {state.urgency !== 'close' && (
+                          <button
+                            type="button"
+                            className="btn btn--sm"
+                            onClick={() => onReminder(request, state.deadline)}
+                            title="Ajoute l'échéance à ton agenda (fichier .ics)"
+                          >
+                            <Icon name="bell" size={16} />
+                            Rappel
+                          </button>
+                        )}
+                        {(state.urgency === 'depassee' || request.status === 'relancee') && (
+                          <button
+                            type="button"
+                            className="btn btn--sm"
+                            aria-expanded={complaintFor === request.id}
+                            onClick={() => setComplaintFor((id) => (id === request.id ? null : request.id))}
+                          >
+                            Plainte CNIL
+                          </button>
+                        )}
                         <button
                           type="button"
                           className="btn btn--sm btn--ghost btn--danger request__delete"
@@ -381,6 +426,35 @@ export function Tracker() {
                           <Icon name="trash" size={16} />
                         </button>
                       </div>
+                      {complaintFor === request.id && (
+                        <div className="complaint">
+                          <p className="small">
+                            Récapitulatif à coller dans le formulaire de la CNIL. Joins ta demande, ta relance et tes
+                            preuves.
+                          </p>
+                          <textarea
+                            className="textarea textarea--mono"
+                            readOnly
+                            rows={9}
+                            value={complaintSummary(request, today)}
+                            aria-label={`Récapitulatif de plainte pour ${request.site}`}
+                          />
+                          <div className="btn-row">
+                            <button
+                              type="button"
+                              className="btn btn--sm btn--primary"
+                              onClick={() => onCopyComplaint(complaintSummary(request, today))}
+                            >
+                              <Icon name="copy" size={16} />
+                              Copier
+                            </button>
+                            <ExternalLink href={CNIL_COMPLAINT_URL} className="btn btn--sm">
+                              Adresser une plainte à la CNIL
+                              <Icon name="external" size={16} />
+                            </ExternalLink>
+                          </div>
+                        </div>
+                      )}
                     </li>
                   );
                 })}

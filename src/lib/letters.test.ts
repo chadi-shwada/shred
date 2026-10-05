@@ -175,8 +175,54 @@ describe('contexte « violation » (fuite subie par l’entreprise)', () => {
   });
 });
 
+describe('signalement (hébergeur, registrar, Cloudflare)', () => {
+  const report: LetterInput = {
+    ...base,
+    kind: 'signalement',
+    reportTarget: 'hebergeur',
+  };
+
+  it('hébergeur : les quatre éléments de l’article 16.2 du DSA', () => {
+    const letter = generateLetter(report);
+    expect(letter.articles).toEqual(['6 RGPD', '5 RGPD', '16 DSA']);
+    expect(letter.subject).toContain('article 16 du règlement (UE) 2022/2065');
+    // a) explication de l'illégalité
+    expect(letter.body).toContain(
+      "sans aucune autre base légale prévue à l'article 6 du règlement (UE) 2016/679 (RGPD)",
+    );
+    expect(letter.body).toContain('contraire aux articles 5 et 6 du RGPD');
+    // b) URL exactes
+    expect(letter.body).toContain('- https://exemple-fuites.test/dump/123\n- https://exemple-fuites.test/dump/456');
+    // c) nom et e-mail
+    expect(letter.body).toContain('Camille Martin');
+    expect(letter.body).toContain('camille@example.org');
+    // d) déclaration de bonne foi
+    expect(letter.body).toContain('Je déclare de bonne foi que les informations et allégations');
+    expect(letter.body).toContain("En application de l'article 16 du règlement (UE) 2022/2065");
+  });
+
+  it('registrar et Cloudflare : pas de DSA 16, demande adaptée', () => {
+    const registrar = generateLetter({ ...report, reportTarget: 'registrar' });
+    expect(registrar.articles).toEqual(['6 RGPD', '5 RGPD']);
+    expect(registrar.body).not.toContain('2022/2065');
+    expect(registrar.body).toContain('transmettre ce signalement au titulaire du nom de domaine');
+    const cloudflare = generateLetter({ ...report, reportTarget: 'cloudflare' });
+    expect(cloudflare.body).not.toContain('2022/2065');
+    expect(cloudflare.body).toContain("me communiquer l'identité de l'hébergeur");
+  });
+
+  it('exige au moins une URL et une adresse e-mail', () => {
+    expect(() => generateLetter({ ...report, urls: [' '] })).toThrow(LetterInputError);
+    expect(() => generateLetter({ ...report, email: '' })).toThrow('adresse e-mail');
+  });
+
+  it('hébergeur par défaut', () => {
+    expect(generateLetter({ ...report, reportTarget: undefined }).articles).toContain('16 DSA');
+  });
+});
+
 describe('style des lettres', () => {
-  const kinds = ['effacement', 'acces', 'relance'] as const;
+  const kinds = ['effacement', 'acces', 'relance', 'signalement'] as const;
   const contexts = ['exposition', 'violation'] as const;
   for (const context of contexts)
     for (const kind of kinds) {
