@@ -9,6 +9,38 @@ import { formatLongFr, gdprDeadlines } from '../lib/dates';
 import { generateLetter } from '../lib/letters';
 import { href } from '../router';
 
+/** Points d'entrée selon la situation (page Vérifier, paramètre « parcours »). */
+const STARTS: { icon: IconName; title: string; text: string; link: string; action: string }[] = [
+  {
+    icon: 'search',
+    title: 'Je veux savoir si je suis concerné',
+    text: 'Cherche ton e-mail sur Have I Been Pwned, colle les résultats : Shred coche les fuites pour toi.',
+    link: href('/verifier'),
+    action: 'Vérifier mes fuites',
+  },
+  {
+    icon: 'mail',
+    title: "Une entreprise m'a prévenu",
+    text: 'Retrouve la fuite, vois ce qui est exposé et demande à l’entreprise ce qu’elle détient sur toi.',
+    link: href('/verifier', { parcours: 'message' }),
+    action: 'Partir du message',
+  },
+  {
+    icon: 'database',
+    title: 'Mes données sont publiées',
+    text: 'Demande l’effacement au site qui les publie, puis signale la page à son hébergeur.',
+    link: href('/verifier', { parcours: 'publie' }),
+    action: 'Faire retirer',
+  },
+  {
+    icon: 'alert',
+    title: "J'ai reçu un message suspect",
+    text: 'SMS, appel ou e-mail qui cite tes informations : ne clique pas, signale-le au bon endroit.',
+    link: href('/que-faire'),
+    action: 'Les bons réflexes',
+  },
+];
+
 const STEPS: { icon: IconName; title: string; text: string }[] = [
   {
     icon: 'search',
@@ -111,6 +143,32 @@ export function Home() {
       </section>
 
       <DataStream />
+
+      <section className="section section--tight" aria-labelledby="commencer-par">
+        <div className="container">
+          <div className="section__head">
+            <span className="eyebrow">Par où commencer ?</span>
+            <h2 id="commencer-par">Pars de ta situation</h2>
+          </div>
+          <ul className="starts">
+            {STARTS.map((s) => (
+              <li key={s.title}>
+                <a className="start" href={s.link}>
+                  <span className="step__icon">
+                    <Icon name={s.icon} />
+                  </span>
+                  <strong className="start__title">{s.title}</strong>
+                  <span className="start__text">{s.text}</span>
+                  <span className="start__action">
+                    {s.action}
+                    <Icon name="arrow" size={16} />
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
 
       <section className="section section--glow" aria-labelledby="verifier">
         <div className="container showcase showcase--reverse">

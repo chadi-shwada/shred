@@ -53,6 +53,7 @@ Fait :
 - page « Que faire ? » : canaux officiels pour un message suspect (33700, Signal Spam, Phishing Initiative, SignalConso, Pharos ; fin de Bloctel le 11 août 2026) et démarches selon la donnée qui a fuité, vérifiés le 5 octobre 2026 ;
 - suivi local avec échéances (1 mois, 3 si prolongé), export et import JSON, rappel `.ics`, copie facultative des lettres envoyées et dossier de plainte CNIL (récapitulatif, lettres, pièces à joindre) ;
 - mentions légales (éditeur Cha4Sh, hébergeur Vercel Inc.), aperçu de partage, sitemap ;
+- accueil : section « Par où commencer ? » (4 cartes vers les parcours de Vérifier et Que faire ?), frise des étapes verticale sur mobile ; liste des fuites compacte (6 puis « Afficher plus », lien vers la fiche HIBP en icône) ; tous les types de données HIBP du catalogue traduits en français ;
 - pages ressources et à propos, logo, animation d'accueil ;
 - CI GitHub Actions ; déploiement Vercel depuis `main` (`vercel.json`). GitHub Pages abandonné : le dépôt est privé.
 - Ne jamais ajouter `@vercel/analytics` ni `@vercel/speed-insights` (règle 1).

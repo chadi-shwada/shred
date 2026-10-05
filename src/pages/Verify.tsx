@@ -141,11 +141,16 @@ function PasswordCheck() {
 }
 
 function BreachRow({ breach, selected, onToggle }: { breach: Breach; selected: boolean; onToggle: () => void }) {
-  const shown = breach.dataClasses.slice(0, 4);
+  const shown = breach.dataClasses.slice(0, 3);
   const more = breach.dataClasses.length - shown.length;
+  const meta = [
+    breach.domain,
+    formatLongFr(breach.date),
+    breach.pwnCount > 0 ? `${formatCount(breach.pwnCount)} comptes` : '',
+  ].filter(Boolean);
   return (
-    <li>
-      <label className="breach" data-selected={selected}>
+    <li className="breach" data-selected={selected}>
+      <label className="breach__pick">
         <input type="checkbox" checked={selected} onChange={onToggle} />
         <span className="breach__main">
           <span className="breach__title">
@@ -155,11 +160,7 @@ function BreachRow({ breach, selected, onToggle }: { breach: Breach; selected: b
             {breach.spamList && <span className="breach__flag">liste de spam</span>}
             {breach.malware && <span className="breach__flag">logiciel malveillant</span>}
           </span>
-          <span className="breach__meta">
-            {breach.domain && <span className="mono">{breach.domain}</span>}
-            <span>{formatLongFr(breach.date)}</span>
-            {breach.pwnCount > 0 && <span>{formatCount(breach.pwnCount)} comptes</span>}
-          </span>
+          <span className="breach__meta">{meta.join(' · ')}</span>
           <span className="breach__classes">
             {shown.map((dc) => (
               <span key={dc} className={`chip${RISKY.has(dc) ? ' chip--danger' : ''}`}>
@@ -168,14 +169,18 @@ function BreachRow({ breach, selected, onToggle }: { breach: Breach; selected: b
             ))}
             {more > 0 && <span className="chip">+{more}</span>}
           </span>
-          <ExternalLink href={hibpBreachUrl(breach)} className="breach__more">
-            Voir la fiche sur Have I Been Pwned
-          </ExternalLink>
         </span>
       </label>
+      <ExternalLink href={hibpBreachUrl(breach)} className="breach__more" title="Voir la fiche sur Have I Been Pwned">
+        <Icon name="external" size={16} />
+        <span className="visually-hidden">Fiche de {breach.title} sur Have I Been Pwned</span>
+      </ExternalLink>
     </li>
   );
 }
+
+/** Nombre de fuites affichées avant « Afficher plus ». */
+const FIRST_ROWS = 6;
 
 export function Verify() {
   const id = useId();
@@ -187,6 +192,7 @@ export function Verify() {
   const [catalog, setCatalog] = useState<BreachCatalog | null>(null);
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<string[]>([]);
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -420,7 +426,10 @@ export function Verify() {
                         className="input"
                         type="search"
                         value={query}
-                        onChange={(e) => setQuery(e.target.value)}
+                        onChange={(e) => {
+                          setQuery(e.target.value);
+                          setExpanded(false);
+                        }}
                         placeholder={
                           situation === 'message'
                             ? 'Ex. le nom cité dans le message reçu'
@@ -438,7 +447,7 @@ export function Verify() {
                           : 'Les fuites les plus récentes :'}
                     </p>
                     <ul className="breach-list">
-                      {results.map((b) => (
+                      {(expanded ? results : results.slice(0, FIRST_ROWS)).map((b) => (
                         <BreachRow
                           key={b.name}
                           breach={b}
@@ -447,6 +456,12 @@ export function Verify() {
                         />
                       ))}
                     </ul>
+                    {!expanded && results.length > FIRST_ROWS && (
+                      <button type="button" className="btn btn--sm breach-list__more" onClick={() => setExpanded(true)}>
+                        <Icon name="plus" size={16} />
+                        Afficher {results.length - FIRST_ROWS} fuite{results.length - FIRST_ROWS > 1 ? 's' : ''} de plus
+                      </button>
+                    )}
                     {situation === 'message' && (
                       <p className="hint verify__credit">
                         L'entreprise n'est pas dans la liste ?{' '}

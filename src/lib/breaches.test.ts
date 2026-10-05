@@ -178,3 +178,11 @@ describe('findBreachesInText', () => {
     expect(findBreachesInText(breaches, '   ')).toEqual([]);
   });
 });
+
+describe('dataClassLabel, couverture', () => {
+  it('traduit les types de données courants du catalogue HIBP', () => {
+    for (const dc of ['Places of birth', 'Latitude and longitude pairs', 'Credit card CVV', 'Historical passwords']) {
+      expect(dataClassLabel(dc)).not.toBe(dc);
+    }
+  });
+});
