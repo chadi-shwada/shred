@@ -12,6 +12,17 @@ import { useSyncExternalStore } from 'react';
 
 export type RoutePath = '/' | '/verifier' | '/lettre' | '/suivi' | '/ressources' | '/a-propos' | '/mentions-legales';
 
+/** Toutes les routes, pour vérifier qu'elles ont chacune leurs métadonnées (seo.test.ts). */
+export const PUBLIC_ROUTES: readonly RoutePath[] = [
+  '/',
+  '/verifier',
+  '/lettre',
+  '/suivi',
+  '/ressources',
+  '/a-propos',
+  '/mentions-legales',
+];
+
 export interface Route {
   path: string;
   query: URLSearchParams;

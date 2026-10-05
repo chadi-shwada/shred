@@ -25,9 +25,25 @@
 
 import { formatLongFr, gdprDeadlines, type IsoDate } from './dates';
 
-export type LetterKind = 'effacement' | 'acces' | 'relance' | 'signalement';
-/** Demandes RGPD avec délai légal de réponse (suivies dans le suivi). */
-export type InitialKind = 'effacement' | 'acces';
+export type LetterKind = 'effacement' | 'acces' | 'opposition' | 'fermeture' | 'relance' | 'signalement';
+/** Demandes RGPD avec délai légal de réponse (art. 12.3), suivies dans le suivi. */
+export type InitialKind = 'effacement' | 'acces' | 'opposition' | 'fermeture';
+
+/** Table de référence des demandes RGPD : libellé, nom dans une phrase, article fondateur. */
+export const INITIAL_KINDS: Record<InitialKind, { label: string; noun: string; article: string }> = {
+  effacement: { label: 'Effacement', noun: "demande d'effacement de mes données personnelles", article: '17' },
+  acces: { label: 'Accès', noun: "demande d'accès à mes données personnelles", article: '15' },
+  opposition: { label: 'Opposition', noun: 'opposition au traitement de mes données personnelles', article: '21' },
+  fermeture: {
+    label: 'Fermeture de compte',
+    noun: "demande de fermeture de mon compte et d'effacement de mes données",
+    article: '17',
+  },
+};
+
+export function isInitialKind(value: unknown): value is InitialKind {
+  return typeof value === 'string' && value in INITIAL_KINDS;
+}
 /** Destinataire d'un signalement. */
 export type ReportTarget = 'hebergeur' | 'registrar' | 'cloudflare';
 export type LetterContext = 'exposition' | 'violation';
@@ -261,11 +277,6 @@ function acces(input: LetterInput): Letter {
   return { subject, body, articles: ['15', '15.3', '15.1 g', '12.3', '12.5', '77'] };
 }
 
-const PREVIOUS_LABEL: Record<InitialKind, { noun: string; article: string }> = {
-  effacement: { noun: "demande d'effacement de mes données personnelles", article: '17' },
-  acces: { noun: "demande d'accès à mes données personnelles", article: '15' },
-};
-
 function relance(input: LetterInput): Letter {
   const previousDate = input.previousRequestDate;
   const previousKind = input.previousKind;
@@ -273,7 +284,7 @@ function relance(input: LetterInput): Letter {
     throw new LetterInputError('Une relance demande la date et la nature de la première demande.');
   }
   const site = clean(input.siteName);
-  const previous = PREVIOUS_LABEL[previousKind];
+  const previous = INITIAL_KINDS[previousKind];
   const deadline = gdprDeadlines(previousDate).standard;
   const body = assemble(
     [
@@ -294,6 +305,55 @@ function relance(input: LetterInput): Letter {
     subject: `Relance : ${previous.noun} (article ${previous.article} du RGPD)`,
     body,
     articles: [previous.article, '12.3', '12.4', '77'],
+  };
+}
+
+function opposition(input: LetterInput): Letter {
+  const site = clean(input.siteName);
+  const body = assemble(
+    [
+      `Je reçois de ${site} des sollicitations commerciales (e-mails, SMS ou appels) auxquelles je n'ai jamais consenti. Je soupçonne que mes coordonnées proviennent d'une fuite de données.`,
+      locationParagraph(input, 'Ces sollicitations font notamment référence aux pages suivantes :'),
+      identificationParagraph(input),
+      `En application de l'article 21.2 du ${RGPD}, je m'oppose au traitement de mes données à des fins de prospection, y compris au profilage lié à cette prospection. Conformément à l'article 21.3 du RGPD, mes données ne doivent plus être traitées à ces fins.`,
+      "Je m'oppose également, au titre de l'article 21.1 du RGPD, à tout autre traitement de mes données fondé sur votre intérêt légitime : il vous appartient de démontrer l'existence de motifs légitimes et impérieux qui prévaudraient sur mes droits.",
+      "En conséquence, je vous demande d'effacer mes données (article 17.1 c du RGPD) et de m'indiquer leur source, puisqu'elles n'ont pas été collectées auprès de moi (article 15.1 g du RGPD).",
+      DEADLINE,
+      COMPLAINT,
+    ],
+    input,
+  );
+  return {
+    subject: 'Opposition au traitement de mes données personnelles (article 21 du RGPD)',
+    body,
+    articles: ['21.2', '21.3', '21.1', '17.1 c', '15.1 g', '12.3', '12.5', '77'],
+  };
+}
+
+function fermeture(input: LetterInput): Letter {
+  const violation = isViolation(input);
+  const body = assemble(
+    [
+      violation
+        ? `${violationIntro(input)} Je ne souhaite plus utiliser votre service.`
+        : `Je suis titulaire d'un compte sur ${clean(input.siteName)} et je ne souhaite plus utiliser ce service.`,
+      locationParagraph(input, 'Pour référence, les pages concernées sont les suivantes :'),
+      identificationParagraph(input),
+      `Je vous demande de clôturer mon compte et, en application de l'article 17.1 du ${RGPD}, d'effacer l'ensemble des données me concernant : je retire mon consentement à leur traitement (articles 7.3 et 17.1 b) et elles ne sont plus nécessaires au regard des finalités pour lesquelles elles ont été collectées (article 17.1 a).`,
+      'Si certaines données doivent être conservées pour respecter une obligation légale (article 17.3 b du RGPD), je vous demande de me préciser lesquelles, sur quel fondement et pour quelle durée.',
+      NOTIFY_RECIPIENTS,
+      violation ? BREACH_DETAILS : null,
+      DEADLINE,
+      COMPLAINT,
+    ],
+    input,
+  );
+  return {
+    subject: "Fermeture de compte et demande d'effacement de mes données (article 17 du RGPD)",
+    body,
+    articles: violation
+      ? ['17.1', '7.3', '17.3 b', '19', '34', '34.2', '33.3', '12.3', '12.5', '77']
+      : ['17.1', '7.3', '17.3 b', '19', '12.3', '12.5', '77'],
   };
 }
 
@@ -356,6 +416,10 @@ export function generateLetter(input: LetterInput): Letter {
       return effacement(input);
     case 'acces':
       return acces(input);
+    case 'opposition':
+      return opposition(input);
+    case 'fermeture':
+      return fermeture(input);
     case 'relance':
       return relance(input);
     case 'signalement':

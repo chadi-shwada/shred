@@ -8,6 +8,8 @@ import { formatLongFr, gdprDeadlines, isValidIsoDate, todayIso, type IsoDate } f
 import {
   DATA_CATEGORIES,
   generateLetter,
+  INITIAL_KINDS,
+  isInitialKind,
   LetterInputError,
   letterToText,
   mailtoHref,
@@ -47,6 +49,8 @@ interface FormState {
 const KIND_OPTIONS: { value: LetterKind; label: string; hint: string }[] = [
   { value: 'effacement', label: 'Effacement', hint: 'Article 17' },
   { value: 'acces', label: 'Accès', hint: 'Article 15' },
+  { value: 'opposition', label: 'Opposition', hint: 'Prospection, art. 21' },
+  { value: 'fermeture', label: 'Fermer un compte', hint: 'Article 17' },
   { value: 'relance', label: 'Relance', hint: 'Après un mois' },
   { value: 'signalement', label: 'Signalement', hint: 'Hébergeur, registrar' },
 ];
@@ -58,7 +62,8 @@ const TARGET_OPTIONS: { value: ReportTarget; label: string }[] = [
 ];
 
 function asKind(value: string | null): LetterKind {
-  return value === 'acces' || value === 'relance' || value === 'signalement' ? value : 'effacement';
+  if (isInitialKind(value) || value === 'relance' || value === 'signalement') return value;
+  return 'effacement';
 }
 
 function initialState(route: Route): FormState {
@@ -77,7 +82,7 @@ function initialState(route: Route): FormState {
     otherData: q.get('autres') ?? '',
     date: todayIso(),
     previousRequestDate: isValidIsoDate(since) ? since : '',
-    previousKind: q.get('premiere') === 'acces' ? 'acces' : 'effacement',
+    previousKind: isInitialKind(q.get('premiere')) ? (q.get('premiere') as InitialKind) : 'effacement',
     context: q.get('contexte') === 'violation' ? 'violation' : 'exposition',
     breachName: q.get('fuite') ?? '',
     breachDate: isValidIsoDate(breachDate) ? breachDate : '',
@@ -265,8 +270,11 @@ export function Generator({ route }: { route: Route }) {
                       value={form.previousKind}
                       onChange={set('previousKind')}
                     >
-                      <option value="effacement">Effacement</option>
-                      <option value="acces">Accès</option>
+                      {(Object.keys(INITIAL_KINDS) as InitialKind[]).map((k) => (
+                        <option key={k} value={k}>
+                          {INITIAL_KINDS[k].label}
+                        </option>
+                      ))}
                     </select>
                   </div>
                 </div>
@@ -519,7 +527,13 @@ export function Generator({ route }: { route: Route }) {
                 )}
               </div>
 
-              <article className="paper" aria-live="polite" aria-atomic="false">
+              <article
+                className="paper"
+                aria-live="polite"
+                aria-atomic="false"
+                aria-label="Texte de la lettre"
+                tabIndex={0}
+              >
                 {letter ? (
                   <>
                     <p className="paper__subject">Objet : {letter.subject}</p>

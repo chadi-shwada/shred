@@ -50,7 +50,12 @@ describe('échéances', () => {
 
 describe('export et import', () => {
   it('fait un aller-retour sans perte', () => {
-    const list = [req(), req({ id: 'b', kind: 'acces', channel: 'courrier', notes: 'AR n° 1A' })];
+    const list = [
+      req(),
+      req({ id: 'b', kind: 'acces', channel: 'courrier', notes: 'AR n° 1A' }),
+      req({ id: 'c', kind: 'opposition' }),
+      req({ id: 'd', kind: 'fermeture' }),
+    ];
     expect(parseExport(serializeExport(list, '2026-10-05'))).toEqual(list);
   });
 

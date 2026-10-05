@@ -4,7 +4,7 @@
  */
 
 import { daysBetween, gdprDeadlines, isValidIsoDate, type IsoDate } from './dates';
-import type { InitialKind } from './letters';
+import { INITIAL_KINDS, isInitialKind, type InitialKind } from './letters';
 
 export type Channel = 'email' | 'formulaire' | 'courrier';
 
@@ -25,10 +25,9 @@ export const CHANNEL_LABELS: Record<Channel, string> = {
   courrier: 'Courrier',
 };
 
-export const KIND_LABELS: Record<InitialKind, string> = {
-  effacement: 'Effacement',
-  acces: 'Accès',
-};
+export const KIND_LABELS = Object.fromEntries(
+  Object.entries(INITIAL_KINDS).map(([kind, { label }]) => [kind, label]),
+) as Record<InitialKind, string>;
 
 export interface TrackedRequest {
   id: string;
@@ -103,7 +102,6 @@ export function serializeExport(requests: TrackedRequest[], exportedOn: IsoDate)
 
 export class ImportError extends Error {}
 
-const KINDS: readonly string[] = ['effacement', 'acces'];
 const CHANNELS: readonly string[] = Object.keys(CHANNEL_LABELS);
 const STATUSES: readonly string[] = Object.keys(STATUS_LABELS);
 
@@ -117,7 +115,7 @@ function parseRequest(value: unknown, index: number): TrackedRequest {
   const { id, site, kind, channel, sentOn, status, notes } = value;
   if (typeof id !== 'string' || !id) throw new ImportError(`${where} : identifiant manquant.`);
   if (typeof site !== 'string' || !site.trim()) throw new ImportError(`${where} : site manquant.`);
-  if (typeof kind !== 'string' || !KINDS.includes(kind)) throw new ImportError(`${where} : type inconnu.`);
+  if (!isInitialKind(kind)) throw new ImportError(`${where} : type inconnu.`);
   if (typeof channel !== 'string' || !CHANNELS.includes(channel)) throw new ImportError(`${where} : canal inconnu.`);
   if (!isValidIsoDate(sentOn)) throw new ImportError(`${where} : date d'envoi invalide.`);
   if (typeof status !== 'string' || !STATUSES.includes(status)) throw new ImportError(`${where} : statut inconnu.`);

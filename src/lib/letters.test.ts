@@ -221,8 +221,59 @@ describe('signalement (hébergeur, registrar, Cloudflare)', () => {
   });
 });
 
+describe('opposition (article 21)', () => {
+  const letter = generateLetter({ ...base, kind: 'opposition' });
+
+  it('cite 21.2, 21.3, 21.1, puis l’effacement (17.1 c) et la source (15.1 g)', () => {
+    expect(letter.articles).toEqual(['21.2', '21.3', '21.1', '17.1 c', '15.1 g', '12.3', '12.5', '77']);
+    expect(letter.subject).toBe('Opposition au traitement de mes données personnelles (article 21 du RGPD)');
+    expect(letter.body).toContain("l'article 21.2 du règlement (UE) 2016/679 (RGPD), je m'oppose au traitement");
+    expect(letter.body).toContain("Conformément à l'article 21.3 du RGPD");
+    expect(letter.body).toContain("au titre de l'article 21.1 du RGPD");
+    expect(letter.body).toContain('motifs légitimes et impérieux');
+    expect(letter.body).toContain('(article 17.1 c du RGPD)');
+    expect(letter.body).toContain('(article 15.1 g du RGPD)');
+  });
+});
+
+describe('fermeture de compte (article 17)', () => {
+  it('clôture, retrait du consentement (7.3, 17.1 b), données inutiles (17.1 a), obligations légales (17.3 b)', () => {
+    const letter = generateLetter({ ...base, kind: 'fermeture' });
+    expect(letter.articles).toEqual(['17.1', '7.3', '17.3 b', '19', '12.3', '12.5', '77']);
+    expect(letter.body).toContain("Je suis titulaire d'un compte sur exemple-fuites.test");
+    expect(letter.body).toContain('(articles 7.3 et 17.1 b)');
+    expect(letter.body).toContain('(article 17.1 a)');
+    expect(letter.body).toContain('(article 17.3 b du RGPD)');
+    expect(letter.body).toContain("Conformément à l'article 19 du RGPD");
+  });
+
+  it('après une fuite : rappelle la violation et demande sa description (34, 34.2, 33.3)', () => {
+    const letter = generateLetter({
+      ...base,
+      kind: 'fermeture',
+      context: 'violation',
+      siteName: 'Exemple SA',
+      breachName: 'Exemple',
+    });
+    expect(letter.articles).toEqual(['17.1', '7.3', '17.3 b', '19', '34', '34.2', '33.3', '12.3', '12.5', '77']);
+    expect(letter.body).toContain('violation de données subie par Exemple SA');
+    expect(letter.body).toContain("(article 34.2, qui renvoie à l'article 33.3)");
+  });
+
+  it('peut être relancée', () => {
+    const letter = generateLetter({
+      ...base,
+      kind: 'relance',
+      previousKind: 'fermeture',
+      previousRequestDate: '2026-08-01',
+    });
+    expect(letter.subject).toContain('demande de fermeture de mon compte');
+    expect(letter.articles[0]).toBe('17');
+  });
+});
+
 describe('style des lettres', () => {
-  const kinds = ['effacement', 'acces', 'relance', 'signalement'] as const;
+  const kinds = ['effacement', 'acces', 'opposition', 'fermeture', 'relance', 'signalement'] as const;
   const contexts = ['exposition', 'violation'] as const;
   for (const context of contexts)
     for (const kind of kinds) {

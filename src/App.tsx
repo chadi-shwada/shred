@@ -8,17 +8,8 @@ import { NotFound } from './pages/NotFound';
 import { Resources } from './pages/Resources';
 import { Tracker } from './pages/Tracker';
 import { Verify } from './pages/Verify';
+import { pageMeta } from './seo';
 import { interceptLinks, upgradeLegacyUrl, useRoute, type Route } from './router';
-
-const TITLES: Record<string, string> = {
-  '/': "Shred · Demande l'effacement de tes données",
-  '/verifier': 'Vérifier mes fuites · Shred',
-  '/lettre': 'Écrire une lettre · Shred',
-  '/suivi': 'Suivi · Shred',
-  '/ressources': 'Ressources · Shred',
-  '/a-propos': 'À propos · Shred',
-  '/mentions-legales': 'Mentions légales · Shred',
-};
 
 function Page({ route }: { route: Route }) {
   switch (route.path) {
@@ -57,7 +48,7 @@ export function App() {
   }, []);
 
   useEffect(() => {
-    document.title = TITLES[route.path] ?? 'Page introuvable · Shred';
+    document.title = pageMeta(route.path).title;
     if (first.current) {
       first.current = false;
       return;

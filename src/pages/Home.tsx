@@ -177,7 +177,7 @@ export function Home() {
                 par k-anonymat. Ce n'est pas une promesse : c'est ton navigateur qui l'applique.
               </p>
               <div className="tile__visual">
-                <pre className="code-block">
+                <pre className="code-block" tabIndex={0} aria-label="Extrait de la politique de sécurité">
                   <span className="c">{'<!-- en-tête de chaque page publiée -->'}</span>
                   {'\n'}
                   <span className="k">Content-Security-Policy</span>

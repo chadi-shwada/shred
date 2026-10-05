@@ -1,0 +1,52 @@
+import { describe, expect, it } from 'vitest';
+import { PUBLIC_ROUTES } from './router';
+import { headTags, htmlFileName, NOT_FOUND, pageMeta, PAGES, sitemapXml } from './seo';
+
+describe('pages', () => {
+  it('couvre exactement les routes de l’application', () => {
+    expect(PAGES.map((p) => p.path).sort()).toEqual([...PUBLIC_ROUTES].sort());
+  });
+
+  it('a un titre et une description uniques', () => {
+    expect(new Set(PAGES.map((p) => p.title)).size).toBe(PAGES.length);
+    expect(new Set(PAGES.map((p) => p.description)).size).toBe(PAGES.length);
+    for (const p of PAGES) expect(p.description.length).toBeLessThanOrEqual(200);
+  });
+
+  it('donne un fichier HTML par adresse', () => {
+    expect(PAGES.map(htmlFileName)).toContain('verifier.html');
+    expect(htmlFileName(PAGES[0]!)).toBe('index.html');
+  });
+});
+
+describe('headTags', () => {
+  it('chaque page est sa propre adresse canonique', () => {
+    const tags = headTags(pageMeta('/verifier'));
+    expect(tags).toContain('<link rel="canonical" href="https://shred-delta.vercel.app/verifier" />');
+    expect(tags).toContain('<meta property="og:url" content="https://shred-delta.vercel.app/verifier" />');
+    expect(tags).toContain('<title>Vérifier mes fuites · Shred</title>');
+  });
+
+  it("l'accueil pointe vers « / »", () => {
+    expect(headTags(pageMeta('/'))).toContain('href="https://shred-delta.vercel.app/"');
+  });
+
+  it("la page 404 n'est pas indexée et n'a pas d'adresse canonique", () => {
+    const tags = headTags(NOT_FOUND, { noindex: true });
+    expect(tags).toContain('<meta name="robots" content="noindex" />');
+    expect(tags).not.toContain('canonical');
+    expect(pageMeta('/inconnue')).toBe(NOT_FOUND);
+  });
+
+  it('échappe les guillemets', () => {
+    expect(headTags({ path: '/x', title: 'a"b', description: '<c>' })).toContain('content="a&quot;b"');
+  });
+});
+
+describe('sitemap', () => {
+  it('liste toutes les pages, sans la 404', () => {
+    const xml = sitemapXml();
+    for (const p of PAGES) expect(xml).toContain(`<loc>https://shred-delta.vercel.app${p.path}</loc>`);
+    expect(xml).not.toContain('404');
+  });
+});

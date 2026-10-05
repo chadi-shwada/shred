@@ -17,8 +17,8 @@ export function FooterWord() {
 
   return (
     <div ref={ref} className="footer-word" aria-hidden="true" onPointerMove={onPointerMove}>
-      <span className="footer-word__base">Shred</span>
-      <span className="footer-word__glow">Shred</span>
+      <span className="footer-word__base" data-text="Shred" />
+      <span className="footer-word__glow" data-text="Shred" />
     </div>
   );
 }

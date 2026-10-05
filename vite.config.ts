@@ -1,7 +1,7 @@
 import type { Plugin } from 'vite';
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
-import { PUBLIC_PAGES, SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from './src/config';
+import { headTags, htmlFileName, NOT_FOUND, pageMeta, PAGES, robotsTxt, sitemapXml } from './src/seo';
 import { CSP_META } from './src/security';
 
 // CSP appliquée au build seulement (le serveur de dev a besoin de scripts en ligne).
@@ -20,47 +20,44 @@ function csp(): Plugin {
   };
 }
 
-const escapeAttr = (text: string) => text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+const SEO_MARKER = '<!-- shred:seo -->';
 
-/** Titre, description, aperçus de partage (Open Graph, X), robots.txt et sitemap.xml. */
+/**
+ * Une page HTML par adresse (index.html, verifier.html…) avec son titre, sa
+ * description, son adresse canonique et son aperçu de partage, plus 404.html
+ * (non indexée), robots.txt et sitemap.xml. Vercel sert verifier.html sur
+ * /verifier grâce à cleanUrls (vercel.json). Source : src/seo.ts.
+ */
 function seo(): Plugin {
-  const image = `${SITE_URL}/og.png`;
-  const tags = [
-    `<title>${SITE_TITLE}</title>`,
-    `<meta name="description" content="${escapeAttr(SITE_DESCRIPTION)}" />`,
-    `<link rel="canonical" href="${SITE_URL}/" />`,
-    `<meta property="og:type" content="website" />`,
-    `<meta property="og:locale" content="fr_FR" />`,
-    `<meta property="og:site_name" content="Shred" />`,
-    `<meta property="og:title" content="${escapeAttr(SITE_TITLE)}" />`,
-    `<meta property="og:description" content="${escapeAttr(SITE_DESCRIPTION)}" />`,
-    `<meta property="og:url" content="${SITE_URL}/" />`,
-    `<meta property="og:image" content="${image}" />`,
-    `<meta property="og:image:width" content="1200" />`,
-    `<meta property="og:image:height" content="630" />`,
-    `<meta property="og:image:alt" content="Shred : demande l'effacement de tes données" />`,
-    `<meta name="twitter:card" content="summary_large_image" />`,
-    `<meta name="twitter:title" content="${escapeAttr(SITE_TITLE)}" />`,
-    `<meta name="twitter:description" content="${escapeAttr(SITE_DESCRIPTION)}" />`,
-    `<meta name="twitter:image" content="${image}" />`,
-  ].join('\n    ');
   return {
     name: 'shred-seo',
-    transformIndexHtml(html) {
-      return html.replace('<!-- shred:seo -->', tags);
+    enforce: 'post',
+    transformIndexHtml: {
+      order: 'post',
+      handler(html, ctx) {
+        // En développement, l'accueil ; au build, le marqueur reste pour generateBundle.
+        return ctx.server ? html.replace(SEO_MARKER, headTags(pageMeta('/'))) : html;
+      },
     },
-    generateBundle() {
+    generateBundle(_options, bundle) {
+      const index = bundle['index.html'];
+      if (!index || index.type !== 'asset' || typeof index.source !== 'string') {
+        this.error('index.html introuvable dans le bundle');
+      }
+      const template = index.source as string;
+      if (!template.includes(SEO_MARKER)) this.error('marqueur SEO absent de index.html');
+      for (const page of PAGES) {
+        const html = template.replace(SEO_MARKER, headTags(page));
+        if (page.path === '/') index.source = html;
+        else this.emitFile({ type: 'asset', fileName: htmlFileName(page), source: html });
+      }
       this.emitFile({
         type: 'asset',
-        fileName: 'robots.txt',
-        source: `User-agent: *\nAllow: /\n\nSitemap: ${SITE_URL}/sitemap.xml\n`,
+        fileName: '404.html',
+        source: template.replace(SEO_MARKER, headTags(NOT_FOUND, { noindex: true })),
       });
-      const urls = PUBLIC_PAGES.map((p) => `  <url><loc>${SITE_URL}${p}</loc></url>`).join('\n');
-      this.emitFile({
-        type: 'asset',
-        fileName: 'sitemap.xml',
-        source: `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`,
-      });
+      this.emitFile({ type: 'asset', fileName: 'robots.txt', source: robotsTxt() });
+      this.emitFile({ type: 'asset', fileName: 'sitemap.xml', source: sitemapXml() });
     },
   };
 }

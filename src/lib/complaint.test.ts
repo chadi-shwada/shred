@@ -24,6 +24,11 @@ describe('complaintSummary', () => {
     expect(text).toContain('Précisions : Ticket 42');
   });
 
+  it('décrit une opposition', () => {
+    const t = complaintSummary({ ...req, kind: 'opposition' }, '2026-04-02');
+    expect(t).toContain("une opposition au traitement de mes données personnelles, fondée sur l'article 21 du RGPD");
+  });
+
   it('tient compte de la prolongation et de l’accès', () => {
     const t = complaintSummary({ ...req, kind: 'acces', status: 'prolongee', notes: '' }, '2026-06-01');
     expect(t).toContain("l'article 15 du RGPD");

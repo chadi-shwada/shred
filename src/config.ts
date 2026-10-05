@@ -13,9 +13,6 @@ export const AUTHOR = { name: 'Cha4Sh', url: 'https://x.com/Cha4Sh' } as const;
  */
 export const SOURCE_CODE_URL: string | null = null;
 
-/** Pages publiques, pour le sitemap. */
-export const PUBLIC_PAGES = ['/', '/verifier', '/lettre', '/suivi', '/ressources', '/a-propos', '/mentions-legales'];
-
 export const SITE_TITLE = "Shred · Demande l'effacement de tes données";
 export const SITE_DESCRIPTION =
   'Vérifie ce qui a fuité et demande l’effacement de tes données personnelles avec une lettre RGPD. Gratuit, sans compte, sans traceur : tes données restent dans ton navigateur.';

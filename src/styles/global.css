@@ -201,6 +201,25 @@ a:hover {
   text-underline-offset: 0.2em;
 }
 
+/* Liens dans du texte : soulignés, pour ne pas reposer sur la seule couleur (WCAG 1.4.1). */
+:where(p, li, dd, .hint, .site-footer__legal, .notice) a:not(.btn) {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  text-decoration-color: color-mix(in srgb, currentColor 55%, transparent);
+}
+
+:where(p, li, dd, .hint, .site-footer__legal, .notice) a:not(.btn):hover {
+  text-decoration-color: currentColor;
+}
+
+.nav a,
+.link-list a,
+.site-footer ul a,
+.brand {
+  text-decoration: none;
+}
+
 :focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 3px;
@@ -2686,6 +2705,11 @@ fieldset:last-child {
 
 .footer-word > span {
   grid-area: 1 / 1;
+}
+
+/* Texte généré en CSS : purement décoratif, absent de l'arbre d'accessibilité. */
+.footer-word > span::before {
+  content: attr(data-text);
 }
 
 .footer-word__base {
