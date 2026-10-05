@@ -8,6 +8,7 @@ import {
   dataClassLabel,
   HIBP_LICENSE_URL,
   HIBP_URL,
+  recentFrenchBreaches,
   searchBreaches,
   type Breach,
   type BreachCatalog,
@@ -186,7 +187,14 @@ export function Verify() {
     };
   }, []);
 
-  const results = useMemo(() => (catalog ? searchBreaches(catalog.breaches, query, 12) : []), [catalog, query]);
+  // Sans recherche : les fuites françaises récentes (repli sur toutes si aucune n'est repérée).
+  const frenchRecent = useMemo(() => (catalog ? recentFrenchBreaches(catalog.breaches, 12) : []), [catalog]);
+  const showFrench = !query && frenchRecent.length > 0;
+  const results = useMemo(() => {
+    if (!catalog) return [];
+    if (!query && frenchRecent.length > 0) return frenchRecent;
+    return searchBreaches(catalog.breaches, query, 12);
+  }, [catalog, query, frenchRecent]);
   const chosen = useMemo(
     () => (catalog ? catalog.breaches.filter((b) => selected.includes(b.name)) : []),
     [catalog, selected],
@@ -264,7 +272,9 @@ export function Verify() {
                   <p className="hint" aria-live="polite">
                     {query
                       ? `${results.length} résultat${results.length > 1 ? 's' : ''}`
-                      : 'Les fuites les plus récentes :'}
+                      : showFrench
+                        ? 'Les fuites récentes en France. Cherche ci-dessus pour voir toutes les autres, y compris les services étrangers.'
+                        : 'Les fuites les plus récentes :'}
                   </p>
                   <ul className="breach-list">
                     {results.map((b) => (

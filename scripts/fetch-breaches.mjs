@@ -10,6 +10,7 @@
 
 import { writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
+import { isFrenchBreach } from './french.mjs';
 
 const URL_BREACHES = 'https://haveibeenpwned.com/api/v3/breaches';
 const OUTPUT = fileURLToPath(new URL('../src/data/breaches.generated.json', import.meta.url));
@@ -34,10 +35,15 @@ try {
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
   const raw = await response.json();
   if (!Array.isArray(raw)) throw new Error('réponse inattendue');
-  const breaches = raw.map((b) => Object.fromEntries(FIELDS.filter((f) => f in b).map((f) => [f, b[f]])));
+  // La description n'est pas embarquée (trop lourde) : on n'en garde que l'indice « fuite française ».
+  const breaches = raw.map((b) => ({
+    ...Object.fromEntries(FIELDS.filter((f) => f in b).map((f) => [f, b[f]])),
+    IsFrench: isFrenchBreach(b),
+  }));
+  const french = breaches.filter((b) => b.IsFrench).length;
   const fetchedOn = new Date().toISOString().slice(0, 10);
   await writeFile(OUTPUT, JSON.stringify({ fetchedOn, breaches }) + '\n');
-  console.log(`[fetch-breaches] ${breaches.length} fuites enregistrées (${fetchedOn}).`);
+  console.log(`[fetch-breaches] ${breaches.length} fuites enregistrées dont ${french} françaises (${fetchedOn}).`);
 } catch (error) {
   console.warn(`[fetch-breaches] Catalogue non téléchargé : ${error.message}. Le build continue sans.`);
 }

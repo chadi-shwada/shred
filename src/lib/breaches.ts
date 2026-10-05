@@ -22,6 +22,8 @@ export interface Breach {
   fabricated: boolean;
   sensitive: boolean;
   spamList: boolean;
+  /** Fuite française selon l'heuristique du build (scripts/french.mjs). */
+  french: boolean;
 }
 
 export interface BreachCatalog {
@@ -54,6 +56,8 @@ function toBreach(raw: unknown): Breach | null {
     fabricated: raw.IsFabricated === true,
     sensitive: raw.IsSensitive === true,
     spamList: raw.IsSpamList === true,
+    // Ancien fichier sans l'indice : on se rabat sur le domaine en .fr.
+    french: typeof raw.IsFrench === 'boolean' ? raw.IsFrench : /\.fr$/i.test(typeof Domain === 'string' ? Domain : ''),
   };
 }
 
@@ -145,6 +149,14 @@ export function mapDataClasses(dataClasses: string[]): { categories: DataCategor
 }
 
 /* ---------- Recherche ---------- */
+
+/** Les fuites françaises les plus récentes. */
+export function recentFrenchBreaches(breaches: Breach[], limit = 12): Breach[] {
+  return breaches
+    .filter((b) => b.french)
+    .sort((a, b) => b.date.localeCompare(a.date))
+    .slice(0, limit);
+}
 
 function normalize(text: string): string {
   return text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
