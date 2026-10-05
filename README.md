@@ -20,8 +20,9 @@ Node 22.12 ou plus récent.
 
 ## Déploiement
 
-Le workflow `.github/workflows/deploy.yml` publie `dist/` sur GitHub Pages à chaque push sur `main`.
-Dans les réglages du dépôt, choisir **Pages → Source : GitHub Actions**.
+Site statique déployé sur Vercel depuis la branche `main`. La configuration est dans `vercel.json` :
+build `npm run build`, dossier `dist`, et en-têtes de sécurité (CSP identique à celle injectée dans
+la page, plus `frame-ancestors 'none'`). Aucun script Vercel (Analytics, Speed Insights) n'est inclus.
 
 ## Licence
 

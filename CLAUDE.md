@@ -21,6 +21,7 @@ npx prettier --write "src/**/*.{ts,tsx}"   # mise en forme (.prettierrc)
 - `src/pages/`, `src/components/` : interface. `ShredSheet`, `BinaryField`, `ScrambleText`, `DataStream` et `Logo` sont décoratifs (`aria-hidden`, figés si `prefers-reduced-motion`).
 - `src/styles/global.css` : tokens de couleur et de typographie, mode sombre inclus. Le site est entièrement sombre : `<html class="theme-dark">` dans `index.html` (choix de design). Les tokens clairs de `:root` restent comme base.
 - Identité : bleu `#2F4BDC` du logo (`public/logo.png`, tracé vectoriel dans `Logo.tsx` et `public/favicon.svg`), polices Inter et JetBrains Mono auto-hébergées via `@fontsource-variable` (OFL).
+- `src/security.ts` : source unique de la CSP. `vite.config.ts` l'injecte en `<meta>`, `vercel.json` l'envoie en en-tête HTTP (avec `frame-ancestors`) ; `security.test.ts` vérifie qu'elles restent alignées.
 - `vite.config.ts` : injecte au build une CSP stricte (`connect-src 'none'`, `font-src 'self'`) et désactive l'intégration des fichiers en `data:` (`assetsInlineLimit: 0`), sinon la CSP bloque les petites polices. Toute fonctionnalité réseau future (Pwned Passwords) devra l'assouplir pour un seul domaine, explicitement.
 
 ## Règles non négociables
@@ -44,7 +45,8 @@ Fait :
 - générateur de lettres (effacement art. 17, accès art. 15, relance art. 12.3/12.4/77), copie, mailto, téléchargement, impression ;
 - suivi local avec échéances (1 mois, 3 si prolongé), export et import JSON ;
 - pages ressources et à propos, logo, animation d'accueil ;
-- CI et déploiement GitHub Pages (sur `main`, source Pages « GitHub Actions » à activer).
+- CI GitHub Actions ; déploiement Vercel depuis `main` (`vercel.json`). GitHub Pages abandonné : le dépôt est privé.
+- Ne jamais ajouter `@vercel/analytics` ni `@vercel/speed-insights` (règle 1).
 
 Vérifié dans Chromium (Playwright) : rendu bureau 1440 px et mobile 390 px, clair, sombre et animations réduites, sans débordement horizontal ; aucune violation CSP ni requête externe ; contrastes des tokens ≥ 4,5:1 (clair, sombre, `.theme-dark`).
 
