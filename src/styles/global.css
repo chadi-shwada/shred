@@ -2694,9 +2694,14 @@ fieldset:last-child {
 
 .footer-word__glow {
   color: transparent;
-  background: linear-gradient(90deg, #3d58ea, #8b5cf6 35%, #d6589c 65%, #e05a6b);
+  /* Bleu néon dans la teinte du logo (#2F4BDC), avec un halo lumineux. */
+  background: linear-gradient(90deg, #2f4bdc, #4d7dff 30%, #8fc4ff 55%, #4d7dff 80%, #2f4bdc);
   -webkit-background-clip: text;
   background-clip: text;
+  text-shadow:
+    0 0 0.02em rgb(140 185 255 / 90%),
+    0 0 0.06em rgb(77 125 255 / 55%),
+    0 0 0.14em rgb(47 75 220 / 30%);
   -webkit-mask-image: radial-gradient(circle 1.5em at var(--x) var(--y), #000 20%, transparent 75%);
   mask-image: radial-gradient(circle 1.5em at var(--x) var(--y), #000 20%, transparent 75%);
   opacity: 0;
