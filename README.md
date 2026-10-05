@@ -9,7 +9,9 @@ Outil libre et gratuit pour exercer ses droits RGPD (effacement, accès, relance
   copie facultative des lettres envoyées et dossier de plainte CNIL complet (récapitulatif et lettres).
 - Page « Vérifier » : recherche de l'e-mail sur Have I Been Pwned (lien sortant), choix des fuites dans le
   catalogue public HIBP téléchargé au build (CC BY 4.0), lettre pré-remplie ; test de mot de passe Pwned
-  Passwords par k-anonymat (seuls 5 caractères du SHA-1 partent). Plan d'action selon les données exposées,
+  Passwords par k-anonymat (seuls 5 caractères du SHA-1 partent). Trois points de départ (vérifier son
+  adresse, message reçu d'une entreprise, données publiées), collage de la page de résultats HIBP pour
+  cocher les fuites d'un coup, sans rien envoyer. Plan d'action selon les données exposées,
   lettres groupées (une par entreprise), fuites françaises ajoutées depuis la dernière visite, générateur de
   mot de passe local.
 - Page « Que faire ? » : canaux officiels pour signaler un message suspect (33700, Signal Spam, Phishing

@@ -211,3 +211,88 @@ export function searchBreaches(breaches: Breach[], query: string, limit = 20): B
     .slice(0, limit)
     .map((s) => s.breach);
 }
+
+export interface PastedMatch {
+  breach: Breach;
+  /**
+   * true seulement si le nom apparaît comme un titre de résultat (seul sur sa
+   * ligne, ou en début de ligne suivi de « : ») et qu'une seule fuite le porte.
+   * Sinon (nom cité dans une phrase, un menu, un pied de page), la personne
+   * confirme elle-même : la case n'est pas cochée d'office.
+   */
+  certain: boolean;
+}
+
+/** Taille maximale du texte analysé, largement au-dessus d'une page de résultats. */
+export const PASTE_MAX_LENGTH = 200_000;
+
+function unifyText(text: string): string {
+  return text
+    .normalize('NFC')
+    .replace(/[\u2018\u2019\u02bc]/g, "'")
+    .replace(/[\u00a0\u202f]/g, ' ')
+    .replace(/[ \t]+/g, ' ');
+}
+
+/** Le nom occupe-t-il sa ligne, éventuellement suivi de « : » (« Cultura: In 2024… ») ? */
+function isHeading(source: string, start: number, end: number, allowColon: boolean): boolean {
+  const lineStart = source.lastIndexOf('\n', start - 1) + 1;
+  const lineEnd = source.indexOf('\n', end);
+  const before = source.slice(lineStart, start).trim();
+  const after = source.slice(end, lineEnd === -1 ? undefined : lineEnd).trim();
+  return before === '' && (after === '' || (allowColon && after.startsWith(':')));
+}
+
+function escapeRegExp(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * Repère les fuites citées dans un texte collé (page de résultats de Have I
+ * Been Pwned, e-mail d'alerte). Tout se passe dans le navigateur : le texte,
+ * qui contient l'adresse e-mail, n'est ni envoyé ni conservé.
+ *
+ * Le nom affiché de la fuite doit apparaître tel quel, casse comprise, comme
+ * mot entier : « Free » ne correspond ni à « free » ni à « Freelance ». Un nom
+ * contenu dans un nom plus long déjà trouvé (« Domino's » dans « Domino's
+ * India ») est ignoré à cet endroit. Résultat dans l'ordre d'apparition.
+ *
+ * Le format exact de la page de Have I Been Pwned n'a pas pu être vérifié :
+ * d'où la confirmation demandée à la personne avant de cocher.
+ */
+export function findBreachesInText(breaches: Breach[], text: string): PastedMatch[] {
+  const source = unifyText(text.slice(0, PASTE_MAX_LENGTH));
+  if (!source.trim()) return [];
+
+  const byTitle = new Map<string, Breach[]>();
+  for (const breach of breaches) {
+    const title = unifyText(breach.title).trim();
+    if (title.length < 2) continue;
+    byTitle.set(title, [...(byTitle.get(title) ?? []), breach]);
+  }
+
+  const taken: [number, number][] = [];
+  const overlaps = (start: number, end: number) => taken.some(([s, e]) => start < e && end > s);
+  const found: { breach: Breach; at: number; certain: boolean }[] = [];
+
+  const titles = [...byTitle.keys()].sort((a, b) => b.length - a.length);
+  for (const title of titles) {
+    const pattern = new RegExp(`(?<![\\p{L}\\p{N}])${escapeRegExp(title)}(?![\\p{L}\\p{N}])`, 'gu');
+    const shortWord = !/\s/.test(title) && title.length <= 4;
+    let first = -1;
+    let heading = false;
+    for (const match of source.matchAll(pattern)) {
+      const start = match.index;
+      const end = start + match[0].length;
+      if (overlaps(start, end)) continue;
+      taken.push([start, end]);
+      if (first === -1) first = start;
+      heading ||= isHeading(source, start, end, !shortWord);
+    }
+    if (first === -1) continue;
+    const group = byTitle.get(title) ?? [];
+    for (const breach of group) found.push({ breach, at: first, certain: heading && group.length === 1 });
+  }
+
+  return found.sort((a, b) => a.at - b.at).map(({ breach, certain }) => ({ breach, certain }));
+}

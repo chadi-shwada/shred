@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useId, useMemo, useRef, useState, type FormEvent } from 'react';
 import { loadBreachCatalog } from '../breachCatalog';
 import { readStorage, writeStorage } from '../browser';
 import { ActionPlan } from '../components/ActionPlan';
@@ -8,6 +8,7 @@ import { Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
 import { PageHead } from '../components/PageHead';
 import { PasswordGenerator } from '../components/PasswordGenerator';
+import { PasteResults } from '../components/PasteResults';
 import {
   dataClassLabel,
   HIBP_LICENSE_URL,
@@ -22,9 +23,25 @@ import {
 import { formatLongFr, isValidIsoDate, todayIso } from '../lib/dates';
 import { breachLetterQuery } from '../lib/letterLink';
 import { pwnedCount, PwnedServiceError } from '../lib/pwned';
-import { href } from '../router';
+import { href, navigate, useRoute } from '../router';
 
 const LAST_VISIT_KEY = 'shred.verifier.derniereVisite';
+
+/** Point de départ : comment la personne a appris la fuite (paramètre « parcours » du fragment). */
+type Situation = 'verifier' | 'message' | 'publie';
+
+const SITUATIONS: { value: Situation; label: string; hint: string }[] = [
+  { value: 'verifier', label: 'Je veux savoir si je suis concerné', hint: 'recherche par e-mail' },
+  { value: 'message', label: "Une entreprise m'a prévenu", hint: 'e-mail ou courrier reçu' },
+  { value: 'publie', label: 'Mes données sont publiées', hint: 'sur un site ou un forum' },
+];
+
+function asSituation(value: string | null): Situation {
+  return value === 'message' || value === 'publie' ? value : 'verifier';
+}
+
+/** Les outils de mot de passe sont repliés sur petit écran pour garder le parcours court. */
+const WIDE_QUERY = '(min-width: 961px)';
 
 const RISKY = new Set(['Passwords', 'Credit cards', 'Partial credit card data', 'Bank account numbers']);
 
@@ -162,6 +179,11 @@ function BreachRow({ breach, selected, onToggle }: { breach: Breach; selected: b
 
 export function Verify() {
   const id = useId();
+  const route = useRoute();
+  const situation = asSituation(route.query.get('parcours'));
+  const setSituation = (value: Situation) =>
+    navigate(href('/verifier', value === 'verifier' ? undefined : { parcours: value }), { replace: true });
+  const [toolsOpen] = useState(() => typeof window !== 'undefined' && window.matchMedia?.(WIDE_QUERY).matches);
   const [catalog, setCatalog] = useState<BreachCatalog | null>(null);
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<string[]>([]);
@@ -191,6 +213,28 @@ export function Verify() {
   const exposed = useMemo(() => [...new Set(chosen.flatMap((b) => b.dataClasses))], [chosen]);
 
   const toggle = (name: string) => setSelected((s) => (s.includes(name) ? s.filter((n) => n !== name) : [...s, name]));
+  const addMany = (names: string[]) => setSelected((s) => [...s, ...names.filter((n) => !s.includes(n))]);
+
+  // Barre « voir quoi faire » sur mobile, tant que l'étape suivante est plus bas dans la page.
+  const nextStep = useRef<HTMLElement>(null);
+  const [nextVisible, setNextVisible] = useState(false);
+  const hasChosen = chosen.length > 0;
+  useEffect(() => {
+    const target = nextStep.current;
+    if (!target || typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver(([entry]) =>
+      setNextVisible(entry ? entry.isIntersecting || entry.boundingClientRect.top < 0 : false),
+    );
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [hasChosen]);
+  const goToNextStep = () => {
+    const target = nextStep.current;
+    if (!target) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    target.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    target.querySelector<HTMLElement>('h2')?.focus({ preventScroll: true });
+  };
 
   const unavailable = catalog !== null && catalog.breaches.length === 0;
 
@@ -219,109 +263,212 @@ export function Verify() {
       </PageHead>
 
       <div className="container page-body">
+        <fieldset className="situation">
+          <legend className="situation__legend">Ta situation</legend>
+          <div className="segmented">
+            {SITUATIONS.map((s) => (
+              <label key={s.value}>
+                <input
+                  type="radio"
+                  name={`${id}-situation`}
+                  value={s.value}
+                  checked={situation === s.value}
+                  onChange={() => setSituation(s.value)}
+                />
+                <strong>{s.label}</strong>
+                <span>{s.hint}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
         <div className="verify">
           <div className="verify__main">
-            <section className="card" aria-labelledby={`${id}-s1`}>
-              <h2 className="card__title" id={`${id}-s1`}>
-                <span className="card__num">1</span>
-                Cherche ton adresse e-mail
-              </h2>
-              <p className="muted">
-                Have I Been Pwned, le service de référence, liste les fuites qui contiennent ton adresse. Fais la
-                recherche sur leur site, puis reviens ici avec les noms des fuites trouvées.
-              </p>
-              <ExternalLink href={HIBP_URL} className="btn btn--primary">
-                Ouvrir Have I Been Pwned
-                <Icon name="external" size={16} />
-              </ExternalLink>
-            </section>
+            {situation === 'publie' && (
+              <section className="card" aria-labelledby={`${id}-pub`}>
+                <h2 className="card__title" id={`${id}-pub`}>
+                  <span className="card__num">1</span>
+                  Fais retirer les données publiées
+                </h2>
+                <p className="muted">
+                  Écris d'abord au site qui publie tes données pour demander leur effacement. S'il ne répond pas ou
+                  reste introuvable, signale la page à son hébergeur : il doit agir sur un signalement précis.
+                </p>
+                <div className="btn-row">
+                  <a
+                    className="btn btn--primary"
+                    href={href('/lettre', { type: 'effacement', contexte: 'exposition' })}
+                  >
+                    Écrire au site
+                  </a>
+                  <a className="btn" href={href('/lettre', { type: 'signalement' })}>
+                    Signaler à l'hébergeur
+                  </a>
+                </div>
+                <p className="hint verify__credit">
+                  Garde des preuves avant tout : captures d'écran datées et adresse exacte des pages. Les démarches
+                  selon la donnée exposée sont sur la page <a href={href('/que-faire')}>Que faire ?</a>
+                </p>
+              </section>
+            )}
 
-            <section className="card" aria-labelledby={`${id}-s2`}>
-              <h2 className="card__title" id={`${id}-s2`}>
-                <span className="card__num">2</span>
-                Coche les fuites trouvées
-              </h2>
-
-              {catalog === null && <p className="muted">Chargement de la liste des fuites…</p>}
-
-              {unavailable && (
-                <Notice tone="warn">
-                  <p>La liste des fuites n'est pas disponible dans cette version du site.</p>
+            {situation === 'verifier' && (
+              <section className="card" aria-labelledby={`${id}-s1`}>
+                <h2 className="card__title" id={`${id}-s1`}>
+                  <span className="card__num">1</span>
+                  Cherche ton adresse e-mail
+                </h2>
+                <p className="muted">
+                  Have I Been Pwned, le service de référence, liste les fuites qui contiennent ton adresse. Fais la
+                  recherche sur leur site, puis reviens coller la page de résultats : Shred coche les fuites pour toi.
+                </p>
+                <ExternalLink href={HIBP_URL} className="btn btn--primary">
+                  Ouvrir Have I Been Pwned
+                  <Icon name="external" size={16} />
+                </ExternalLink>
+                {catalog && catalog.breaches.length > 0 && <PasteResults breaches={catalog.breaches} onAdd={addMany} />}
+                <details className="verify__none">
+                  <summary>Have I Been Pwned n'a rien trouvé ?</summary>
                   <p>
-                    Tu peux quand même écrire ta lettre :{' '}
-                    <a href={href('/lettre', { contexte: 'violation' })}>choisis « Une entreprise a subi une fuite »</a>
+                    Bonne nouvelle, mais pas une garantie : le service ne connaît que les fuites rendues publiques et ne
+                    voit que l'adresse cherchée. Refais la recherche avec tes autres adresses, anciennes comprises.
+                  </p>
+                  <p>
+                    Une entreprise t'a prévenu d'une fuite ?{' '}
+                    <button type="button" className="link-button" onClick={() => setSituation('message')}>
+                      Pars du message reçu
+                    </button>
                     .
                   </p>
-                </Notice>
-              )}
+                </details>
+              </section>
+            )}
 
-              {catalog && catalog.breaches.length > 0 && (
-                <>
-                  {fresh.length > 0 && lastVisit && (
-                    <div className="fresh" role="status">
-                      <p>
-                        <strong>
-                          {fresh.length} nouvelle{fresh.length > 1 ? 's' : ''} fuite{fresh.length > 1 ? 's' : ''}{' '}
-                          française{fresh.length > 1 ? 's' : ''}
-                        </strong>{' '}
-                        depuis ta dernière visite, le {formatLongFr(lastVisit)} :
-                      </p>
-                      <ul>
-                        {fresh.slice(0, 6).map((b) => (
-                          <li key={b.name}>
-                            <button type="button" className="fresh__item" onClick={() => toggle(b.name)}>
-                              {selected.includes(b.name) && <Icon name="check" size={14} />}
-                              {b.title}
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  <div className="field">
-                    <label htmlFor={`${id}-q`}>Nom de la fuite ou du site</label>
-                    <input
-                      id={`${id}-q`}
-                      className="input"
-                      type="search"
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                      placeholder="Ex. le nom affiché par Have I Been Pwned"
-                      autoComplete="off"
-                      spellCheck={false}
-                    />
-                  </div>
-                  <p className="hint" aria-live="polite">
-                    {query
-                      ? `${results.length} résultat${results.length > 1 ? 's' : ''}`
-                      : showFrench
-                        ? 'Les fuites récentes en France. Cherche ci-dessus pour voir toutes les autres, y compris les services étrangers.'
-                        : 'Les fuites les plus récentes :'}
-                  </p>
-                  <ul className="breach-list">
-                    {results.map((b) => (
-                      <BreachRow
-                        key={b.name}
-                        breach={b}
-                        selected={selected.includes(b.name)}
-                        onToggle={() => toggle(b.name)}
+            {situation !== 'publie' && (
+              <section className="card" aria-labelledby={`${id}-s2`}>
+                <h2 className="card__title" id={`${id}-s2`}>
+                  <span className="card__num">{situation === 'message' ? 1 : 2}</span>
+                  {situation === 'message' ? "Trouve l'entreprise" : 'Coche les fuites trouvées'}
+                </h2>
+
+                {catalog === null && <p className="muted">Chargement de la liste des fuites…</p>}
+
+                {unavailable && (
+                  <Notice tone="warn">
+                    <p>La liste des fuites n'est pas disponible dans cette version du site.</p>
+                    <p>
+                      Tu peux quand même écrire ta lettre :{' '}
+                      <a href={href('/lettre', { contexte: 'violation' })}>
+                        choisis « Une entreprise a subi une fuite »
+                      </a>
+                      .
+                    </p>
+                  </Notice>
+                )}
+
+                {catalog && catalog.breaches.length > 0 && (
+                  <>
+                    {chosen.length > 0 && (
+                      <div className="picked">
+                        <p className="picked__title">
+                          {chosen.length} fuite{chosen.length > 1 ? 's' : ''} choisie{chosen.length > 1 ? 's' : ''}
+                        </p>
+                        <ul>
+                          {chosen.map((b) => (
+                            <li key={b.name}>
+                              <button
+                                type="button"
+                                className="fresh__item"
+                                onClick={() => toggle(b.name)}
+                                aria-label={`Retirer ${b.title}`}
+                              >
+                                {b.title}
+                                <Icon name="close" size={14} />
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {fresh.length > 0 && lastVisit && (
+                      <div className="fresh" role="status">
+                        <p>
+                          <strong>
+                            {fresh.length} nouvelle{fresh.length > 1 ? 's' : ''} fuite{fresh.length > 1 ? 's' : ''}{' '}
+                            française{fresh.length > 1 ? 's' : ''}
+                          </strong>{' '}
+                          depuis ta dernière visite, le {formatLongFr(lastVisit)} :
+                        </p>
+                        <ul>
+                          {fresh.slice(0, 6).map((b) => (
+                            <li key={b.name}>
+                              <button type="button" className="fresh__item" onClick={() => toggle(b.name)}>
+                                {selected.includes(b.name) && <Icon name="check" size={14} />}
+                                {b.title}
+                              </button>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    <div className="field">
+                      <label htmlFor={`${id}-q`}>
+                        {situation === 'message' ? "Nom de l'entreprise ou du site" : 'Nom de la fuite ou du site'}
+                      </label>
+                      <input
+                        id={`${id}-q`}
+                        className="input"
+                        type="search"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        placeholder={
+                          situation === 'message'
+                            ? 'Ex. le nom cité dans le message reçu'
+                            : 'Ex. le nom affiché par Have I Been Pwned'
+                        }
+                        autoComplete="off"
+                        spellCheck={false}
                       />
-                    ))}
-                  </ul>
-                  <p className="hint verify__credit">
-                    Liste des fuites : <ExternalLink href={HIBP_URL}>Have I Been Pwned</ExternalLink>, sous licence{' '}
-                    <ExternalLink href={HIBP_LICENSE_URL}>CC BY 4.0</ExternalLink>
-                    {catalog.fetchedOn && <>, mise à jour le {formatLongFr(catalog.fetchedOn)}</>}. Ce sont des
-                    informations publiques sur les fuites, pas les données fuitées.
-                  </p>
-                </>
-              )}
-            </section>
+                    </div>
+                    <p className="hint" aria-live="polite">
+                      {query
+                        ? `${results.length} résultat${results.length > 1 ? 's' : ''}`
+                        : showFrench
+                          ? 'Les fuites récentes en France. Cherche ci-dessus pour voir toutes les autres, y compris les services étrangers.'
+                          : 'Les fuites les plus récentes :'}
+                    </p>
+                    <ul className="breach-list">
+                      {results.map((b) => (
+                        <BreachRow
+                          key={b.name}
+                          breach={b}
+                          selected={selected.includes(b.name)}
+                          onToggle={() => toggle(b.name)}
+                        />
+                      ))}
+                    </ul>
+                    {situation === 'message' && (
+                      <p className="hint verify__credit">
+                        L'entreprise n'est pas dans la liste ?{' '}
+                        <a href={href('/lettre', { contexte: 'violation' })}>Écris-lui directement</a> : la lettre
+                        s'adapte à une fuite subie par l'entreprise.
+                      </p>
+                    )}
+                    <p className="hint verify__credit">
+                      Liste des fuites : <ExternalLink href={HIBP_URL}>Have I Been Pwned</ExternalLink>, sous licence{' '}
+                      <ExternalLink href={HIBP_LICENSE_URL}>CC BY 4.0</ExternalLink>
+                      {catalog.fetchedOn && <>, mise à jour le {formatLongFr(catalog.fetchedOn)}</>}. Ce sont des
+                      informations publiques sur les fuites, pas les données fuitées.
+                    </p>
+                  </>
+                )}
+              </section>
+            )}
 
-            {chosen.length > 0 && (
-              <section className="card" aria-labelledby={`${id}-s3`}>
-                <h2 className="card__title" id={`${id}-s3`}>
-                  <span className="card__num">3</span>
+            {situation !== 'publie' && chosen.length > 0 && (
+              <section className="card" aria-labelledby={`${id}-s3`} ref={nextStep}>
+                <h2 className="card__title" id={`${id}-s3`} tabIndex={-1}>
+                  <span className="card__num">{situation === 'message' ? 2 : 3}</span>
                   Ce qui a fuité, et quoi faire
                 </h2>
                 <div className="chips verify__exposed">
@@ -362,11 +509,31 @@ export function Verify() {
           </div>
 
           <aside className="verify__side">
-            <PasswordCheck />
-            <PasswordGenerator />
+            <details className="verify__tools" open={toolsOpen}>
+              <summary>
+                <Icon name="lock" size={16} />
+                Mots de passe : tester ou en créer un
+              </summary>
+              <div className="verify__tools-body">
+                <PasswordCheck />
+                <PasswordGenerator />
+              </div>
+            </details>
           </aside>
         </div>
       </div>
+
+      {situation !== 'publie' && chosen.length > 0 && !nextVisible && (
+        <div className="verify-bar">
+          <span>
+            {chosen.length} fuite{chosen.length > 1 ? 's' : ''} choisie{chosen.length > 1 ? 's' : ''}
+          </span>
+          <button type="button" className="btn btn--primary btn--sm" onClick={goToNextStep}>
+            Voir quoi faire
+            <Icon name="arrow" size={16} />
+          </button>
+        </div>
+      )}
     </>
   );
 }

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   dataClassLabel,
+  findBreachesInText,
   hibpBreachUrl,
   mapDataClasses,
   newFrenchBreachesSince,
@@ -116,5 +117,64 @@ describe('fiche HIBP et nouveautés', () => {
 
   it('pointe vers la fiche publique HIBP', () => {
     expect(hibpBreachUrl(breaches[2]!)).toBe('https://haveibeenpwned.com/Breach/%C3%89trang%C3%A8re');
+  });
+});
+
+describe('findBreachesInText', () => {
+  const { breaches } = parseCatalog({
+    breaches: [
+      { Name: 'FreeMobile', Title: 'Free', BreachDate: '2024-10-17' },
+      { Name: 'Dominos', Title: "Domino's", BreachDate: '2014-06-13' },
+      { Name: 'DominosIndia', Title: "Domino's India", BreachDate: '2021-04-01' },
+      { Name: 'ZadigVoltaire', Title: 'Zadig & Voltaire', BreachDate: '2023-11-16' },
+      { Name: 'Cultura', Title: 'Cultura', BreachDate: '2024-09-06' },
+      { Name: 'Deezer', Title: 'Deezer', BreachDate: '2019-04-22' },
+      { Name: 'Twin1', Title: 'Jumeau', BreachDate: '2020-01-01' },
+      { Name: 'Twin2', Title: 'Jumeau', BreachDate: '2021-01-01' },
+    ],
+  });
+  const names = (text: string) => findBreachesInText(breaches, text).map((m) => m.breach.name);
+
+  it("repère les fuites d'une page de résultats, dans l'ordre d'apparition", () => {
+    const page = 'Oh no — pwned!\nCultura\nIn September 2024, Cultura…\nZadig & Voltaire\nIn November 2023…';
+    expect(names(page)).toEqual(['Cultura', 'ZadigVoltaire']);
+  });
+
+  it('exige le nom exact, casse comprise, comme mot entier', () => {
+    expect(names('free service, Freelance, Deezers, cultura')).toEqual([]);
+    expect(names('(Deezer)')).toEqual(['Deezer']);
+  });
+
+  it('accepte les apostrophes typographiques et les espaces insécables', () => {
+    expect(names('Domino’s India')).toEqual(['DominosIndia']);
+  });
+
+  it('ignore un nom contenu dans un nom plus long, mais pas ailleurs dans le texte', () => {
+    expect(names("Domino's India")).toEqual(['DominosIndia']);
+    expect(names("Domino's India puis Domino's")).toEqual(['DominosIndia', 'Dominos']);
+  });
+
+  it("ne coche d'office que les noms affichés comme un titre et portés par une seule fuite", () => {
+    const certain = (text: string) =>
+      findBreachesInText(breaches, text).map((m) => [m.breach.name, m.certain] as [string, boolean]);
+    expect(certain('Free\nJumeau\n  Deezer  \nCultura: In 2024, Cultura…')).toEqual([
+      ['FreeMobile', true],
+      ['Twin1', false],
+      ['Twin2', false],
+      ['Deezer', true],
+      ['Cultura', true],
+    ]);
+    // Cité dans une phrase ou un pied de page : à confirmer.
+    expect(certain('Suivre Deezer, Cultura et Free')).toEqual([
+      ['Deezer', false],
+      ['Cultura', false],
+      ['FreeMobile', false],
+    ]);
+    // Un nom court suivi de « : » peut être un libellé de la page.
+    expect(certain('Free: offre')).toEqual([['FreeMobile', false]]);
+  });
+
+  it('renvoie une liste vide pour un texte vide', () => {
+    expect(findBreachesInText(breaches, '   ')).toEqual([]);
   });
 });
