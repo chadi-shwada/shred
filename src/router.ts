@@ -5,7 +5,7 @@ import { useSyncExternalStore } from 'react';
  * serveur et ne transmet jamais la route au serveur.
  */
 
-export type RoutePath = '/' | '/lettre' | '/suivi' | '/ressources' | '/a-propos';
+export type RoutePath = '/' | '/verifier' | '/lettre' | '/suivi' | '/ressources' | '/a-propos';
 
 export interface Route {
   path: string;

@@ -124,8 +124,9 @@ export function Resources() {
             </p>
             <h3>Est-ce que Shred vérifie si mes données ont fuité ?</h3>
             <p>
-              Non. Shred n'a aucune base de fuites et n'envoie aucune requête. Pour vérifier une adresse e-mail, tu peux
-              utiliser un service tiers comme Have I Been Pwned, en connaissance de cause.
+              Shred t'y aide sans voir tes données : tu cherches ton e-mail sur Have I Been Pwned, puis tu coches les
+              fuites trouvées sur la page <a href={href('/verifier')}>Vérifier</a>. Shred affiche les données exposées
+              et prépare la lettre. Il n'héberge aucune base de fuites.
             </p>
 
             <Notice>

@@ -10,8 +10,8 @@ import { href } from '../router';
 const STEPS: { icon: IconName; title: string; text: string }[] = [
   {
     icon: 'search',
-    title: 'Repère tes données',
-    text: 'Note les adresses des pages où apparaissent ton e-mail, ton mot de passe ou ton téléphone.',
+    title: 'Vérifie ce qui a fuité',
+    text: 'Repère les fuites qui contiennent ton e-mail et teste tes mots de passe, sans les confier à Shred.',
   },
   {
     icon: 'file',
@@ -33,11 +33,11 @@ const STEPS: { icon: IconName; title: string; text: string }[] = [
 const FAQ = [
   {
     q: 'Est-ce que Shred voit mes données ?',
-    a: "Non. Tout se passe dans ton navigateur : il n'y a pas de serveur applicatif, pas de compte, pas de traceur. La page interdit elle-même toute requête réseau grâce à sa politique de sécurité.",
+    a: "Non. Tout se passe dans ton navigateur : il n'y a pas de serveur applicatif, pas de compte, pas de traceur. La page bloque toute requête réseau, sauf vers Pwned Passwords quand tu lances un test de mot de passe : seuls 5 caractères de son empreinte partent, jamais le mot de passe.",
   },
   {
     q: 'Est-ce que Shred vérifie si mes données ont fuité ?',
-    a: "Non. Shred n'héberge aucune base de fuites, même partielle. Il t'aide à exercer tes droits auprès des sites qui t'exposent.",
+    a: "Il t'y aide sans voir tes données. Tu cherches ton e-mail sur Have I Been Pwned, puis tu coches les fuites trouvées dans Shred, qui affiche les données exposées et prépare la lettre. Shred n'héberge aucune base de fuites : seulement la liste publique des fuites connues.",
   },
   {
     q: 'Une lettre suffit-elle à faire supprimer mes données ?',
@@ -69,7 +69,7 @@ export function Home() {
         <div className="container hero__grid">
           <div>
             <span className="pill">
-              <span className="pill__tag">100 % local</span>
+              <span className="pill__tag">Sans traceur</span>
               Libre, gratuit, sans compte
             </span>
             <h1 id="titre">
@@ -84,8 +84,9 @@ export function Home() {
                 Écrire ma lettre
                 <Icon name="arrow" size={18} />
               </a>
-              <a className="btn btn--outline btn--lg" href={href('/ressources')}>
-                Comprendre mes droits
+              <a className="btn btn--outline btn--lg" href={href('/verifier')}>
+                <Icon name="search" size={18} />
+                Vérifier mes fuites
               </a>
             </div>
             <ul className="hero__trust">
@@ -118,7 +119,7 @@ export function Home() {
           </div>
           <dl className="zeros">
             <div>
-              <dt>octet de tes données envoyé</dt>
+              <dt>donnée personnelle envoyée</dt>
               <dd>0</dd>
             </div>
             <div>
@@ -171,8 +172,8 @@ export function Home() {
             <article className="tile tile--wide">
               <h3>Rien ne quitte ton navigateur</h3>
               <p>
-                La page déclare une politique de sécurité qui interdit toute requête réseau. Ce n'est pas une promesse :
-                c'est ton navigateur qui l'applique.
+                La page déclare une politique de sécurité qui bloque toute requête réseau, sauf le test de mot de passe
+                par k-anonymat. Ce n'est pas une promesse : c'est ton navigateur qui l'applique.
               </p>
               <div className="tile__visual">
                 <pre className="code-block">
@@ -181,7 +182,7 @@ export function Home() {
                   <span className="k">Content-Security-Policy</span>
                   {': '}
                   {'\n  '}
-                  <span className="k">connect-src</span> <span className="v">'none'</span>
+                  <span className="k">connect-src</span> <span className="v">https://api.pwnedpasswords.com</span>
                   {';\n  '}
                   <span className="k">form-action</span> <span className="v">'none'</span>
                   {';\n  '}

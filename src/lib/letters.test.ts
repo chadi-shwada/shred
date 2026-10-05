@@ -116,22 +116,86 @@ describe('validation', () => {
   });
 });
 
+describe('contexte « violation » (fuite subie par l’entreprise)', () => {
+  const violation: LetterInput = {
+    kind: 'effacement',
+    fullName: 'Camille Martin',
+    siteName: 'Exemple SA',
+    dataCategories: ['email', 'motDePasse'],
+    date: '2026-10-05',
+    context: 'violation',
+    breachName: 'Exemple',
+    breachDate: '2024-03-01',
+  };
+
+  it('effacement : art. 17.1 a et b, 19, 34, 34.2, 33.3, sans 17.2 ni 17.1 d', () => {
+    const letter = generateLetter(violation);
+    expect(letter.articles).toEqual(['17.1', '19', '34', '34.2', '33.3', '12.3', '12.5', '77']);
+    expect(letter.body).toContain(
+      'violation de données subie par Exemple SA (référencée sous le nom « Exemple », datée du 1er mars 2024).',
+    );
+    expect(letter.body).toContain('(point a)');
+    expect(letter.body).toContain('(point b)');
+    expect(letter.body).not.toContain('point d)');
+    expect(letter.body).not.toContain('17.2');
+    expect(letter.body).toContain("l'article 34 du RGPD vous impose de m'en informer");
+    expect(letter.body).toContain("(article 34.2, qui renvoie à l'article 33.3)");
+    expect(letter.body).toContain("D'après les informations publiques sur cette fuite");
+  });
+
+  it('accès : art. 15 et 15.3, données touchées, sans la source (15.1 g)', () => {
+    const letter = generateLetter({ ...violation, kind: 'acces' });
+    expect(letter.articles).toEqual(['15', '15.3', '34', '34.2', '33.3', '12.3', '12.5', '77']);
+    expect(letter.body).toContain('la liste précise des données me concernant touchées par cette violation.');
+    expect(letter.body).not.toContain('15.1 g');
+  });
+
+  it('relance : rappelle la violation', () => {
+    const letter = generateLetter({
+      ...violation,
+      kind: 'relance',
+      previousKind: 'acces',
+      previousRequestDate: '2026-08-01',
+    });
+    expect(letter.body).toContain("exposées lors d'une violation de données subie par Exemple SA");
+    expect(letter.body).not.toContain('diffusées sur le site');
+  });
+
+  it('référence partielle : nom seul, date seule, ou rien', () => {
+    const nameOnly = generateLetter({ ...violation, breachDate: undefined });
+    expect(nameOnly.body).toContain('subie par Exemple SA (référencée sous le nom « Exemple »).');
+    const dateOnly = generateLetter({ ...violation, breachName: ' ' });
+    expect(dateOnly.body).toContain('subie par Exemple SA (datée du 1er mars 2024).');
+    const none = generateLetter({ ...violation, breachName: undefined, breachDate: undefined });
+    expect(none.body).toContain('subie par Exemple SA.');
+  });
+
+  it('le contexte par défaut reste « exposition »', () => {
+    expect(generateLetter({ ...violation, context: undefined }).articles).toContain('17.2');
+  });
+});
+
 describe('style des lettres', () => {
   const kinds = ['effacement', 'acces', 'relance'] as const;
-  for (const kind of kinds) {
-    it(`${kind} : pas de « veuillez », pas de « simplement », pas d’apostrophe typographique mélangée`, () => {
-      const { subject, body } = generateLetter({
-        ...base,
-        kind,
-        previousKind: 'effacement',
-        previousRequestDate: '2026-09-01',
+  const contexts = ['exposition', 'violation'] as const;
+  for (const context of contexts)
+    for (const kind of kinds) {
+      it(`${context}, ${kind} : pas de « veuillez », pas de « simplement », pas d’apostrophe typographique mélangée`, () => {
+        const { subject, body } = generateLetter({
+          ...base,
+          kind,
+          context,
+          breachName: 'Exemple',
+          breachDate: '2024-03-01',
+          previousKind: 'effacement',
+          previousRequestDate: '2026-09-01',
+        });
+        const text = `${subject}\n${body}`;
+        expect(text).not.toMatch(/veuillez/i);
+        expect(text).not.toMatch(/simplement/i);
+        expect(text).not.toContain('’');
       });
-      const text = `${subject}\n${body}`;
-      expect(text).not.toMatch(/veuillez/i);
-      expect(text).not.toMatch(/simplement/i);
-      expect(text).not.toContain('’');
-    });
-  }
+    }
 });
 
 describe('sorties', () => {

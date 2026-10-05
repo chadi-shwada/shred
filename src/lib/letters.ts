@@ -7,6 +7,11 @@
  * article 17.1 pour l'effacement, article 12.3 pour le délai d'un mois,
  * article 19 pour la notification aux destinataires.
  *
+ * Deux contextes :
+ * - « exposition » : un site publie des données issues d'une fuite (art. 17.1 d, 17.2) ;
+ * - « violation » : l'entreprise a elle-même subi la fuite. La lettre demande alors
+ *   aussi la description de la violation (art. 34.2, qui renvoie à l'art. 33.3 b, c, d).
+ *
  * Toute modification d'une lettre cite l'article concerné et met à jour
  * letters.test.ts.
  */
@@ -15,6 +20,7 @@ import { formatLongFr, gdprDeadlines, type IsoDate } from './dates';
 
 export type LetterKind = 'effacement' | 'acces' | 'relance';
 export type InitialKind = Exclude<LetterKind, 'relance'>;
+export type LetterContext = 'exposition' | 'violation';
 
 export const DATA_CATEGORIES = {
   nomPrenom: 'nom et prénom',
@@ -51,6 +57,12 @@ export interface LetterInput {
   previousRequestDate?: IsoDate;
   /** Relance seulement : nature de la première demande. */
   previousKind?: InitialKind;
+  /** Exposition par un site tiers (par défaut) ou violation subie par l'entreprise elle-même. */
+  context?: LetterContext;
+  /** Violation seulement : nom public de la fuite (ex. référence Have I Been Pwned). */
+  breachName?: string;
+  /** Violation seulement : date de la fuite. */
+  breachDate?: IsoDate;
 }
 
 export interface Letter {
@@ -85,14 +97,50 @@ function urlList(input: LetterInput): string[] {
   return (input.urls ?? []).map((url) => url.trim()).filter(Boolean);
 }
 
+function isViolation(input: LetterInput): boolean {
+  return input.context === 'violation';
+}
+
 function locationParagraph(input: LetterInput, intro: string): string | null {
   const urls = urlList(input);
   const data = dataList(input);
   const parts: string[] = [];
   if (urls.length > 0) parts.push(`${intro}\n${bulletList(urls)}`);
-  if (data.length > 0) parts.push(`Les données concernées sont :\n${bulletList(data)}`);
+  if (data.length > 0) {
+    const label = isViolation(input)
+      ? "D'après les informations publiques sur cette fuite, les catégories de données exposées sont :"
+      : 'Les données concernées sont :';
+    parts.push(`${label}\n${bulletList(data)}`);
+  }
   return parts.length > 0 ? parts.join('\n\n') : null;
 }
+
+/** « la violation de données « Exemple » (date : 3 mars 2024) », selon ce qui est connu. */
+function breachReference(input: LetterInput): string {
+  const name = clean(input.breachName);
+  const date = input.breachDate;
+  let ref = '';
+  if (name) ref += ` (référencée sous le nom « ${name} »`;
+  if (date) ref += `${name ? ', ' : ' ('}datée du ${formatLongFr(date)}`;
+  if (ref) ref += ')';
+  return ref;
+}
+
+function violationIntro(input: LetterInput): string {
+  return `J'ai appris que des données personnelles me concernant ont été exposées lors d'une violation de données subie par ${clean(input.siteName)}${breachReference(input)}.`;
+}
+
+const BREACH_DETAILS =
+  "Si cette violation est susceptible d'engendrer un risque élevé pour mes droits et libertés, l'article 34 du RGPD vous impose de m'en informer. Je vous demande dans tous les cas de me décrire la nature de cette violation, ses conséquences probables, les mesures prises pour y remédier et en atténuer les effets, ainsi que les coordonnées de votre délégué à la protection des données (article 34.2, qui renvoie à l'article 33.3).";
+
+const DEADLINE =
+  "L'article 12.3 du RGPD vous impose de me répondre dans les meilleurs délais et au plus tard dans un délai d'un mois à compter de la réception de cette demande. Cette démarche est gratuite (article 12.5 du RGPD).";
+
+const COMPLAINT =
+  "À défaut de réponse satisfaisante dans ce délai, je me réserve la possibilité d'introduire une réclamation auprès de la Commission nationale de l'informatique et des libertés (CNIL), conformément à l'article 77 du RGPD.";
+
+const NOTIFY_RECIPIENTS =
+  "Conformément à l'article 19 du RGPD, je vous demande également de notifier cet effacement à chaque destinataire auquel ces données ont été communiquées.";
 
 function identificationParagraph(input: LetterInput): string | null {
   const email = clean(input.email);
@@ -115,6 +163,26 @@ function assemble(paragraphs: (string | null)[], input: LetterInput): string {
 }
 
 function effacement(input: LetterInput): Letter {
+  const subject = "Demande d'effacement de données personnelles (article 17 du RGPD)";
+  if (isViolation(input)) {
+    return {
+      subject,
+      body: assemble(
+        [
+          violationIntro(input),
+          locationParagraph(input, 'Elles apparaissent notamment aux adresses suivantes :'),
+          identificationParagraph(input),
+          `En application de l'article 17.1 du ${RGPD}, je vous demande d'effacer l'ensemble des données me concernant, dans la mesure où elles ne sont plus nécessaires au regard des finalités pour lesquelles elles ont été collectées (point a) ou où je retire mon consentement à leur traitement (point b).`,
+          NOTIFY_RECIPIENTS,
+          BREACH_DETAILS,
+          DEADLINE,
+          COMPLAINT,
+        ],
+        input,
+      ),
+      articles: ['17.1', '19', '34', '34.2', '33.3', '12.3', '12.5', '77'],
+    };
+  }
   const site = clean(input.siteName);
   const body = assemble(
     [
@@ -123,45 +191,62 @@ function effacement(input: LetterInput): Letter {
       identificationParagraph(input),
       `En application de l'article 17.1 du ${RGPD}, et notamment de son point d) (données ayant fait l'objet d'un traitement illicite), je vous demande d'effacer ces données dans les meilleurs délais.`,
       "Ces données ayant été rendues publiques, je vous demande, conformément à l'article 17.2 du RGPD, de prendre les mesures raisonnables pour informer les autres responsables de traitement qui les reproduisent de ma demande d'effacement de tout lien vers ces données et de toute copie de celles-ci.",
-      "Conformément à l'article 19 du RGPD, je vous demande également de notifier cet effacement à chaque destinataire auquel ces données ont été communiquées.",
-      "L'article 12.3 du RGPD vous impose de me répondre dans les meilleurs délais et au plus tard dans un délai d'un mois à compter de la réception de cette demande. Cette démarche est gratuite (article 12.5 du RGPD).",
-      "À défaut de réponse satisfaisante dans ce délai, je me réserve la possibilité d'introduire une réclamation auprès de la Commission nationale de l'informatique et des libertés (CNIL), conformément à l'article 77 du RGPD.",
+      NOTIFY_RECIPIENTS,
+      DEADLINE,
+      COMPLAINT,
     ],
     input,
   );
-  return {
-    subject: "Demande d'effacement de données personnelles (article 17 du RGPD)",
-    body,
-    articles: ['17.1', '17.2', '19', '12.3', '12.5', '77'],
-  };
+  return { subject, body, articles: ['17.1', '17.2', '19', '12.3', '12.5', '77'] };
+}
+
+function accessRequest(extra: string): string {
+  return `En application de l'article 15 du ${RGPD}, je vous demande de me confirmer si vous traitez des données me concernant et, si c'est le cas, de m'en communiquer une copie (article 15.3), ainsi que les informations suivantes :\n${bulletList(
+    [
+      'les finalités du traitement ;',
+      'les catégories de données concernées ;',
+      'les destinataires auxquels ces données ont été ou seront communiquées ;',
+      'la durée de conservation envisagée ;',
+      extra,
+    ],
+  )}`;
 }
 
 function acces(input: LetterInput): Letter {
+  const subject = "Demande d'accès à mes données personnelles (article 15 du RGPD)";
+  if (isViolation(input)) {
+    return {
+      subject,
+      body: assemble(
+        [
+          violationIntro(input),
+          locationParagraph(input, 'Elles semblent apparaître aux adresses suivantes :'),
+          identificationParagraph(input),
+          accessRequest('la liste précise des données me concernant touchées par cette violation.'),
+          BREACH_DETAILS,
+          DEADLINE,
+          COMPLAINT,
+        ],
+        input,
+      ),
+      articles: ['15', '15.3', '34', '34.2', '33.3', '12.3', '12.5', '77'],
+    };
+  }
   const site = clean(input.siteName);
   const body = assemble(
     [
       `J'ai des raisons de penser que le site ${site} traite des données personnelles me concernant, qui proviennent selon toute vraisemblance d'une fuite de données.`,
       locationParagraph(input, 'Elles semblent apparaître aux adresses suivantes :'),
       identificationParagraph(input),
-      `En application de l'article 15 du ${RGPD}, je vous demande de me confirmer si vous traitez des données me concernant et, si c'est le cas, de m'en communiquer une copie (article 15.3), ainsi que les informations suivantes :\n${bulletList(
-        [
-          'les finalités du traitement ;',
-          'les catégories de données concernées ;',
-          'les destinataires auxquels ces données ont été ou seront communiquées ;',
-          'la durée de conservation envisagée ;',
-          "toute information disponible sur la source de ces données, puisqu'elles n'ont pas été collectées auprès de moi (article 15.1 g).",
-        ],
-      )}`,
-      "L'article 12.3 du RGPD vous impose de me répondre dans les meilleurs délais et au plus tard dans un délai d'un mois à compter de la réception de cette demande. Cette démarche est gratuite (article 12.5 du RGPD).",
-      "À défaut de réponse satisfaisante dans ce délai, je me réserve la possibilité d'introduire une réclamation auprès de la Commission nationale de l'informatique et des libertés (CNIL), conformément à l'article 77 du RGPD.",
+      accessRequest(
+        "toute information disponible sur la source de ces données, puisqu'elles n'ont pas été collectées auprès de moi (article 15.1 g).",
+      ),
+      DEADLINE,
+      COMPLAINT,
     ],
     input,
   );
-  return {
-    subject: "Demande d'accès à mes données personnelles (article 15 du RGPD)",
-    body,
-    articles: ['15', '15.3', '15.1 g', '12.3', '12.5', '77'],
-  };
+  return { subject, body, articles: ['15', '15.3', '15.1 g', '12.3', '12.5', '77'] };
 }
 
 const PREVIOUS_LABEL: Record<InitialKind, { noun: string; article: string }> = {
@@ -180,7 +265,11 @@ function relance(input: LetterInput): Letter {
   const deadline = gdprDeadlines(previousDate).standard;
   const body = assemble(
     [
-      `Le ${formatLongFr(previousDate)}, je vous ai adressé une ${previous.noun}, fondée sur l'article ${previous.article} du ${RGPD}, au sujet de données me concernant diffusées sur le site ${site}.`,
+      `Le ${formatLongFr(previousDate)}, je vous ai adressé une ${previous.noun}, fondée sur l'article ${previous.article} du ${RGPD}, au sujet de données me concernant ${
+        isViolation(input)
+          ? `exposées lors d'une violation de données subie par ${site}${breachReference(input)}`
+          : `diffusées sur le site ${site}`
+      }.`,
       locationParagraph(input, 'Pour rappel, ces données apparaissent aux adresses suivantes :'),
       `L'article 12.3 du RGPD vous imposait d'y répondre dans un délai d'un mois à compter de sa réception, soit au plus tard vers le ${formatLongFr(deadline)} pour une réception le jour de l'envoi. Je n'ai pas reçu de réponse satisfaisante à ce jour.`,
       "Si vous estimez ne pas devoir donner suite à ma demande, l'article 12.4 du RGPD vous oblige à m'en informer et à m'en indiquer les motifs.",

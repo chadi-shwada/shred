@@ -7,9 +7,9 @@ function headerValue(key: string): string | undefined {
 }
 
 describe('politique de sécurité', () => {
-  it('interdit toute requête réseau depuis la page (règle n° 1)', () => {
-    expect(CSP_META).toContain("connect-src 'none'");
-    expect(CSP_META).not.toMatch(/https?:/);
+  it('n’autorise qu’une seule origine réseau : Pwned Passwords (règle n° 1)', () => {
+    expect(CSP_META).toContain('connect-src https://api.pwnedpasswords.com;');
+    expect(CSP_META.match(/https?:\/\/[^\s;]+/g)).toEqual(['https://api.pwnedpasswords.com']);
   });
 
   it('vercel.json envoie la même CSP que la balise, plus frame-ancestors', () => {

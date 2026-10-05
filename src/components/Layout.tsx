@@ -5,6 +5,7 @@ import { Icon } from './Icon';
 import { Logo } from './Logo';
 
 const NAV: { path: RoutePath; label: string }[] = [
+  { path: '/verifier', label: 'Vérifier' },
   { path: '/lettre', label: 'Écrire une lettre' },
   { path: '/suivi', label: 'Suivi' },
   { path: '/ressources', label: 'Ressources' },
@@ -98,6 +99,9 @@ export function Layout({ path, children }: LayoutProps) {
               <div>
                 <h2>Outil</h2>
                 <ul>
+                  <li>
+                    <a href={href('/verifier')}>Vérifier mes fuites</a>
+                  </li>
                   <li>
                     <a href={href('/lettre')}>Écrire une lettre</a>
                   </li>

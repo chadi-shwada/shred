@@ -31,8 +31,18 @@ export function About() {
           <h2>Vie privée</h2>
           <p>
             Pas de compte, pas de cookie, pas d'analytics, pas de police chargée depuis un CDN. La page déclare une
-            politique de sécurité du contenu (<code>connect-src 'none'</code>) : ton navigateur bloque toute requête
-            réseau lancée par la page.
+            politique de sécurité du contenu : ton navigateur bloque toute requête réseau lancée par la page, avec une
+            seule exception, <code>api.pwnedpasswords.com</code>.
+          </p>
+          <p>
+            Cette exception sert au test de mot de passe, et seulement quand tu le lances. Shred calcule l'empreinte
+            SHA-1 du mot de passe dans ton navigateur et n'en envoie que les 5 premiers caractères. Le service renvoie
+            des centaines d'empreintes qui commencent pareil et la comparaison se fait chez toi (k-anonymat).
+          </p>
+          <p>
+            Pour ton adresse e-mail, Shred ne fait aucune requête : tu la cherches toi-même sur Have I Been Pwned. La
+            liste des fuites connues est intégrée au site au moment de sa publication (source : Have I Been Pwned,
+            licence CC BY 4.0). Elle contient des informations publiques sur les fuites, jamais les données fuitées.
           </p>
           <p>
             Le formulaire de lettre reste en mémoire dans l'onglet et disparaît quand tu le fermes. Le suivi enregistre

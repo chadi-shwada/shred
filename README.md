@@ -4,7 +4,11 @@ Outil libre et gratuit pour exercer ses droits RGPD (effacement, accès, relance
 
 - Générateur de lettres d'effacement (art. 17), d'accès (art. 15) et de relance (art. 12.3, 12.4, 77).
 - Suivi local des demandes avec calcul des délais légaux, export et import JSON.
-- Site statique : aucune donnée ne quitte le navigateur. Le build déclare une CSP `connect-src 'none'`.
+- Page « Vérifier » : recherche de l'e-mail sur Have I Been Pwned (lien sortant), choix des fuites dans le
+  catalogue public HIBP téléchargé au build (CC BY 4.0), lettre pré-remplie ; test de mot de passe Pwned
+  Passwords par k-anonymat (seuls 5 caractères du SHA-1 partent).
+- Site statique : aucune donnée personnelle ne quitte le navigateur. La CSP n'autorise qu'une origine réseau,
+  `api.pwnedpasswords.com`, pour le test de mot de passe.
 
 Les modèles de lettres sont indicatifs et ne constituent pas un conseil juridique.
 

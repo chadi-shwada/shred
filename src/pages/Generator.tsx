@@ -13,8 +13,10 @@ import {
   type DataCategory,
   type InitialKind,
   type Letter,
+  type LetterContext,
   type LetterKind,
 } from '../lib/letters';
+import { parseCategories } from '../lib/letterLink';
 import { slugify } from '../lib/slug';
 import { newId } from '../lib/tracking';
 import { href, type Route } from '../router';
@@ -33,6 +35,9 @@ interface FormState {
   date: IsoDate;
   previousRequestDate: IsoDate;
   previousKind: InitialKind;
+  context: LetterContext;
+  breachName: string;
+  breachDate: IsoDate;
 }
 
 const KIND_OPTIONS: { value: LetterKind; label: string; hint: string }[] = [
@@ -48,6 +53,7 @@ function asKind(value: string | null): LetterKind {
 function initialState(route: Route): FormState {
   const q = route.query;
   const since = q.get('depuis') ?? '';
+  const breachDate = q.get('date-fuite') ?? '';
   return {
     kind: asKind(q.get('type')),
     fullName: '',
@@ -56,11 +62,14 @@ function initialState(route: Route): FormState {
     siteName: q.get('site') ?? '',
     contact: '',
     urls: '',
-    dataCategories: [],
-    otherData: '',
+    dataCategories: parseCategories(q.get('donnees')),
+    otherData: q.get('autres') ?? '',
     date: todayIso(),
     previousRequestDate: isValidIsoDate(since) ? since : '',
     previousKind: q.get('premiere') === 'acces' ? 'acces' : 'effacement',
+    context: q.get('contexte') === 'violation' ? 'violation' : 'exposition',
+    breachName: q.get('fuite') ?? '',
+    breachDate: isValidIsoDate(breachDate) ? breachDate : '',
   };
 }
 
@@ -96,7 +105,8 @@ export function Generator({ route }: { route: Route }) {
   const result = useMemo((): { letter: Letter | null; missing: string[] } => {
     const missing: string[] = [];
     if (!form.fullName.trim()) missing.push('ton nom');
-    if (!form.siteName.trim()) missing.push('le site concerné');
+    if (!form.siteName.trim())
+      missing.push(form.context === 'violation' ? "le nom de l'entreprise" : 'le site concerné');
     if (form.kind === 'relance' && !isValidIsoDate(form.previousRequestDate))
       missing.push('la date de ta première demande');
     if (!isValidIsoDate(form.date)) missing.push('la date de la lettre');
@@ -114,6 +124,9 @@ export function Generator({ route }: { route: Route }) {
         date: form.date,
         previousRequestDate: form.kind === 'relance' ? form.previousRequestDate : undefined,
         previousKind: form.kind === 'relance' ? form.previousKind : undefined,
+        context: form.context,
+        breachName: form.context === 'violation' ? form.breachName : undefined,
+        breachDate: form.context === 'violation' && isValidIsoDate(form.breachDate) ? form.breachDate : undefined,
       });
       return { letter, missing };
     } catch (error) {
@@ -241,7 +254,16 @@ export function Generator({ route }: { route: Route }) {
                 Le site concerné
               </h2>
               <div className="field">
-                <label htmlFor={fieldId('site')}>Nom ou adresse du site</label>
+                <label htmlFor={fieldId('context')}>Situation</label>
+                <select id={fieldId('context')} className="select" value={form.context} onChange={set('context')}>
+                  <option value="exposition">Un site publie mes données issues d'une fuite</option>
+                  <option value="violation">Une entreprise a subi une fuite de mes données</option>
+                </select>
+              </div>
+              <div className="field">
+                <label htmlFor={fieldId('site')}>
+                  {form.context === 'violation' ? "Nom de l'entreprise" : 'Nom ou adresse du site'}
+                </label>
                 <input
                   id={fieldId('site')}
                   className="input"
@@ -252,6 +274,34 @@ export function Generator({ route }: { route: Route }) {
                   spellCheck={false}
                 />
               </div>
+              {form.context === 'violation' && (
+                <div className="field-row">
+                  <div className="field">
+                    <label htmlFor={fieldId('breachName')}>
+                      Nom de la fuite <span className="optional">(facultatif)</span>
+                    </label>
+                    <input
+                      id={fieldId('breachName')}
+                      className="input"
+                      value={form.breachName}
+                      onChange={set('breachName')}
+                      autoComplete="off"
+                    />
+                  </div>
+                  <div className="field">
+                    <label htmlFor={fieldId('breachDate')}>
+                      Date de la fuite <span className="optional">(facultatif)</span>
+                    </label>
+                    <input
+                      id={fieldId('breachDate')}
+                      className="input"
+                      type="date"
+                      value={form.breachDate}
+                      onChange={set('breachDate')}
+                    />
+                  </div>
+                </div>
+              )}
               <div className="field">
                 <label htmlFor={fieldId('contact')}>
                   E-mail du DPO ou du responsable <span className="optional">(facultatif)</span>
