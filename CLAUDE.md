@@ -19,7 +19,7 @@ npx prettier --write "src/**/*.{ts,tsx}"   # mise en forme (.prettierrc)
 - `src/router.ts` : routage par fragment (`#/lettre`, `#/suivi`, `#/ressources`, `#/a-propos`).
 - `src/data/sites.ts` : sites connus. Source et date de vérification obligatoires (vérifié par `sites.test.ts`). Vide pour l'instant.
 - `src/pages/`, `src/components/` : interface. `ShredSheet`, `BinaryField`, `ScrambleText`, `DataStream` et `Logo` sont décoratifs (`aria-hidden`, figés si `prefers-reduced-motion`).
-- `src/styles/global.css` : tokens de couleur et de typographie, mode sombre inclus. `.theme-dark` force le thème sombre localement (en-tête, pied de page, accueil, en-têtes de page) ; les pages outils suivent le thème de l'appareil.
+- `src/styles/global.css` : tokens de couleur et de typographie, mode sombre inclus. Le site est entièrement sombre : `<html class="theme-dark">` dans `index.html` (choix de design). Les tokens clairs de `:root` restent comme base.
 - Identité : bleu `#2F4BDC` du logo (`public/logo.png`, tracé vectoriel dans `Logo.tsx` et `public/favicon.svg`), polices Inter et JetBrains Mono auto-hébergées via `@fontsource-variable` (OFL).
 - `vite.config.ts` : injecte au build une CSP stricte (`connect-src 'none'`, `font-src 'self'`) et désactive l'intégration des fichiers en `data:` (`assetsInlineLimit: 0`), sinon la CSP bloque les petites polices. Toute fonctionnalité réseau future (Pwned Passwords) devra l'assouplir pour un seul domaine, explicitement.
 
@@ -36,7 +36,7 @@ npx prettier --write "src/**/*.{ts,tsx}"   # mise en forme (.prettierrc)
 - Texte d'interface en français, casse de phrase, tutoiement, voix active. Pas de « veuillez », pas de « simplement ».
 - Les lettres, adressées aux responsables de traitement, vouvoient.
 - Les modèles de lettres sont indicatifs : ne jamais présenter l'outil comme un conseil juridique.
-- Accessibilité : focus visible, `prefers-reduced-motion` respecté, contrastes AA en clair et en sombre.
+- Accessibilité : focus visible, `prefers-reduced-motion` respecté, contrastes AA sur le thème sombre.
 
 ## État du projet
 

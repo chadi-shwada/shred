@@ -1,7 +1,8 @@
 /* ==========================================================================
    Shred : tokens de couleur et de typographie, mode sombre inclus.
    Polices Inter et JetBrains Mono (OFL) servies par le site lui-même : aucun CDN.
-   Le héros et le bandeau final utilisent toujours le thème sombre (.theme-dark).
+   Le site entier utilise le thème sombre : <html class="theme-dark"> dans index.html.
+   Les tokens clairs de :root restent la base si on réintroduit un thème clair.
    ========================================================================== */
 
 :root {
@@ -310,7 +311,7 @@ code {
   position: sticky;
   top: 0;
   z-index: 50;
-  background: color-mix(in srgb, var(--bg) 94%, transparent);
+  background: color-mix(in srgb, var(--bg) 97%, transparent);
   backdrop-filter: saturate(1.8) blur(14px);
   -webkit-backdrop-filter: saturate(1.8) blur(14px);
   border-bottom: 1px solid var(--line);
