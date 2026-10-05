@@ -38,6 +38,17 @@ export interface TrackedRequest {
   sentOn: IsoDate;
   status: Status;
   notes: string;
+  /**
+   * Copies des lettres envoyées, gardées seulement si la personne le choisit
+   * (elles contiennent son nom). Servent au dossier de plainte CNIL.
+   */
+  letters?: SavedLetter[];
+}
+
+export interface SavedLetter {
+  date: IsoDate;
+  subject: string;
+  body: string;
 }
 
 export type Urgency = 'close' | 'en-cours' | 'bientot' | 'depassee';
@@ -112,7 +123,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 function parseRequest(value: unknown, index: number): TrackedRequest {
   const where = `Demande n° ${index + 1}`;
   if (!isRecord(value)) throw new ImportError(`${where} : format invalide.`);
-  const { id, site, kind, channel, sentOn, status, notes } = value;
+  const { id, site, kind, channel, sentOn, status, notes, letters } = value;
   if (typeof id !== 'string' || !id) throw new ImportError(`${where} : identifiant manquant.`);
   if (typeof site !== 'string' || !site.trim()) throw new ImportError(`${where} : site manquant.`);
   if (!isInitialKind(kind)) throw new ImportError(`${where} : type inconnu.`);
@@ -127,7 +138,19 @@ function parseRequest(value: unknown, index: number): TrackedRequest {
     sentOn,
     status: status as Status,
     notes: typeof notes === 'string' ? notes : '',
+    ...(Array.isArray(letters) && { letters: letters.filter(isSavedLetter) }),
   };
+}
+
+function isSavedLetter(value: unknown): value is SavedLetter {
+  return (
+    isRecord(value) && isValidIsoDate(value.date) && typeof value.subject === 'string' && typeof value.body === 'string'
+  );
+}
+
+/** Ajoute une copie de lettre à une demande. */
+export function withLetter(request: TrackedRequest, letter: SavedLetter): TrackedRequest {
+  return { ...request, letters: [...(request.letters ?? []), letter] };
 }
 
 export function parseExport(text: string): TrackedRequest[] {

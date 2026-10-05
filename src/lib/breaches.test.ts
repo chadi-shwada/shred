@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { dataClassLabel, mapDataClasses, parseCatalog, searchBreaches } from './breaches';
+import {
+  dataClassLabel,
+  hibpBreachUrl,
+  mapDataClasses,
+  newFrenchBreachesSince,
+  parseCatalog,
+  searchBreaches,
+} from './breaches';
 
 const RAW = {
   fetchedOn: '2026-10-05',
@@ -78,5 +85,36 @@ describe('searchBreaches', () => {
 
   it('respecte la limite', () => {
     expect(searchBreaches(breaches, '', 1)).toHaveLength(1);
+  });
+});
+
+describe('fiche HIBP et nouveautés', () => {
+  const { breaches } = parseCatalog({
+    breaches: [
+      { Name: 'Vieille', BreachDate: '2020-01-01', AddedDate: '2026-01-10T10:00:00Z', Domain: 'a.fr', IsFrench: true },
+      { Name: 'Nouvelle', BreachDate: '2026-08-01', AddedDate: '2026-09-20T08:00:00Z', Domain: 'b.fr', IsFrench: true },
+      {
+        Name: 'Étrangère',
+        BreachDate: '2026-08-01',
+        AddedDate: '2026-09-21T08:00:00Z',
+        Domain: 'c.com',
+        IsFrench: false,
+      },
+      { Name: 'Malware', BreachDate: '2026-08-01', AddedDate: '2026-09-22T08:00:00Z', IsFrench: true, IsMalware: true },
+    ],
+  });
+
+  it('lit la date d’ajout', () => {
+    expect(breaches[1]?.addedDate).toBe('2026-09-20');
+  });
+
+  it('liste les fuites françaises ajoutées depuis la dernière visite', () => {
+    expect(newFrenchBreachesSince(breaches, '2026-09-01').map((b) => b.name)).toEqual(['Nouvelle']);
+    expect(newFrenchBreachesSince(breaches, '2025-12-31').map((b) => b.name)).toEqual(['Nouvelle', 'Vieille']);
+    expect(newFrenchBreachesSince(breaches, null)).toEqual([]);
+  });
+
+  it('pointe vers la fiche publique HIBP', () => {
+    expect(hibpBreachUrl(breaches[2]!)).toBe('https://haveibeenpwned.com/Breach/%C3%89trang%C3%A8re');
   });
 });

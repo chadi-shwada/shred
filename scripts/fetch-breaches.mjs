@@ -19,6 +19,7 @@ const FIELDS = [
   'Title',
   'Domain',
   'BreachDate',
+  'AddedDate',
   'PwnCount',
   'DataClasses',
   'IsVerified',

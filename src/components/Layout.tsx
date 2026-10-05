@@ -10,8 +10,8 @@ const NAV: { path: RoutePath; label: string }[] = [
   { path: '/verifier', label: 'Vérifier' },
   { path: '/lettre', label: 'Écrire une lettre' },
   { path: '/suivi', label: 'Suivi' },
+  { path: '/que-faire', label: 'Que faire ?' },
   { path: '/ressources', label: 'Ressources' },
-  { path: '/a-propos', label: 'À propos' },
 ];
 
 interface LayoutProps {
@@ -114,6 +114,9 @@ export function Layout({ path, children }: LayoutProps) {
               <div>
                 <h2>Comprendre</h2>
                 <ul>
+                  <li>
+                    <a href={href('/que-faire')}>Que faire ?</a>
+                  </li>
                   <li>
                     <a href={href('/ressources')}>Ressources</a>
                   </li>

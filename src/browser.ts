@@ -33,3 +33,22 @@ export async function copyText(text: string): Promise<boolean> {
     return ok;
   }
 }
+
+/** Lecture du stockage local, sans planter en navigation privée. */
+export function readStorage(key: string): string | null {
+  try {
+    return window.localStorage.getItem(key);
+  } catch {
+    return null;
+  }
+}
+
+/** Écriture du stockage local ; false si le navigateur refuse. */
+export function writeStorage(key: string, value: string): boolean {
+  try {
+    window.localStorage.setItem(key, value);
+    return true;
+  } catch {
+    return false;
+  }
+}

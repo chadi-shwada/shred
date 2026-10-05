@@ -8,6 +8,7 @@ import { NotFound } from './pages/NotFound';
 import { Resources } from './pages/Resources';
 import { Tracker } from './pages/Tracker';
 import { Verify } from './pages/Verify';
+import { WhatToDo } from './pages/WhatToDo';
 import { pageMeta } from './seo';
 import { interceptLinks, upgradeLegacyUrl, useRoute, type Route } from './router';
 
@@ -17,6 +18,8 @@ function Page({ route }: { route: Route }) {
       return <Home />;
     case '/verifier':
       return <Verify />;
+    case '/que-faire':
+      return <WhatToDo />;
     case '/lettre':
       // La clé réinitialise le formulaire quand on arrive avec d'autres paramètres (relance depuis le suivi).
       return <Generator key={route.query.toString()} route={route} />;

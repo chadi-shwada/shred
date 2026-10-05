@@ -10,6 +10,7 @@ import {
   sortRequests,
   stateOf,
   STORAGE_KEY,
+  withLetter,
   type TrackedRequest,
 } from './tracking';
 
@@ -114,5 +115,20 @@ describe('stockage local', () => {
       },
     };
     expect(saveRequests(full, [req()], '2026-10-05')).toBe(false);
+  });
+});
+
+describe('copies des lettres', () => {
+  it('fait un aller-retour avec les lettres et ignore celles abîmées', () => {
+    const withCopies = withLetter(req(), { date: '2026-09-01', subject: 'Objet', body: 'Corps' });
+    const raw = JSON.parse(serializeExport([withCopies], '2026-10-05'));
+    raw.requests[0].letters.push({ date: 'hier', subject: 'x', body: 'y' });
+    expect(parseExport(JSON.stringify(raw))[0]?.letters).toEqual([
+      { date: '2026-09-01', subject: 'Objet', body: 'Corps' },
+    ]);
+  });
+
+  it('reste compatible avec les exports sans lettres', () => {
+    expect(parseExport(serializeExport([req()], '2026-10-05'))[0]).not.toHaveProperty('letters');
   });
 });

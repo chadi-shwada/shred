@@ -2111,6 +2111,306 @@ fieldset:last-child {
   gap: 0.1rem;
 }
 
+/* Plan d'action */
+.plan {
+  margin: 1.25rem 0;
+  padding: 1.1rem 1.15rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-subtle);
+}
+
+.plan__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.plan__head h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.plan__count {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--brand-text);
+}
+
+.plan__bar {
+  height: 4px;
+  margin: 0.75rem 0 0.9rem;
+  border-radius: 4px;
+  background: var(--line);
+  overflow: hidden;
+}
+
+.plan__fill {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(90deg, var(--brand), var(--brand-text));
+  box-shadow: 0 0 12px var(--glow);
+  transition: width 300ms ease;
+}
+
+.plan__list {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  list-style: none;
+}
+
+.plan__item {
+  display: flex;
+  gap: 0.7rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  cursor: pointer;
+  transition:
+    border-color 150ms ease,
+    opacity 150ms ease;
+}
+
+.plan__item:hover {
+  border-color: var(--line-strong);
+}
+
+.plan__item:has(input:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.plan__item input {
+  width: 1.05rem;
+  height: 1.05rem;
+  margin: 0.15rem 0 0;
+  accent-color: var(--brand);
+  flex: none;
+}
+
+.plan__item > span {
+  display: grid;
+  gap: 0.2rem;
+  font-size: 0.875rem;
+}
+
+.plan__detail {
+  color: var(--ink-2);
+}
+
+.plan__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  width: fit-content;
+  font-size: 0.8125rem;
+}
+
+.plan__list li[data-done='true'] .plan__item {
+  opacity: 0.6;
+}
+
+.plan__list li[data-done='true'] strong {
+  text-decoration: line-through;
+  text-decoration-color: var(--ink-3);
+}
+
+/* Lettres groupées */
+.batch {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+}
+
+.batch > * + * {
+  margin-top: 0.9rem;
+}
+
+.batch h3 {
+  font-size: 1rem;
+  margin: 0;
+}
+
+.batch__list {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.batch__list li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem 1rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--bg-subtle);
+}
+
+.batch__list li > div:first-child {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+/* Nouvelles fuites depuis la dernière visite */
+.fresh {
+  margin-bottom: 1rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--brand-line);
+  border-radius: var(--radius);
+  background: var(--brand-soft);
+  font-size: 0.875rem;
+}
+
+.fresh p {
+  margin: 0 0 0.6rem;
+}
+
+.fresh ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fresh__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid var(--brand-line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink);
+  font: inherit;
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.fresh__item:hover {
+  border-color: var(--brand);
+}
+
+/* Lien vers la fiche HIBP d'une fuite */
+.breach__more {
+  width: fit-content;
+  font-size: 0.75rem;
+}
+
+/* Générateur de mot de passe */
+.verify__side > * + * {
+  margin-top: 1rem;
+}
+
+.generator-pw {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1.15rem;
+}
+
+.generator-pw__value {
+  display: block;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-sm);
+  background: var(--bg-subtle);
+  font-family: var(--font-mono);
+  font-size: 0.9375rem;
+  letter-spacing: 0.02em;
+  overflow-wrap: anywhere;
+  color: var(--ink);
+}
+
+input[type='range'] {
+  width: 100%;
+  accent-color: var(--brand);
+}
+
+.checks--compact {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* Que faire ? */
+.channels {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  gap: 1rem;
+  margin: 0 0 clamp(3rem, 7vw, 5rem);
+  padding: 0;
+  list-style: none;
+}
+
+.channel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.35rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background-color: var(--surface);
+  background-image: linear-gradient(180deg, rgb(255 255 255 / 2.5%), transparent 45%);
+}
+
+.channel h3 {
+  margin: 0.5rem 0 0;
+}
+
+.channel p {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 0.9375rem;
+}
+
+.channel__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  width: fit-content;
+  margin-top: auto;
+  padding-top: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+}
+
+.guides .faq {
+  margin-inline: 0;
+  max-width: 52rem;
+}
+
+.guide__steps {
+  margin: 0 0.25rem 1rem;
+  padding-left: 1.25rem;
+  color: var(--ink-2);
+}
+
+.guide__steps li + li {
+  margin-top: 0.45rem;
+}
+
+.guide__links {
+  margin: 0 0.25rem 1.35rem;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+}
+
+.guides__notice {
+  max-width: 52rem;
+  margin-top: 2.5rem;
+}
+
 /* ---------- Encadrés ---------- */
 
 .notice {
@@ -3244,4 +3544,8 @@ fieldset:last-child {
     background: #fff;
     color: #000;
   }
+}
+
+.request__letters {
+  margin: 0 0 1rem;
 }

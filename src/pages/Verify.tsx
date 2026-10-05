@@ -1,47 +1,32 @@
 import { useEffect, useId, useMemo, useState, type FormEvent } from 'react';
 import { loadBreachCatalog } from '../breachCatalog';
+import { readStorage, writeStorage } from '../browser';
+import { ActionPlan } from '../components/ActionPlan';
+import { BatchLetters } from '../components/BatchLetters';
 import { ExternalLink } from '../components/ExternalLink';
 import { Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
 import { PageHead } from '../components/PageHead';
+import { PasswordGenerator } from '../components/PasswordGenerator';
 import {
   dataClassLabel,
   HIBP_LICENSE_URL,
   HIBP_URL,
+  hibpBreachUrl,
+  newFrenchBreachesSince,
   recentFrenchBreaches,
   searchBreaches,
   type Breach,
   type BreachCatalog,
 } from '../lib/breaches';
-import { formatLongFr } from '../lib/dates';
+import { formatLongFr, isValidIsoDate, todayIso } from '../lib/dates';
 import { breachLetterQuery } from '../lib/letterLink';
 import { pwnedCount, PwnedServiceError } from '../lib/pwned';
 import { href } from '../router';
 
-const RISKY = new Set(['Passwords', 'Credit cards', 'Partial credit card data', 'Bank account numbers']);
+const LAST_VISIT_KEY = 'shred.verifier.derniereVisite';
 
-const ADVICE: { when: string[]; text: string }[] = [
-  {
-    when: ['Passwords', 'Password hints'],
-    text: "Change le mot de passe concerné partout où tu l'utilises, et active la double authentification.",
-  },
-  {
-    when: ['Credit cards', 'Partial credit card data', 'Bank account numbers'],
-    text: 'Préviens ta banque et surveille tes relevés.',
-  },
-  {
-    when: ['Phone numbers'],
-    text: 'Méfie-toi des SMS et appels qui citent tes informations : la fuite sert souvent au hameçonnage.',
-  },
-  {
-    when: ['Email addresses'],
-    text: "Attends-toi à des e-mails d'hameçonnage crédibles. Ne clique pas sur les liens inattendus.",
-  },
-  {
-    when: ['Government issued IDs', 'Passport numbers', 'Social security numbers'],
-    text: "Tes papiers d'identité peuvent servir à une usurpation : signale-le sur cybermalveillance.gouv.fr.",
-  },
-];
+const RISKY = new Set(['Passwords', 'Credit cards', 'Partial credit card data', 'Bank account numbers']);
 
 function formatCount(n: number): string {
   return new Intl.NumberFormat('fr-FR').format(n);
@@ -166,6 +151,9 @@ function BreachRow({ breach, selected, onToggle }: { breach: Breach; selected: b
             ))}
             {more > 0 && <span className="chip">+{more}</span>}
           </span>
+          <ExternalLink href={hibpBreachUrl(breach)} className="breach__more">
+            Voir la fiche sur Have I Been Pwned
+          </ExternalLink>
         </span>
       </label>
     </li>
@@ -201,11 +189,23 @@ export function Verify() {
     [catalog, selected],
   );
   const exposed = useMemo(() => [...new Set(chosen.flatMap((b) => b.dataClasses))], [chosen]);
-  const advice = ADVICE.filter((a) => a.when.some((w) => exposed.includes(w)));
 
   const toggle = (name: string) => setSelected((s) => (s.includes(name) ? s.filter((n) => n !== name) : [...s, name]));
 
   const unavailable = catalog !== null && catalog.breaches.length === 0;
+
+  // Nouvelles fuites françaises depuis la dernière visite (date gardée dans le navigateur).
+  const [lastVisit] = useState(() => {
+    const raw = readStorage(LAST_VISIT_KEY);
+    return raw && isValidIsoDate(raw) ? raw : null;
+  });
+  useEffect(() => {
+    if (catalog && catalog.breaches.length > 0) writeStorage(LAST_VISIT_KEY, todayIso());
+  }, [catalog]);
+  const fresh = useMemo(
+    () => (catalog ? newFrenchBreachesSince(catalog.breaches, lastVisit) : []),
+    [catalog, lastVisit],
+  );
 
   return (
     <>
@@ -257,6 +257,27 @@ export function Verify() {
 
               {catalog && catalog.breaches.length > 0 && (
                 <>
+                  {fresh.length > 0 && lastVisit && (
+                    <div className="fresh" role="status">
+                      <p>
+                        <strong>
+                          {fresh.length} nouvelle{fresh.length > 1 ? 's' : ''} fuite{fresh.length > 1 ? 's' : ''}{' '}
+                          française{fresh.length > 1 ? 's' : ''}
+                        </strong>{' '}
+                        depuis ta dernière visite, le {formatLongFr(lastVisit)} :
+                      </p>
+                      <ul>
+                        {fresh.slice(0, 6).map((b) => (
+                          <li key={b.name}>
+                            <button type="button" className="fresh__item" onClick={() => toggle(b.name)}>
+                              {selected.includes(b.name) && <Icon name="check" size={14} />}
+                              {b.title}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                   <div className="field">
                     <label htmlFor={`${id}-q`}>Nom de la fuite ou du site</label>
                     <input
@@ -311,16 +332,7 @@ export function Verify() {
                   ))}
                 </div>
 
-                {advice.length > 0 && (
-                  <ul className="checklist">
-                    {advice.map((a) => (
-                      <li key={a.text}>
-                        <Icon name="alert" size={18} />
-                        {a.text}
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                <ActionPlan dataClasses={exposed} />
 
                 <ul className="letter-targets">
                   {chosen.map((b) => (
@@ -344,12 +356,14 @@ export function Verify() {
                   « Demander ce qui a fuité » s'appuie sur les articles 15 et 34 du RGPD : l'entreprise doit te dire
                   quelles données te concernent et ce qu'elle a fait. Les lettres sont des modèles indicatifs.
                 </p>
+                {chosen.length > 1 && <BatchLetters breaches={chosen} />}
               </section>
             )}
           </div>
 
           <aside className="verify__side">
             <PasswordCheck />
+            <PasswordGenerator />
           </aside>
         </div>
       </div>

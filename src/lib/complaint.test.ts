@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { complaintSummary } from './complaint';
+import { cnilDossier, complaintSummary } from './complaint';
 import type { TrackedRequest } from './tracking';
 
 const req: TrackedRequest = {
@@ -34,5 +34,23 @@ describe('complaintSummary', () => {
     expect(t).toContain("l'article 15 du RGPD");
     expect(t).toContain('expirait le 30 avril 2026');
     expect(t).not.toContain('Précisions');
+  });
+});
+
+describe('cnilDossier', () => {
+  it('rassemble le récapitulatif, les lettres et les pièces à joindre', () => {
+    const text = cnilDossier(
+      { ...req, letters: [{ date: '2026-01-31', subject: "Demande d'effacement", body: 'Madame, Monsieur…' }] },
+      '2026-04-02',
+    );
+    expect(text).toContain('Organisme concerné : exemple.test');
+    expect(text).toContain('LETTRES ENVOYÉES (1)');
+    expect(text).toContain("--- 31 janvier 2026 : Demande d'effacement ---");
+    expect(text).toContain('Madame, Monsieur…');
+    expect(text).toContain('PIÈCES À JOINDRE');
+  });
+
+  it('signale l’absence de copie', () => {
+    expect(cnilDossier(req, '2026-04-02')).toContain('Aucune copie gardée');
   });
 });

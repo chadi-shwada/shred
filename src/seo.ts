@@ -21,6 +21,12 @@ export const PAGES: PageMeta[] = [
       "Repère les fuites qui contiennent ton e-mail, vois quelles données sont exposées et teste un mot de passe sans le confier à personne. Puis écris à l'entreprise en un clic.",
   },
   {
+    path: '/que-faire',
+    title: 'Que faire après une fuite ? · Shred',
+    description:
+      'SMS, appel ou e-mail suspect, carte bancaire, pièce d’identité ou mot de passe exposé : les bons réflexes et les canaux officiels de signalement.',
+  },
+  {
     path: '/lettre',
     title: 'Écrire une lettre RGPD · Shred',
     description:

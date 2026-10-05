@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { parseCatalog } from './breaches';
-import { breachLetterQuery, parseCategories } from './letterLink';
+import { generateLetter } from './letters';
+import { breachLetterInput, breachLetterQuery, parseCategories } from './letterLink';
 
 const [breach] = parseCatalog({
   breaches: [
@@ -36,5 +37,23 @@ describe('parseCategories', () => {
   it('garde les catégories connues, sans doublon', () => {
     expect(parseCategories('email, motDePasse,inconnu,email')).toEqual(['email', 'motDePasse']);
     expect(parseCategories(null)).toEqual([]);
+  });
+});
+
+describe('breachLetterInput', () => {
+  it('produit la même lettre que le générateur pré-rempli', () => {
+    const input = breachLetterInput(breach!, 'acces', { fullName: 'Camille' }, '2026-10-05');
+    expect(input).toMatchObject({
+      kind: 'acces',
+      context: 'violation',
+      siteName: 'Exemple',
+      breachName: 'Exemple2024',
+      breachDate: '2024-03-01',
+      dataCategories: ['email', 'motDePasse'],
+      otherData: 'genre',
+    });
+    const letter = generateLetter(input);
+    expect(letter.body).toContain('violation de données subie par Exemple');
+    expect(letter.body).toContain('- mot de passe ou son empreinte (hash)');
   });
 });

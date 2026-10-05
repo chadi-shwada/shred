@@ -23,7 +23,7 @@ import {
 import { CLOUDFLARE_ABUSE_URL, extractDomain, icannLookupUrl } from '../lib/domain';
 import { parseCategories } from '../lib/letterLink';
 import { slugify } from '../lib/slug';
-import { newId } from '../lib/tracking';
+import { newId, withLetter, type TrackedRequest } from '../lib/tracking';
 import { href, type Route } from '../router';
 import { useTracking } from '../useTracking';
 
@@ -98,6 +98,7 @@ type Feedback = { tone: 'ok' | 'warn'; text: string } | null;
 export function Generator({ route }: { route: Route }) {
   const [form, setForm] = useState<FormState>(() => initialState(route));
   const [feedback, setFeedback] = useState<Feedback>(null);
+  const [keepCopy, setKeepCopy] = useState(false);
   const { requests, update, saveFailed } = useTracking();
   const uid = useId();
   const fieldId = (name: string) => `${uid}-${name}`;
@@ -186,24 +187,27 @@ export function Generator({ route }: { route: Route }) {
 
   const onTrack = () => {
     if (!letter) return;
+    const copy = { date: form.date, subject: letter.subject, body: letter.body };
     if (form.kind === 'relance') {
       if (!tracked) return;
-      update((list) => list.map((r) => (r.id === tracked.id ? { ...r, status: 'relancee' } : r)));
+      update((list) =>
+        list.map((r) =>
+          r.id === tracked.id ? { ...(keepCopy ? withLetter(r, copy) : r), status: 'relancee' as const } : r,
+        ),
+      );
       setFeedback({ tone: 'ok', text: 'La demande est marquée comme relancée dans ton suivi.' });
       return;
     }
-    update((list) => [
-      ...list,
-      {
-        id: newId(),
-        site: form.siteName.trim(),
-        kind: form.kind as InitialKind,
-        channel: 'email',
-        sentOn: form.date,
-        status: 'envoyee',
-        notes: '',
-      },
-    ]);
+    const request: TrackedRequest = {
+      id: newId(),
+      site: form.siteName.trim(),
+      kind: form.kind as InitialKind,
+      channel: 'email',
+      sentOn: form.date,
+      status: 'envoyee',
+      notes: '',
+    };
+    update((list) => [...list, keepCopy ? withLetter(request, copy) : request]);
     setFeedback({
       tone: 'ok',
       text: `Ajoutée au suivi. Échéance de réponse : ${formatLongFr(gdprDeadlines(form.date).standard)}.`,
@@ -589,6 +593,15 @@ export function Generator({ route }: { route: Route }) {
                   </button>
                 </div>
 
+                {canTrack && (
+                  <label className="check small">
+                    <input type="checkbox" checked={keepCopy} onChange={(e) => setKeepCopy(e.target.checked)} />
+                    <span>
+                      Garder une copie de la lettre dans le suivi, pour un éventuel dossier CNIL (elle contient ton nom
+                      et reste dans ce navigateur)
+                    </span>
+                  </label>
+                )}
                 <div className="btn-row">
                   <button type="button" className="btn btn--ghost" onClick={onTrack} disabled={!letter || !canTrack}>
                     <Icon name="plus" size={18} />

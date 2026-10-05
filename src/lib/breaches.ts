@@ -16,6 +16,8 @@ export interface Breach {
   title: string;
   domain: string;
   date: IsoDate;
+  /** Date d'ajout au catalogue HIBP (null si inconnue). */
+  addedDate: IsoDate | null;
   pwnCount: number;
   dataClasses: string[];
   verified: boolean;
@@ -52,6 +54,10 @@ function toBreach(raw: unknown): Breach | null {
     title: typeof Title === 'string' && Title ? Title : Name,
     domain: typeof Domain === 'string' ? Domain : '',
     date: BreachDate,
+    addedDate:
+      typeof raw.AddedDate === 'string' && isValidIsoDate(raw.AddedDate.slice(0, 10))
+        ? raw.AddedDate.slice(0, 10)
+        : null,
     pwnCount: typeof PwnCount === 'number' ? PwnCount : 0,
     dataClasses: Array.isArray(DataClasses) ? DataClasses.filter((d): d is string => typeof d === 'string') : [],
     verified: raw.IsVerified === true,
@@ -149,6 +155,22 @@ export function mapDataClasses(dataClasses: string[]): { categories: DataCategor
     }
   }
   return { categories, others };
+}
+
+/** Adresse de la fiche publique d'une fuite sur Have I Been Pwned. */
+export function hibpBreachUrl(breach: Breach): string {
+  return `${HIBP_URL}/Breach/${encodeURIComponent(breach.name)}`;
+}
+
+/**
+ * Fuites françaises ajoutées au catalogue après une date (dernière visite),
+ * les plus récentes d'abord. Sans date de référence : aucune.
+ */
+export function newFrenchBreachesSince(breaches: Breach[], since: IsoDate | null): Breach[] {
+  if (!since) return [];
+  return breaches
+    .filter((b) => b.french && !b.malware && !b.spamList && !b.fabricated && b.addedDate && b.addedDate > since)
+    .sort((a, b) => (b.addedDate ?? '').localeCompare(a.addedDate ?? ''));
 }
 
 /* ---------- Recherche ---------- */

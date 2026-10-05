@@ -4,7 +4,8 @@
  */
 
 import { mapDataClasses, type Breach } from './breaches';
-import { DATA_CATEGORIES, type DataCategory, type InitialKind } from './letters';
+import type { IsoDate } from './dates';
+import { DATA_CATEGORIES, type DataCategory, type InitialKind, type LetterInput } from './letters';
 
 export function breachLetterQuery(breach: Breach, kind: InitialKind): Record<string, string> {
   const { categories, others } = mapDataClasses(breach.dataClasses);
@@ -29,4 +30,30 @@ export function parseCategories(value: string | null): DataCategory[] {
     .split(',')
     .map((v) => v.trim())
     .filter((v, i, all): v is DataCategory => valid.includes(v) && all.indexOf(v) === i);
+}
+
+/**
+ * Lettre complète pour une fuite (contexte « violation »), utilisée par les
+ * lettres groupées : mêmes champs que ceux transmis au générateur par
+ * breachLetterQuery.
+ */
+export function breachLetterInput(
+  breach: Breach,
+  kind: InitialKind,
+  identity: { fullName: string; email?: string },
+  date: IsoDate,
+): LetterInput {
+  const { categories, others } = mapDataClasses(breach.dataClasses);
+  return {
+    kind,
+    context: 'violation',
+    fullName: identity.fullName,
+    email: identity.email,
+    siteName: breach.title,
+    breachName: breach.name.toLowerCase() !== breach.title.toLowerCase() ? breach.name : undefined,
+    breachDate: breach.date,
+    dataCategories: categories,
+    otherData: others.join(', '),
+    date,
+  };
 }

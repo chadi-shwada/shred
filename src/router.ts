@@ -10,12 +10,21 @@ import { useSyncExternalStore } from 'react';
  * Les anciennes adresses en #/lettre?… restent valables (parseLocation).
  */
 
-export type RoutePath = '/' | '/verifier' | '/lettre' | '/suivi' | '/ressources' | '/a-propos' | '/mentions-legales';
+export type RoutePath =
+  | '/'
+  | '/verifier'
+  | '/que-faire'
+  | '/lettre'
+  | '/suivi'
+  | '/ressources'
+  | '/a-propos'
+  | '/mentions-legales';
 
 /** Toutes les routes, pour vérifier qu'elles ont chacune leurs métadonnées (seo.test.ts). */
 export const PUBLIC_ROUTES: readonly RoutePath[] = [
   '/',
   '/verifier',
+  '/que-faire',
   '/lettre',
   '/suivi',
   '/ressources',

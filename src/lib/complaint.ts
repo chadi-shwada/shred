@@ -30,3 +30,32 @@ export function complaintSummary(request: TrackedRequest, today: IsoDate): strin
   );
   return lines.join('\n');
 }
+
+/**
+ * Dossier complet à joindre à une plainte : récapitulatif, puis le texte de
+ * chaque lettre gardée en copie dans le suivi.
+ */
+export function cnilDossier(request: TrackedRequest, today: IsoDate): string {
+  const parts = [
+    'DOSSIER DE PLAINTE CNIL (préparé avec Shred, modèle indicatif)',
+    '',
+    complaintSummary(request, today),
+  ];
+  const letters = request.letters ?? [];
+  parts.push('', '', `LETTRES ENVOYÉES (${letters.length})`);
+  if (letters.length === 0) {
+    parts.push('', 'Aucune copie gardée dans le suivi. Joins les lettres que tu as envoyées.');
+  }
+  for (const letter of letters) {
+    parts.push('', `--- ${formatLongFr(letter.date)} : ${letter.subject} ---`, '', letter.body);
+  }
+  parts.push(
+    '',
+    '',
+    'PIÈCES À JOINDRE',
+    "- captures d'écran datées des pages qui exposent tes données ;",
+    "- preuves d'envoi et de réception (accusés, captures, numéros de ticket) ;",
+    '- réponses éventuelles de l’organisme.',
+  );
+  return parts.join('\n');
+}

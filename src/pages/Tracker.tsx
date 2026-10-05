@@ -4,7 +4,7 @@ import { ExternalLink } from '../components/ExternalLink';
 import { Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
 import { PageHead } from '../components/PageHead';
-import { CNIL_COMPLAINT_URL, complaintSummary } from '../lib/complaint';
+import { CNIL_COMPLAINT_URL, cnilDossier, complaintSummary } from '../lib/complaint';
 import { formatLongFr, isValidIsoDate, todayIso } from '../lib/dates';
 import { buildIcs } from '../lib/ics';
 import { slugify } from '../lib/slug';
@@ -370,6 +370,12 @@ export function Tracker() {
                         </div>
                       </dl>
                       {request.notes && <p className="request__notes">{request.notes}</p>}
+                      {request.letters && request.letters.length > 0 && (
+                        <p className="hint request__letters">
+                          {request.letters.length} lettre{request.letters.length > 1 ? 's' : ''} gardée
+                          {request.letters.length > 1 ? 's' : ''} en copie pour le dossier CNIL
+                        </p>
+                      )}
                       <div className="request__controls">
                         <label className="visually-hidden" htmlFor={`${uid}-status-${request.id}`}>
                           Statut de la demande à {request.site}
@@ -451,6 +457,19 @@ export function Tracker() {
                             >
                               <Icon name="copy" size={16} />
                               Copier
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn--sm"
+                              onClick={() =>
+                                downloadText(
+                                  `shred-dossier-cnil-${slugify(request.site)}.txt`,
+                                  cnilDossier(request, today),
+                                )
+                              }
+                            >
+                              <Icon name="download" size={16} />
+                              Dossier complet
                             </button>
                             <ExternalLink href={CNIL_COMPLAINT_URL} className="btn btn--sm">
                               Adresser une plainte à la CNIL
