@@ -7,8 +7,15 @@
 
 const FRENCH_TEXT = /\b(French|France)\b/;
 
+/**
+ * Entreprises françaises dont la description HIBP ne cite pas la France
+ * (repérées en vérifiant le catalogue du 5 octobre 2026).
+ */
+const KNOWN_FRENCH_DOMAINS = new Set(['dailymotion.com', 'deezer.com']);
+
 export function isFrenchBreach({ Domain, Description }) {
-  if (typeof Domain === 'string' && /\.fr$/i.test(Domain.trim())) return true;
+  const domain = typeof Domain === 'string' ? Domain.trim().toLowerCase() : '';
+  if (domain.endsWith('.fr') || KNOWN_FRENCH_DOMAINS.has(domain)) return true;
   if (typeof Description === 'string' && FRENCH_TEXT.test(Description)) return true;
   return false;
 }

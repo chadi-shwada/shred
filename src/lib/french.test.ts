@@ -8,6 +8,13 @@ describe('isFrenchBreach (heuristique du build)', () => {
     expect(isFrenchBreach({ Domain: 'EXEMPLE.FR ' })).toBe(true);
   });
 
+  it('retient les entreprises françaises connues dont la description ne cite pas la France', () => {
+    expect(isFrenchBreach({ Domain: 'dailymotion.com', Description: 'In 2016, the video sharing platform…' })).toBe(
+      true,
+    );
+    expect(isFrenchBreach({ Domain: 'Deezer.com' })).toBe(true);
+  });
+
   it('retient une description qui mentionne la France', () => {
     expect(isFrenchBreach({ Domain: 'exemple.com', Description: 'In 2024, the French retailer lost data.' })).toBe(
       true,
@@ -30,10 +37,13 @@ describe('recentFrenchBreaches', () => {
       { Name: 'B', BreachDate: '2024-01-01', Domain: 'b.com', IsFrench: true },
       { Name: 'C', BreachDate: '2026-01-01', Domain: 'c.com', IsFrench: true },
       { Name: 'D', BreachDate: '2023-01-01', Domain: 'ancien.fr' },
+      { Name: 'Malware', BreachDate: '2026-06-01', Domain: '', IsFrench: true, IsMalware: true },
+      { Name: 'Spam', BreachDate: '2026-06-02', Domain: '', IsFrench: true, IsSpamList: true },
+      { Name: 'Faux', BreachDate: '2026-06-03', Domain: 'faux.fr', IsFrench: true, IsFabricated: true },
     ],
   });
 
-  it('ne garde que les fuites françaises, les plus récentes d’abord', () => {
+  it('ne garde que les fuites françaises à qui écrire, les plus récentes d’abord', () => {
     expect(recentFrenchBreaches(breaches).map((b) => b.name)).toEqual(['C', 'B', 'D']);
   });
 

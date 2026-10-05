@@ -25,6 +25,7 @@ const FIELDS = [
   'IsFabricated',
   'IsSensitive',
   'IsSpamList',
+  'IsMalware',
 ];
 
 try {

@@ -22,6 +22,8 @@ export interface Breach {
   fabricated: boolean;
   sensitive: boolean;
   spamList: boolean;
+  /** Données issues d'un logiciel malveillant : personne à qui écrire. */
+  malware: boolean;
   /** Fuite française selon l'heuristique du build (scripts/french.mjs). */
   french: boolean;
 }
@@ -56,6 +58,7 @@ function toBreach(raw: unknown): Breach | null {
     fabricated: raw.IsFabricated === true,
     sensitive: raw.IsSensitive === true,
     spamList: raw.IsSpamList === true,
+    malware: raw.IsMalware === true,
     // Ancien fichier sans l'indice : on se rabat sur le domaine en .fr.
     french: typeof raw.IsFrench === 'boolean' ? raw.IsFrench : /\.fr$/i.test(typeof Domain === 'string' ? Domain : ''),
   };
@@ -150,10 +153,13 @@ export function mapDataClasses(dataClasses: string[]): { categories: DataCategor
 
 /* ---------- Recherche ---------- */
 
-/** Les fuites françaises les plus récentes. */
+/**
+ * Les fuites françaises les plus récentes, sans celles où il n'y a pas
+ * d'entreprise à qui écrire (logiciel malveillant, liste de spam, fuite fabriquée).
+ */
 export function recentFrenchBreaches(breaches: Breach[], limit = 12): Breach[] {
   return breaches
-    .filter((b) => b.french)
+    .filter((b) => b.french && !b.malware && !b.spamList && !b.fabricated)
     .sort((a, b) => b.date.localeCompare(a.date))
     .slice(0, limit);
 }

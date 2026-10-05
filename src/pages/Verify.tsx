@@ -151,6 +151,7 @@ function BreachRow({ breach, selected, onToggle }: { breach: Breach; selected: b
             {!breach.verified && <span className="breach__flag">non vérifiée</span>}
             {breach.fabricated && <span className="breach__flag">possiblement fabriquée</span>}
             {breach.spamList && <span className="breach__flag">liste de spam</span>}
+            {breach.malware && <span className="breach__flag">logiciel malveillant</span>}
           </span>
           <span className="breach__meta">
             {breach.domain && <span className="mono">{breach.domain}</span>}
