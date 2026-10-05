@@ -4,6 +4,7 @@ import { DataStream } from '../components/DataStream';
 import { Icon, type IconName } from '../components/Icon';
 import { ScrambleText } from '../components/ScrambleText';
 import { ShredSheet } from '../components/ShredSheet';
+import { VerifyMock } from '../components/VerifyMock';
 import { formatLongFr, gdprDeadlines } from '../lib/dates';
 import { generateLetter } from '../lib/letters';
 import { href } from '../router';
@@ -28,31 +29,6 @@ const STEPS: { icon: IconName; title: string; text: string }[] = [
     icon: 'bell',
     title: 'Suis le délai',
     text: "Le site a un mois pour répondre. Shred calcule l'échéance et prépare la relance.",
-  },
-];
-
-/** Exemples fictifs pour l'aperçu de la page Vérifier (aucune vraie fuite). */
-const MOCK_BREACHES = [
-  {
-    title: 'Exemple Réseau',
-    domain: 'exemple-reseau.test',
-    date: 'nov. 2025',
-    classes: ['adresses e-mail', 'mots de passe', 'téléphones'],
-    selected: true,
-  },
-  {
-    title: 'Exemple Boutique',
-    domain: 'exemple-boutique.test',
-    date: 'juin 2024',
-    classes: ['adresses e-mail', 'cartes bancaires', 'adresses postales'],
-    selected: true,
-  },
-  {
-    title: 'Exemple Forum',
-    domain: 'exemple-forum.test',
-    date: 'févr. 2023',
-    classes: ['identifiants', 'adresses IP'],
-    selected: false,
   },
 ];
 
@@ -164,47 +140,7 @@ export function Home() {
               Vérifier mes fuites
             </a>
           </div>
-          <div className="mock" aria-hidden="true">
-            <div className="mock__bar">
-              <span className="terminal__dot" />
-              <span className="terminal__dot" />
-              <span className="terminal__dot" />
-              <span className="mock__url">shred / vérifier</span>
-            </div>
-            <div className="mock__body">
-              <div className="mock__search">
-                <Icon name="search" size={16} />
-                exemple
-              </div>
-              {MOCK_BREACHES.map((b) => (
-                <div className="mock__row" data-selected={b.selected} key={b.title}>
-                  <span className="mock__check">{b.selected && <Icon name="check" size={12} />}</span>
-                  <div>
-                    <strong>{b.title}</strong>
-                    <span className="mock__meta">
-                      {b.domain} · {b.date}
-                    </span>
-                    <span className="mock__chips">
-                      {b.classes.map((c) => (
-                        <span
-                          key={c}
-                          className={`chip${c === 'mots de passe' || c === 'cartes bancaires' ? ' chip--danger' : ''}`}
-                        >
-                          {c}
-                        </span>
-                      ))}
-                    </span>
-                  </div>
-                </div>
-              ))}
-              <div className="mock__footer">
-                <span>2 fuites · 5 types de données exposés</span>
-                <span className="mock__cta">
-                  Écrire la lettre <Icon name="arrow" size={14} />
-                </span>
-              </div>
-            </div>
-          </div>
+          <VerifyMock />
         </div>
       </section>
 
