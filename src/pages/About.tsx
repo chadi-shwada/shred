@@ -1,0 +1,65 @@
+import { ExternalLink } from '../components/ExternalLink';
+import { KNOWN_SITES } from '../data/sites';
+
+export function About() {
+  return (
+    <>
+      <div className="container page-head">
+        <span className="eyebrow">À propos</span>
+        <h1>Un outil pour se défendre, pas pour surveiller</h1>
+        <p className="lead">
+          Shred aide les personnes dont les données ont fuité à exercer leurs droits, sans rien leur demander en retour.
+        </p>
+      </div>
+
+      <div className="container page-body">
+        <div className="prose">
+          <h2>Ce que fait Shred</h2>
+          <ul>
+            <li>Il rédige des lettres d'effacement, d'accès et de relance fondées sur le RGPD.</li>
+            <li>Il calcule les délais légaux de réponse et t'aide à suivre tes demandes.</li>
+            <li>Il te renvoie vers les bons interlocuteurs, à commencer par la CNIL.</li>
+          </ul>
+
+          <h2>Ce que Shred ne fera jamais</h2>
+          <ul>
+            <li>Envoyer tes données à un serveur ou à un tiers. Le site est statique et n'a pas de serveur applicatif.</li>
+            <li>Héberger une base de fuites, même partielle, même hachée.</li>
+            <li>Inventer le contact d'un responsable de traitement ou d'un DPO.</li>
+            <li>Se présenter comme un conseil juridique : les modèles sont indicatifs.</li>
+          </ul>
+
+          <h2>Vie privée</h2>
+          <p>
+            Pas de compte, pas de cookie, pas d'analytics, pas de police chargée depuis un CDN. La page déclare une
+            politique de sécurité du contenu (<code>connect-src 'none'</code>) : ton navigateur bloque toute requête
+            réseau lancée par la page.
+          </p>
+          <p>
+            Le formulaire de lettre reste en mémoire dans l'onglet et disparaît quand tu le fermes. Le suivi enregistre
+            seulement le site, le type de demande, les dates, le statut et tes notes, dans le stockage local de ton
+            navigateur. Tu peux l'exporter ou l'effacer à tout moment.
+          </p>
+          <p>
+            Le bouton « Ouvrir dans ma messagerie » passe la lettre à ton logiciel de messagerie : c'est lui qui
+            l'envoie, pas Shred. Les liens vers des sites externes s'ouvrent sans transmettre d'adresse d'origine.
+          </p>
+
+          <h2>Sites connus</h2>
+          <p>
+            {KNOWN_SITES.length === 0
+              ? "La liste des sites connus est vide pour l'instant. Un site n'y entre qu'avec une source publique et une date de vérification, et son contact n'est indiqué que s'il est sourcé."
+              : `La liste compte ${KNOWN_SITES.length} site${KNOWN_SITES.length > 1 ? 's' : ''}, chacun avec une source publique et une date de vérification.`}
+          </p>
+
+          <h2>Contribuer</h2>
+          <p>
+            Le code est libre. Tu peux signaler une erreur dans une lettre, proposer une amélioration ou héberger ta
+            propre copie :{' '}
+            <ExternalLink href="https://github.com/chadi-shwada/shred">github.com/chadi-shwada/shred</ExternalLink>.
+          </p>
+        </div>
+      </div>
+    </>
+  );
+}

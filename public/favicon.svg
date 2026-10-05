@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+  <style>
+    .bg { fill: #17171a; } .paper { fill: #f6f5f1; } .slot { fill: #e0482a; }
+    @media (prefers-color-scheme: dark) { .bg { fill: #ededee; } .paper { fill: #121214; } }
+  </style>
+  <rect class="bg" width="24" height="24" rx="6"/>
+  <rect class="paper" x="7" y="4" width="10" height="7" rx="1"/>
+  <rect class="slot" x="4" y="11" width="16" height="2" rx="1"/>
+  <rect class="paper" x="7" y="14" width="2" height="6" rx="1"/>
+  <rect class="paper" x="11" y="14" width="2" height="5" rx="1"/>
+  <rect class="paper" x="15" y="14" width="2" height="6" rx="1"/>
+</svg>
