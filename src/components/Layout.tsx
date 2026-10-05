@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type MouseEvent, type ReactNode } from 'react';
 import { href, type RoutePath } from '../router';
+import { ExternalLink } from './ExternalLink';
 import { FooterWord } from './FooterWord';
 import { Icon } from './Icon';
 import { Logo } from './Logo';
@@ -130,7 +131,10 @@ export function Layout({ path, children }: LayoutProps) {
           </div>
           <div className="site-footer__legal">
             <span>Modèles indicatifs, pas un conseil juridique.</span>
-            <span>Aucune donnée ne quitte ton navigateur.</span>
+            <span>
+              Conçu avec ❤️ par <ExternalLink href="https://x.com/Cha4Sh">Cha4Sh</ExternalLink> et l'IA · © 2026
+            </span>
+            <span>Aucune donnée personnelle ne quitte ton navigateur.</span>
           </div>
         </div>
         <FooterWord />

@@ -2597,6 +2597,10 @@ fieldset:last-child {
   color: var(--ink);
 }
 
+.site-footer__legal a {
+  color: var(--brand-text);
+}
+
 .site-footer__legal {
   display: flex;
   flex-wrap: wrap;
