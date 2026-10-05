@@ -104,7 +104,9 @@ export function Home() {
           <div>
             <span className="pill">
               <span className="pill__tag">Sans traceur</span>
-              <span className="pill__text">Gratuit, sans compte, sans publicité</span>
+              <span className="pill__text">
+                Gratuit, sans compte<span className="pill__more">, sans publicité</span>
+              </span>
             </span>
             <h1 id="titre">
               Demande l'effacement de <ScrambleText className="accent" text="tes données" />
