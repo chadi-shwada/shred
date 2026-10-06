@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Layout } from './components/Layout';
 import { About } from './pages/About';
+import { BreachPage } from './pages/BreachPage';
 import { Generator } from './pages/Generator';
 import { Home } from './pages/Home';
 import { LegalNotice } from './pages/LegalNotice';
@@ -9,6 +10,8 @@ import { Resources } from './pages/Resources';
 import { Tracker } from './pages/Tracker';
 import { Verify } from './pages/Verify';
 import { WhatToDo } from './pages/WhatToDo';
+import { BREACH_PATH_PREFIX } from './lib/breachPages';
+import { revealOnScroll } from './reveal';
 import { pageMeta } from './seo';
 import { interceptLinks, upgradeLegacyUrl, useRoute, type Route } from './router';
 
@@ -32,6 +35,9 @@ function Page({ route }: { route: Route }) {
     case '/mentions-legales':
       return <LegalNotice />;
     default:
+      if (route.path.startsWith(BREACH_PATH_PREFIX)) {
+        return <BreachPage key={route.path} slug={route.path.slice(BREACH_PATH_PREFIX.length)} />;
+      }
       return <NotFound />;
   }
 }
@@ -51,7 +57,10 @@ export function App() {
   }, []);
 
   useEffect(() => {
-    document.title = pageMeta(route.path).title;
+    // Les pages de fuite posent leur titre une fois le catalogue chargé.
+    document.title = route.path.startsWith(BREACH_PATH_PREFIX)
+      ? 'Fuite de données · Shred'
+      : pageMeta(route.path).title;
     if (first.current) {
       first.current = false;
       return;
@@ -60,6 +69,9 @@ export function App() {
     window.scrollTo(0, 0);
     document.getElementById('contenu')?.focus({ preventScroll: true });
   }, [route.path]);
+
+  // Après le rendu de chaque page : apparition des blocs au défilement.
+  useEffect(() => revealOnScroll(), [route.path]);
 
   return (
     <Layout path={route.path}>

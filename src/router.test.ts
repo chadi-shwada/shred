@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { href, parseLocation } from './router';
+import { href, isAppLink, parseLocation } from './router';
 
 describe('href', () => {
   it('place les paramètres dans le fragment, jamais envoyé au serveur', () => {
@@ -29,5 +29,16 @@ describe('parseLocation', () => {
 
   it('ignore une ancre simple comme #contenu', () => {
     expect(parseLocation('/ressources', '#contenu').path).toBe('/ressources');
+  });
+});
+
+describe('isAppLink', () => {
+  it('garde les pages internes et laisse passer les fichiers et liens externes', () => {
+    expect(isAppLink('/lettre#site=x')).toBe(true);
+    expect(isAppLink('/fuite/free')).toBe(true);
+    expect(isAppLink('/fuites.xml')).toBe(false);
+    expect(isAppLink('/videos/shred-demo.mp4')).toBe(false);
+    expect(isAppLink('//exemple.test/page')).toBe(false);
+    expect(isAppLink('https://exemple.test')).toBe(false);
   });
 });

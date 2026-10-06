@@ -4,6 +4,8 @@ import { Icon } from './Icon';
 /**
  * Animation d'accueil (décorative) : une fiche de fuite est analysée,
  * découpée en bandes comme le logo, puis remplacée par la confirmation.
+ * La fiche reprend une vraie fuite (Deezer, 2019, diffusée sur BreachForums
+ * en 2022) avec une personne fictive aux valeurs masquées.
  * Respecte prefers-reduced-motion (voir global.css).
  */
 
@@ -17,26 +19,26 @@ function LeakCard() {
         <span className="terminal__dot" />
         <span className="terminal__dot" />
         <span className="terminal__dot" />
-        <span className="terminal__title">exemple-fuites.test/dump/2026</span>
+        <span className="terminal__title">breachforums · deezer_2019.csv</span>
       </div>
       <div className="terminal__body">
         <span className="terminal__alert">Fuite détectée · 4 champs exposés</span>
         <dl className="terminal__rows">
           <div className="terminal__row">
             <dt>email</dt>
-            <dd>c•••••.m•••••@mail.test</dd>
+            <dd>c•••••.m•••••@gmail.com</dd>
           </div>
           <div className="terminal__row">
-            <dt>password</dt>
-            <dd className="hl">5f4dcc3b5aa765d61d83…</dd>
+            <dt>birthdate</dt>
+            <dd>1993-••-14</dd>
           </div>
           <div className="terminal__row">
-            <dt>phone</dt>
-            <dd>+33 6 •• •• •• 12</dd>
+            <dt>ip</dt>
+            <dd className="hl">86.2••.•••.41</dd>
           </div>
           <div className="terminal__row">
-            <dt>address</dt>
-            <dd>12 rue ••••••, 75011</dd>
+            <dt>location</dt>
+            <dd>Paris, France</dd>
           </div>
         </dl>
         <p className="terminal__prompt">

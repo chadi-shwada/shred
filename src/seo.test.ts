@@ -49,4 +49,11 @@ describe('sitemap', () => {
     for (const p of PAGES) expect(xml).toContain(`<loc>https://shred-delta.vercel.app${p.path}</loc>`);
     expect(xml).not.toContain('404');
   });
+
+  it('utilise l’image propre à la page quand elle existe', () => {
+    const tags = headTags({ path: '/fuite/free', title: 'Fuite Free', description: 'x', image: '/og/free.jpg' });
+    expect(tags).toContain('content="https://shred-delta.vercel.app/og/free.jpg"');
+    expect(tags).toContain('<meta property="og:image:alt" content="Fuite Free" />');
+    expect(headTags(pageMeta('/'))).toContain('content="https://shred-delta.vercel.app/og.png"');
+  });
 });

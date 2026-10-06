@@ -109,6 +109,11 @@ export function Layout({ path, children }: LayoutProps) {
                   <li>
                     <a href={href('/suivi')}>Suivi</a>
                   </li>
+                  <li>
+                    <a href="/fuites.xml" type="application/atom+xml">
+                      Nouvelles fuites (flux RSS)
+                    </a>
+                  </li>
                 </ul>
               </div>
               <div>
@@ -125,6 +130,9 @@ export function Layout({ path, children }: LayoutProps) {
                   </li>
                   <li>
                     <a href={href('/mentions-legales')}>Mentions légales</a>
+                  </li>
+                  <li>
+                    <ExternalLink href={AUTHOR.url}>Une erreur, une idée ? Écris-moi</ExternalLink>
                   </li>
                   {SOURCE_CODE_URL && (
                     <li>

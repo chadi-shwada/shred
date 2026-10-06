@@ -1,13 +1,13 @@
-/** Bandeau de faux enregistrements floutés qui défilent (décoratif). */
+/** Bandeau d'enregistrements floutés qui défilent (décoratif) : formats réalistes, valeurs masquées, personne fictive. */
 
 const RECORDS = [
-  ['email', 'j.dupont@mail.test'],
+  ['email', 'j.dup•••@orange.fr'],
   ['password', 'e10adc3949ba59abbe56'],
-  ['phone', '+33 6 12 34 56 78'],
-  ['iban', 'FR76 3000 6000 0112'],
-  ['birthdate', '1991-04-17'],
-  ['address', '8 rue des Lilas, Lyon'],
-  ['ip', '192.0.2.44'],
+  ['phone', '+33 6 •• •• 56 78'],
+  ['iban', 'FR76 3000 4••• ••••'],
+  ['birthdate', '1991-••-17'],
+  ['address', '•• rue de la République, Lyon'],
+  ['ip', '90.1••.•••.44'],
   ['username', 'camille_m'],
 ];
 

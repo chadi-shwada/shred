@@ -38,6 +38,19 @@ export interface BreachCatalog {
 export const EMPTY_CATALOG: BreachCatalog = { fetchedOn: null, breaches: [] };
 
 export const HIBP_URL = 'https://haveibeenpwned.com';
+
+/** Types de données les plus sensibles, mis en avant en rouge. */
+export const RISKY_DATA_CLASSES: ReadonlySet<string> = new Set([
+  'Passwords',
+  'Credit cards',
+  'Partial credit card data',
+  'Bank account numbers',
+]);
+
+/** « 13 926 173 ». */
+export function formatCount(n: number): string {
+  return new Intl.NumberFormat('fr-FR').format(n);
+}
 export const HIBP_LICENSE_URL = 'https://creativecommons.org/licenses/by/4.0/';
 
 function isRecord(value: unknown): value is Record<string, unknown> {

@@ -5,6 +5,13 @@ import { Icon, type IconName } from '../components/Icon';
 import { ScrambleText } from '../components/ScrambleText';
 import { ShredSheet } from '../components/ShredSheet';
 import { VerifyMock } from '../components/VerifyMock';
+import { ShowcaseVideo } from '../components/ShowcaseVideo';
+import { PRESENTATION } from '../data/videos';
+import summary from 'virtual:catalog-summary';
+import { formatMonthFr } from '../lib/breachPages';
+import { formatCount } from '../lib/breaches';
+import { RISK_LABELS, RISK_RULE } from '../lib/risk';
+import { BreachMark } from '../components/BreachMark';
 import { formatLongFr, gdprDeadlines } from '../lib/dates';
 import { generateLetter } from '../lib/letters';
 import { href } from '../router';
@@ -41,29 +48,6 @@ const STARTS: { icon: IconName; title: string; text: string; link: string; actio
   },
 ];
 
-const STEPS: { icon: IconName; title: string; text: string }[] = [
-  {
-    icon: 'search',
-    title: 'Vérifie ce qui a fuité',
-    text: 'Repère les fuites qui contiennent ton e-mail et teste tes mots de passe, sans les confier à Shred.',
-  },
-  {
-    icon: 'file',
-    title: 'Génère ta lettre',
-    text: 'Effacement, accès ou relance : la lettre cite les bons articles du RGPD.',
-  },
-  {
-    icon: 'send',
-    title: 'Envoie-la toi-même',
-    text: 'Copie le texte ou ouvre-le dans ta messagerie. Shred ne contacte personne à ta place.',
-  },
-  {
-    icon: 'bell',
-    title: 'Suis le délai',
-    text: "Le site a un mois pour répondre. Shred calcule l'échéance et prépare la relance.",
-  },
-];
-
 const FAQ = [
   {
     q: 'Est-ce que Shred voit mes données ?',
@@ -84,12 +68,16 @@ const FAQ = [
 ];
 
 const SAMPLE_DATE = '2026-10-05';
+/** Exemple réel : la fuite Free d'octobre 2024 (catalogue HIBP), personne fictive. */
 const SAMPLE = generateLetter({
   kind: 'effacement',
+  context: 'violation',
   fullName: 'Camille Martin',
-  siteName: 'exemple-fuites.test',
-  urls: ['https://exemple-fuites.test/dump/2026'],
-  dataCategories: ['email', 'motDePasse'],
+  siteName: 'Free',
+  breachDate: '2024-10-17',
+  urls: [],
+  dataCategories: ['bancaire', 'dateNaissance', 'nomPrenom', 'telephone', 'adresse'],
+  otherData: 'genre',
   date: SAMPLE_DATE,
 });
 const SAMPLE_EXCERPT = SAMPLE.body.split('\n\n').slice(0, 4).join('\n\n');
@@ -145,6 +133,70 @@ export function Home() {
       </section>
 
       <DataStream />
+
+      <section className="section section--tight" aria-labelledby="video">
+        <div className="container">
+          <div className="section__head">
+            <span className="eyebrow">En vidéo</span>
+            <h2 id="video">Vois Shred en action</h2>
+            <p className="lead">
+              Le principe, puis la démo complète sur une vraie fuite : trouver la fuite, écrire à l'entreprise, suivre
+              le délai, relancer.
+            </p>
+          </div>
+          <ShowcaseVideo video={PRESENTATION} />
+        </div>
+      </section>
+
+      {summary.latest.length > 0 && (
+        <section className="section section--tight" aria-labelledby="recentes">
+          <div className="container">
+            <div className="section__head">
+              <span className="eyebrow eyebrow--live">En ce moment</span>
+              <h2 id="recentes">Les dernières fuites en France</h2>
+              <p className="lead">
+                {formatCount(summary.total)} fuites connues dans le monde, dont {summary.french} touchant la France
+                {summary.fetchedOn && <> (catalogue Have I Been Pwned du {formatLongFr(summary.fetchedOn)})</>}. Tu
+                étais client ? Vois ce qui a fuité et quoi faire.
+              </p>
+            </div>
+            <ul className="recent-breaches">
+              {summary.latest.map((b) => (
+                <li key={b.path}>
+                  <a className="start recent-breach" href={b.path}>
+                    <span className="recent-breach__head">
+                      <BreachMark title={b.title} />
+                      <strong>{b.title}</strong>
+                      <span className="recent-breach__date">{formatMonthFr(b.date)}</span>
+                    </span>
+                    <span className="recent-breach__meta">
+                      {b.pwnCount > 0 && (
+                        <span className="recent-breach__count">{formatCount(b.pwnCount)} comptes</span>
+                      )}
+                      <span className={`risk risk--${b.risk}`}>{RISK_LABELS[b.risk]}</span>
+                    </span>
+                    <span className="recent-breach__types">
+                      {b.dataClasses.slice(0, 3).join(' · ')}
+                      {b.dataClasses.length > 3 && ` · +${b.dataClasses.length - 3}`}
+                    </span>
+                    <span className="start__action">
+                      Que faire ?
+                      <Icon name="arrow" size={16} />
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <p className="recent-breaches__more">
+              <a href={href('/verifier')}>Chercher parmi toutes les fuites</a>
+              <a href="/fuites.xml" type="application/atom+xml">
+                Suivre les nouvelles fuites (flux RSS)
+              </a>
+            </p>
+            <p className="hint recent-breaches__rule">{RISK_RULE}</p>
+          </div>
+        </section>
+      )}
 
       <section className="section section--tight" aria-labelledby="commencer-par">
         <div className="container">
@@ -204,12 +256,14 @@ export function Home() {
         </div>
       </section>
 
-      <section className="section" aria-labelledby="zero">
+      <section className="section" aria-labelledby="principes">
         <div className="container">
-          <div className="section__head section__head--center">
-            <span className="eyebrow">Confidentialité</span>
-            <h2 id="zero">Tes données restent chez toi</h2>
-            <p className="lead">Shred n'a rien à protéger, parce qu'il ne garde rien.</p>
+          <div className="section__head">
+            <span className="eyebrow eyebrow--ok">Confidentialité</span>
+            <h2 id="principes">Tes données restent chez toi</h2>
+            <p className="lead">
+              Un outil pour te défendre, qui n'héberge rien : Shred n'a rien à protéger, parce qu'il ne garde rien.
+            </p>
           </div>
           <dl className="zeros">
             <div>
@@ -231,41 +285,6 @@ export function Home() {
               </dd>
             </div>
           </dl>
-        </div>
-      </section>
-
-      <section className="section section--subtle" aria-labelledby="comment">
-        <div className="container">
-          <div className="section__head">
-            <span className="eyebrow">Méthode</span>
-            <h2 id="comment">Quatre étapes, une dizaine de minutes</h2>
-            <p className="lead">De la page qui t'expose à la réponse du site, Shred t'accompagne à chaque étape.</p>
-          </div>
-          <ol className="steps">
-            {STEPS.map((step, i) => (
-              <li className="step" key={step.title}>
-                <span className="step__node" aria-hidden="true">
-                  0{i + 1}
-                </span>
-                <div className="step__card">
-                  <span className="step__icon">
-                    <Icon name={step.icon} />
-                  </span>
-                  <h3>{step.title}</h3>
-                  <p>{step.text}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      <section className="section" aria-labelledby="principes">
-        <div className="container">
-          <div className="section__head">
-            <span className="eyebrow">Principes</span>
-            <h2 id="principes">Un outil pour te défendre, qui n'héberge rien</h2>
-          </div>
           <div className="bento">
             <article className="tile tile--wide">
               <h3>Rien ne quitte ton navigateur</h3>
@@ -357,9 +376,9 @@ export function Home() {
               <Icon name="arrow" size={18} />
             </a>
           </div>
-          <div className="preview-window" aria-label="Extrait d'une lettre d'effacement générée">
+          <div className="preview-window" role="figure" aria-label="Extrait d'une lettre d'effacement générée">
             <div className="preview-bar">
-              <span className="small mono muted">lettre-effacement.txt</span>
+              <span className="small mono muted">lettre-effacement-free.txt</span>
               <ul className="chips">
                 {SAMPLE.articles.slice(0, 4).map((a) => (
                   <li className="chip" key={a}>
@@ -368,7 +387,7 @@ export function Home() {
                 ))}
               </ul>
             </div>
-            <div className="paper">
+            <div className="paper" tabIndex={0} role="region" aria-label="Texte de la lettre d'exemple">
               <p className="paper__subject">Objet : {SAMPLE.subject}</p>
               <pre className="paper__body">{SAMPLE_EXCERPT}</pre>
             </div>

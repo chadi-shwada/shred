@@ -2,35 +2,56 @@ import { useEffect, useRef, useState } from 'react';
 import { Icon } from './Icon';
 
 /**
- * Aperçu animé de la page Vérifier (décoratif, exemples fictifs) :
- * frappe de la recherche, apparition des fuites, coches successives,
- * compteur mis à jour, puis bouton « Écrire la lettre » mis en avant.
+ * Aperçu animé de la page Vérifier (décoratif) : frappe de la recherche,
+ * apparition des fuites, coches successives, compteur mis à jour, puis bouton
+ * « Écrire la lettre » mis en avant.
+ * Les fuites sont réelles : ce sont les trois premiers résultats de la recherche
+ * « mobile » dans le catalogue Have I Been Pwned (vérifié le 6 octobre 2026),
+ * avec leurs types de données traduits comme sur la page Vérifier.
  * Ne tourne que lorsqu'il est visible ; état final fixe si prefers-reduced-motion.
  */
 
 const BREACHES = [
   {
-    title: 'Exemple Réseau',
-    domain: 'exemple-reseau.test',
-    date: 'nov. 2025',
-    classes: ['adresses e-mail', 'mots de passe', 'téléphones'],
+    title: 'Free',
+    domain: 'free.fr',
+    date: 'oct. 2024',
+    classes: [
+      'numéros de compte bancaire',
+      'dates de naissance',
+      'genre',
+      'noms',
+      'numéros de téléphone',
+      'adresses postales',
+    ],
   },
   {
-    title: 'Exemple Boutique',
-    domain: 'exemple-boutique.test',
-    date: 'juin 2024',
-    classes: ['adresses e-mail', 'cartes bancaires', 'adresses postales'],
+    title: 'La Poste Mobile',
+    domain: 'lapostemobile.fr',
+    date: 'juil. 2022',
+    classes: [
+      'numéros de compte bancaire',
+      'dates de naissance',
+      'adresses e-mail',
+      'genre',
+      'noms',
+      'numéros de téléphone',
+      'adresses postales',
+    ],
   },
   {
-    title: 'Exemple Forum',
-    domain: 'exemple-forum.test',
-    date: 'févr. 2023',
-    classes: ['identifiants', 'adresses IP'],
+    title: 'ActMobile',
+    domain: 'actmobile.com',
+    date: 'oct. 2021',
+    classes: ['adresses e-mail', 'adresses IP'],
   },
 ];
 
-const QUERY = 'exemple';
-const RISKY = new Set(['mots de passe', 'cartes bancaires']);
+/** Nombre de types affichés par fuite, comme sur la page Vérifier ; les autres sont résumés en « +N ». */
+const SHOWN = 3;
+
+const QUERY = 'mobile';
+const RISKY = new Set(['mots de passe', 'numéros de compte bancaire']);
 
 interface Frame {
   query: string;
@@ -120,11 +141,12 @@ export function VerifyMock() {
                 {b.domain} · {b.date}
               </span>
               <span className="mock__chips">
-                {b.classes.map((c) => (
+                {b.classes.slice(0, SHOWN).map((c) => (
                   <span key={c} className={`chip${RISKY.has(c) ? ' chip--danger' : ''}`}>
                     {c}
                   </span>
                 ))}
+                {b.classes.length > SHOWN && <span className="chip">+{b.classes.length - SHOWN}</span>}
               </span>
             </div>
           </div>

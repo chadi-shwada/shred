@@ -1,6 +1,7 @@
 import { useId, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { copyText, downloadText } from '../browser';
 import { ExternalLink } from '../components/ExternalLink';
+import { ShredBurst } from '../components/ShredBurst';
 import { Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
 import { PageHead } from '../components/PageHead';
@@ -72,6 +73,7 @@ export function Tracker() {
   const sorted = sortRequests(requests, today);
   const counts: Record<Urgency, number> = { depassee: 0, bientot: 0, 'en-cours': 0, close: 0 };
   for (const r of requests) counts[stateOf(r, today).urgency] += 1;
+  const satisfied = requests.filter((r) => r.status === 'satisfaite').length;
 
   const setField =
     <K extends keyof Draft>(key: K) =>
@@ -106,8 +108,12 @@ export function Tracker() {
     setFeedback({ tone: 'ok', text: `Demande à ${draft.site.trim()} ajoutée.` });
   };
 
+  /** Demande tout juste passée en « Satisfaite » : petite fête, rejouée à chaque fois. */
+  const [celebrate, setCelebrate] = useState<{ id: string; n: number } | null>(null);
+
   const setStatus = (id: string, status: Status) => {
     update((list) => list.map((r) => (r.id === id ? { ...r, status } : r)));
+    if (status === 'satisfaite') setCelebrate((c) => ({ id, n: (c?.n ?? 0) + 1 }));
   };
 
   const remove = (request: TrackedRequest) => {
@@ -330,6 +336,22 @@ export function Tracker() {
               )}
             </div>
 
+            {satisfied > 0 && (
+              <div className="tracker-win">
+                <span className="tracker-win__icon" aria-hidden="true">
+                  <Icon name="check" />
+                </span>
+                <p>
+                  <strong>
+                    {satisfied === 1
+                      ? '1 entreprise a répondu favorablement'
+                      : `${satisfied} entreprises ont répondu favorablement`}
+                  </strong>
+                  <span>Tu as fait respecter tes droits. Garde leur réponse avec ton suivi.</span>
+                </p>
+              </div>
+            )}
+
             {sorted.length === 0 ? (
               <div className="empty">
                 <span className="empty__icon">
@@ -346,7 +368,7 @@ export function Tracker() {
                 {sorted.map((request) => {
                   const state = stateOf(request, today);
                   return (
-                    <li key={request.id} className="request" data-urgency={state.urgency}>
+                    <li key={request.id} className="request" data-urgency={state.urgency} data-status={request.status}>
                       <div className="request__head">
                         <h3 className="request__site">{request.site}</h3>
                         <span className={`badge badge--${state.urgency}`}>{urgencyText(state)}</span>
@@ -369,6 +391,13 @@ export function Tracker() {
                           <dd>{formatLongFr(state.deadline)}</dd>
                         </div>
                       </dl>
+                      {request.status === 'satisfaite' && (
+                        <p className="request__win">
+                          <Icon name="check" size={18} />
+                          Demande satisfaite, bravo !
+                        </p>
+                      )}
+                      {celebrate?.id === request.id && <ShredBurst key={celebrate.n} tone="ok" />}
                       {request.notes && <p className="request__notes">{request.notes}</p>}
                       {request.letters && request.letters.length > 0 && (
                         <p className="hint request__letters">
@@ -401,6 +430,7 @@ export function Tracker() {
                               depuis: request.sentOn,
                               premiere: request.kind,
                               suivi: request.id,
+                              ...(request.context && { contexte: request.context }),
                             })}
                           >
                             Préparer une relance
