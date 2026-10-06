@@ -6,6 +6,7 @@
 
 import { dataClassLabel, formatCount, recentFrenchBreaches, type Breach, type BreachCatalog } from './breaches';
 import { formatLongFr, type IsoDate } from './dates';
+import { breachRisk, type RiskLevel } from './risk';
 import { slugify } from './slug';
 
 export const BREACH_PATH_PREFIX = '/fuite/';
@@ -95,7 +96,14 @@ export interface CatalogSummary {
   fetchedOn: IsoDate | null;
   total: number;
   french: number;
-  latest: { title: string; path: string; date: IsoDate; pwnCount: number; dataClasses: string[] }[];
+  latest: {
+    title: string;
+    path: string;
+    date: IsoDate;
+    pwnCount: number;
+    dataClasses: string[];
+    risk: RiskLevel;
+  }[];
 }
 
 export function catalogSummary(catalog: BreachCatalog, latest = 6): CatalogSummary {
@@ -111,6 +119,7 @@ export function catalogSummary(catalog: BreachCatalog, latest = 6): CatalogSumma
       date: b.date,
       pwnCount: b.pwnCount,
       dataClasses: b.dataClasses.map(dataClassLabel),
+      risk: breachRisk(b.dataClasses),
     })),
   };
 }

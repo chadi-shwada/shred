@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ActionPlan } from '../components/ActionPlan';
+import { BreachMark } from '../components/BreachMark';
 import { ExternalLink } from '../components/ExternalLink';
 import { Icon } from '../components/Icon';
 import { PageHead } from '../components/PageHead';
@@ -17,6 +18,7 @@ import {
 } from '../lib/breaches';
 import { formatLongFr } from '../lib/dates';
 import { breachLetterQuery } from '../lib/letterLink';
+import { breachRisk, RISK_LABELS, RISK_RULE } from '../lib/risk';
 import { href } from '../router';
 import { NOT_FOUND } from '../seo';
 import { NotFound } from './NotFound';
@@ -63,6 +65,7 @@ export function BreachPage({ slug }: { slug: string }) {
     .filter((b) => b.name !== breach.name)
     .slice(0, OTHERS);
   const contact = DPO_CONTACTS[breach.name];
+  const risk = breachRisk(breach.dataClasses);
   const facts = [
     { label: 'Date de la fuite', value: formatLongFr(breach.date) },
     ...(breach.pwnCount > 0 ? [{ label: 'Comptes touchés', value: formatCount(breach.pwnCount) }] : []),
@@ -82,6 +85,13 @@ export function BreachPage({ slug }: { slug: string }) {
       </PageHead>
 
       <div className="container page-body breach-page">
+        <div className="breach-summary">
+          <BreachMark title={breach.title} size="lg" />
+          <div>
+            <span className={`risk risk--${risk}`}>{RISK_LABELS[risk]}</span>
+            <p className="hint">{RISK_RULE}</p>
+          </div>
+        </div>
         <dl className="breach-facts">
           {facts.map((f) => (
             <div key={f.label}>
@@ -174,7 +184,10 @@ export function BreachPage({ slug }: { slug: string }) {
             <ul className="breach-links">
               {others.map((b) => (
                 <li key={b.name}>
-                  <a href={paths.get(b.name)}>{b.title}</a>
+                  <span className="breach-links__name">
+                    <BreachMark title={b.title} size="sm" />
+                    <a href={paths.get(b.name)}>{b.title}</a>
+                  </span>
                   <span className="hint">{formatMonthFr(b.date)}</span>
                 </li>
               ))}

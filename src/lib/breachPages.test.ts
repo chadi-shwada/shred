@@ -86,9 +86,9 @@ describe('résumé pour l’accueil', () => {
   it('compte les fuites et liste les plus récentes avec leur page', () => {
     const summary = catalogSummary(CATALOG, 2);
     expect(summary).toMatchObject({ fetchedOn: '2026-10-05', total: 7, french: 4 });
-    expect(summary.latest.map((l) => [l.title, l.path])).toEqual([
-      ['Free', '/fuite/free'],
-      ['La Poste Mobile', '/fuite/la-poste-mobile'],
+    expect(summary.latest.map((l) => [l.title, l.path, l.risk])).toEqual([
+      ['Free', '/fuite/free', 'eleve'],
+      ['La Poste Mobile', '/fuite/la-poste-mobile', 'faible'],
     ]);
   });
 });

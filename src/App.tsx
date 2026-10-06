@@ -11,6 +11,7 @@ import { Tracker } from './pages/Tracker';
 import { Verify } from './pages/Verify';
 import { WhatToDo } from './pages/WhatToDo';
 import { BREACH_PATH_PREFIX } from './lib/breachPages';
+import { revealOnScroll } from './reveal';
 import { pageMeta } from './seo';
 import { interceptLinks, upgradeLegacyUrl, useRoute, type Route } from './router';
 
@@ -68,6 +69,9 @@ export function App() {
     window.scrollTo(0, 0);
     document.getElementById('contenu')?.focus({ preventScroll: true });
   }, [route.path]);
+
+  // Après le rendu de chaque page : apparition des blocs au défilement.
+  useEffect(() => revealOnScroll(), [route.path]);
 
   return (
     <Layout path={route.path}>

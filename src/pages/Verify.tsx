@@ -7,6 +7,7 @@ import { ExternalLink } from '../components/ExternalLink';
 import { Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
 import { PageHead } from '../components/PageHead';
+import { BreachMark } from '../components/BreachMark';
 import { PasswordGenerator } from '../components/PasswordGenerator';
 import { PasteResults } from '../components/PasteResults';
 import { breachPathsByName } from '../lib/breachPages';
@@ -42,9 +43,6 @@ const SITUATIONS: { value: Situation; label: string; hint: string }[] = [
 function asSituation(value: string | null): Situation {
   return value === 'message' || value === 'publie' ? value : 'verifier';
 }
-
-/** Les outils de mot de passe sont repliés sur petit écran pour garder le parcours court. */
-const WIDE_QUERY = '(min-width: 961px)';
 
 const RISKY = RISKY_DATA_CLASSES;
 
@@ -153,6 +151,7 @@ function BreachRow({ breach, selected, onToggle }: { breach: Breach; selected: b
         <input type="checkbox" checked={selected} onChange={onToggle} />
         <span className="breach__main">
           <span className="breach__title">
+            <BreachMark title={breach.title} size="sm" />
             {breach.title}
             {!breach.verified && <span className="breach__flag">non vérifiée</span>}
             {breach.fabricated && <span className="breach__flag">possiblement fabriquée</span>}
@@ -187,7 +186,6 @@ export function Verify() {
   const situation = asSituation(route.query.get('parcours'));
   const setSituation = (value: Situation) =>
     navigate(href('/verifier', value === 'verifier' ? undefined : { parcours: value }), { replace: true });
-  const [toolsOpen] = useState(() => typeof window !== 'undefined' && window.matchMedia?.(WIDE_QUERY).matches);
   const [catalog, setCatalog] = useState<BreachCatalog | null>(null);
   const [query, setQuery] = useState('');
   const [selected, setSelected] = useState<string[]>([]);
@@ -532,7 +530,8 @@ export function Verify() {
           </div>
 
           <aside className="verify__side">
-            <details className="verify__tools" open={toolsOpen}>
+            {/* Repliés par défaut : l'attention va au parcours 1 → 2 → 3. */}
+            <details className="verify__tools">
               <summary>
                 <Icon name="lock" size={16} />
                 Mots de passe : tester ou en créer un
