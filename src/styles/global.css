@@ -355,7 +355,7 @@ code {
   transition:
     max-width 350ms cubic-bezier(0.2, 0.8, 0.2, 1),
     height 350ms cubic-bezier(0.2, 0.8, 0.2, 1),
-    margin-top 350ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 350ms cubic-bezier(0.2, 0.8, 0.2, 1),
     padding 350ms cubic-bezier(0.2, 0.8, 0.2, 1),
     border-radius 350ms ease,
     background-color 250ms ease,
@@ -370,8 +370,10 @@ code {
 
 .site-header[data-scrolled='true'] .site-header__inner {
   max-width: min(66rem, calc(100% - 1.5rem));
-  height: calc(var(--header-h) - 0.9rem);
-  margin-top: 0.55rem;
+  height: calc(var(--header-h) - 1rem);
+  /* Décalage par transform : une marge haute fusionnerait avec l'en-tête et
+     la barre resterait collée au bord. */
+  transform: translateY(0.75rem);
   padding-inline: 0.55rem 0.45rem;
   border-color: var(--line-strong);
   border-radius: 999px;
