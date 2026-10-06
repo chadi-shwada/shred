@@ -1,4 +1,5 @@
 import type { CSSProperties } from 'react';
+import { breachLogo } from '../breachLogos';
 
 /** Teinte stable tirée du nom (même fuite, même couleur). */
 function hue(text: string): number {
@@ -8,10 +9,19 @@ function hue(text: string): number {
 }
 
 /**
- * Médaillon décoratif d'une fuite : l'initiale de l'entreprise sur une couleur
- * tirée de son nom. Pas de logo (droit des marques, aucune requête externe).
+ * Repère visuel d'une fuite (décoratif, le nom est écrit à côté) : le logo de
+ * l'entreprise s'il a été téléchargé au build (src/breachLogos.ts), sinon son
+ * initiale sur une couleur tirée du nom.
  */
-export function BreachMark({ title, size = 'md' }: { title: string; size?: 'sm' | 'md' | 'lg' }) {
+export function BreachMark({ title, name, size = 'md' }: { title: string; name?: string; size?: 'sm' | 'md' | 'lg' }) {
+  const logo = name ? breachLogo(name) : undefined;
+  if (logo) {
+    return (
+      <span className={`breach-mark breach-mark--${size} breach-mark--logo`} aria-hidden="true">
+        <img src={logo} alt="" loading="lazy" decoding="async" />
+      </span>
+    );
+  }
   const initial = title.trim().charAt(0).toUpperCase() || '?';
   return (
     <span

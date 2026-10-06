@@ -11,6 +11,7 @@ import {
   dataClassLabel,
   formatCount,
   HIBP_LICENSE_URL,
+  LOGO_NOTICE,
   HIBP_URL,
   hibpBreachUrl,
   RISKY_DATA_CLASSES,
@@ -86,7 +87,7 @@ export function BreachPage({ slug }: { slug: string }) {
 
       <div className="container page-body breach-page">
         <div className="breach-summary">
-          <BreachMark title={breach.title} size="lg" />
+          <BreachMark title={breach.title} name={breach.name} size="lg" />
           <div>
             <span className={`risk risk--${risk}`}>{RISK_LABELS[risk]}</span>
             <p className="hint">{RISK_RULE}</p>
@@ -175,7 +176,7 @@ export function BreachPage({ slug }: { slug: string }) {
               Informations : <ExternalLink href={HIBP_URL}>Have I Been Pwned</ExternalLink>, sous licence{' '}
               <ExternalLink href={HIBP_LICENSE_URL}>CC BY 4.0</ExternalLink>
               {catalog.fetchedOn && <>, mise à jour le {formatLongFr(catalog.fetchedOn)}</>}. Ce sont des informations
-              publiques sur la fuite, pas les données fuitées.
+              publiques sur la fuite, pas les données fuitées. {LOGO_NOTICE}
             </p>
           </div>
 
@@ -185,7 +186,7 @@ export function BreachPage({ slug }: { slug: string }) {
               {others.map((b) => (
                 <li key={b.name}>
                   <span className="breach-links__name">
-                    <BreachMark title={b.title} size="sm" />
+                    <BreachMark title={b.title} name={b.name} size="sm" />
                     <a href={paths.get(b.name)}>{b.title}</a>
                   </span>
                   <span className="hint">{formatMonthFr(b.date)}</span>

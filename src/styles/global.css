@@ -4641,3 +4641,39 @@ input[type='range'] {
     scroll-snap-align: start;
   }
 }
+
+/* Logo d'entreprise (téléchargé au build) : sur fond clair, comme ils sont dessinés */
+.breach-mark--logo {
+  padding: 0.2rem;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 8%);
+}
+
+.breach-mark--logo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.breach-mark--lg.breach-mark--logo {
+  padding: 0.45rem;
+}
+
+/* Logo d'entreprise (téléchargé au build) : sur fond clair, comme ils sont dessinés */
+.breach-mark--logo {
+  padding: 0.2rem;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 8%);
+}
+
+.breach-mark--logo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.breach-mark--lg.breach-mark--logo {
+  padding: 0.45rem;
+}

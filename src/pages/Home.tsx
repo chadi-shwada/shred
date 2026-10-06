@@ -9,7 +9,7 @@ import { ShowcaseVideo } from '../components/ShowcaseVideo';
 import { PRESENTATION } from '../data/videos';
 import summary from 'virtual:catalog-summary';
 import { formatMonthFr } from '../lib/breachPages';
-import { formatCount } from '../lib/breaches';
+import { formatCount, LOGO_NOTICE } from '../lib/breaches';
 import { RISK_LABELS, RISK_RULE } from '../lib/risk';
 import { BreachMark } from '../components/BreachMark';
 import { formatLongFr, gdprDeadlines } from '../lib/dates';
@@ -165,7 +165,7 @@ export function Home() {
                 <li key={b.path}>
                   <a className="start recent-breach" href={b.path}>
                     <span className="recent-breach__head">
-                      <BreachMark title={b.title} />
+                      <BreachMark title={b.title} name={b.name} />
                       <strong>{b.title}</strong>
                       <span className="recent-breach__date">{formatMonthFr(b.date)}</span>
                     </span>
@@ -193,7 +193,9 @@ export function Home() {
                 Suivre les nouvelles fuites (flux RSS)
               </a>
             </p>
-            <p className="hint recent-breaches__rule">{RISK_RULE}</p>
+            <p className="hint recent-breaches__rule">
+              {RISK_RULE} {LOGO_NOTICE}
+            </p>
           </div>
         </section>
       )}

@@ -15,6 +15,7 @@ import {
   dataClassLabel,
   formatCount,
   HIBP_LICENSE_URL,
+  LOGO_NOTICE,
   HIBP_URL,
   hibpBreachUrl,
   newFrenchBreachesSince,
@@ -151,7 +152,7 @@ function BreachRow({ breach, selected, onToggle }: { breach: Breach; selected: b
         <input type="checkbox" checked={selected} onChange={onToggle} />
         <span className="breach__main">
           <span className="breach__title">
-            <BreachMark title={breach.title} size="sm" />
+            <BreachMark title={breach.title} name={breach.name} size="sm" />
             {breach.title}
             {!breach.verified && <span className="breach__flag">non vérifiée</span>}
             {breach.fabricated && <span className="breach__flag">possiblement fabriquée</span>}
@@ -471,7 +472,7 @@ export function Verify() {
                       Liste des fuites : <ExternalLink href={HIBP_URL}>Have I Been Pwned</ExternalLink>, sous licence{' '}
                       <ExternalLink href={HIBP_LICENSE_URL}>CC BY 4.0</ExternalLink>
                       {catalog.fetchedOn && <>, mise à jour le {formatLongFr(catalog.fetchedOn)}</>}. Ce sont des
-                      informations publiques sur les fuites, pas les données fuitées.
+                      informations publiques sur les fuites, pas les données fuitées. {LOGO_NOTICE}
                     </p>
                   </>
                 )}
