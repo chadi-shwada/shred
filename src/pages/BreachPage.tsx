@@ -4,7 +4,7 @@ import { BreachMark } from '../components/BreachMark';
 import { ExternalLink } from '../components/ExternalLink';
 import { Icon } from '../components/Icon';
 import { PageHead } from '../components/PageHead';
-import { loadBreachCatalog } from '../breachCatalog';
+import { loadBreachCatalog, loadedBreachCatalog } from '../breachCatalog';
 import { DPO_CONTACTS } from '../data/contacts';
 import { breachPageMeta, breachPathsByName, findBreachBySlug, formatMonthFr, pageBreaches } from '../lib/breachPages';
 import {
@@ -33,7 +33,7 @@ const OTHERS = 6;
  * Métadonnées publiques du catalogue HIBP seulement (règle n° 2).
  */
 export function BreachPage({ slug }: { slug: string }) {
-  const [catalog, setCatalog] = useState<BreachCatalog | null>(null);
+  const [catalog, setCatalog] = useState<BreachCatalog | null>(loadedBreachCatalog);
 
   useEffect(() => {
     let active = true;
