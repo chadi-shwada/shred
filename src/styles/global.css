@@ -2595,6 +2595,27 @@ fieldset:last-child {
   border-color: var(--brand);
 }
 
+/* Choix de voir les nouvelles fuites à la prochaine visite */
+.watch {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.watch p {
+  flex: 1 1 22rem;
+  margin: 0;
+}
+
+.watch .watch__error {
+  flex-basis: 100%;
+  color: var(--ink);
+}
+
 /* Lien vers la fiche HIBP d'une fuite */
 .breach__more {
   display: grid;

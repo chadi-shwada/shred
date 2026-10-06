@@ -1,7 +1,7 @@
 import { useEffect, useId, useMemo, useRef, useState, type FormEvent } from 'react';
 import type { IconName } from '../components/Icon';
 import { loadBreachCatalog } from '../breachCatalog';
-import { readStorage, writeStorage } from '../browser';
+import { readStorage, removeStorage, writeStorage } from '../browser';
 import { ActionPlan } from '../components/ActionPlan';
 import { BatchLetters } from '../components/BatchLetters';
 import { ExternalLink } from '../components/ExternalLink';
@@ -31,7 +31,13 @@ import { breachLetterQuery } from '../lib/letterLink';
 import { pwnedCount, PwnedServiceError } from '../lib/pwned';
 import { href, navigate, useRoute } from '../router';
 
-const LAST_VISIT_KEY = 'shred.verifier.derniereVisite';
+/**
+ * Date de la dernière visite, gardée seulement si la personne a demandé à voir les nouvelles fuites
+ * (traceur exempté de consentement car demandé expressément). L'ancienne clé, écrite d'office avant
+ * le 7 octobre 2026, est effacée.
+ */
+const LAST_VISIT_KEY = 'shred.verifier.nouvellesFuites';
+const OLD_LAST_VISIT_KEY = 'shred.verifier.derniereVisite';
 
 /** Ce que la personne veut vérifier (paramètre « parcours » du fragment). */
 type Situation = 'verifier' | 'mot-de-passe' | 'message' | 'publie';
@@ -287,17 +293,33 @@ function BreachFlow({ mode, catalog }: { mode: 'verifier' | 'message'; catalog: 
 
   const unavailable = catalog !== null && catalog.breaches.length === 0;
 
-  // Nouvelles fuites françaises depuis la dernière visite (date gardée dans le navigateur).
+  // Nouvelles fuites françaises depuis la dernière visite, seulement si la personne l'a demandé.
   const [lastVisit] = useState(() => {
     const raw = readStorage(LAST_VISIT_KEY);
     return raw && isValidIsoDate(raw) ? raw : null;
   });
+  const [watching, setWatching] = useState(lastVisit !== null);
+  const [watchNote, setWatchNote] = useState<'on' | 'refused' | null>(null);
+  useEffect(() => removeStorage(OLD_LAST_VISIT_KEY), []);
   useEffect(() => {
-    if (catalog && catalog.breaches.length > 0) writeStorage(LAST_VISIT_KEY, todayIso());
-  }, [catalog]);
+    if (watching && catalog && catalog.breaches.length > 0) writeStorage(LAST_VISIT_KEY, todayIso());
+  }, [watching, catalog]);
+  const startWatching = () => {
+    if (writeStorage(LAST_VISIT_KEY, todayIso())) {
+      setWatching(true);
+      setWatchNote('on');
+    } else {
+      setWatchNote('refused');
+    }
+  };
+  const stopWatching = () => {
+    removeStorage(LAST_VISIT_KEY);
+    setWatching(false);
+    setWatchNote(null);
+  };
   const fresh = useMemo(
-    () => (catalog ? newFrenchBreachesSince(catalog.breaches, lastVisit) : []),
-    [catalog, lastVisit],
+    () => (catalog && watching ? newFrenchBreachesSince(catalog.breaches, lastVisit) : []),
+    [catalog, watching, lastVisit],
   );
 
   const titleProps = { ref: heading, tabIndex: -1 } as const;
@@ -406,7 +428,7 @@ function BreachFlow({ mode, catalog }: { mode: 'verifier' | 'message'; catalog: 
                   </ul>
                 </div>
               )}
-              {fresh.length > 0 && lastVisit && (
+              {watching && fresh.length > 0 && lastVisit && (
                 <div className="fresh" role="status">
                   <p>
                     <strong>
@@ -427,6 +449,36 @@ function BreachFlow({ mode, catalog }: { mode: 'verifier' | 'message'; catalog: 
                   </ul>
                 </div>
               )}
+              <div className="watch">
+                {watching ? (
+                  <>
+                    <p role="status">
+                      {watchNote === 'on'
+                        ? `C'est noté : à ta prochaine visite, tu verras les fuites françaises ajoutées depuis le ${formatLongFr(todayIso())}.`
+                        : 'Tu vois les fuites françaises ajoutées depuis ta dernière visite.'}
+                    </p>
+                    <button type="button" className="btn btn--ghost btn--sm" onClick={stopWatching}>
+                      Ne plus me les signaler
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <p>
+                      À ta prochaine visite, veux-tu voir les fuites françaises ajoutées d'ici là ? ShredRGPD garde
+                      alors la date du jour dans ton navigateur, rien d'autre, et ne l'envoie nulle part.
+                    </p>
+                    <button type="button" className="btn btn--ghost btn--sm" onClick={startWatching}>
+                      <Icon name="bell" size={16} />
+                      Me signaler les nouvelles fuites
+                    </button>
+                    {watchNote === 'refused' && (
+                      <p className="watch__error" role="status">
+                        Ton navigateur refuse l'enregistrement (navigation privée ?) : rien n'a été gardé.
+                      </p>
+                    )}
+                  </>
+                )}
+              </div>
               <div className="field">
                 <label htmlFor={`${id}-q`}>
                   {mode === 'message' ? "Nom de l'entreprise ou du site" : 'Nom de la fuite ou du site'}

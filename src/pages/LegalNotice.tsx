@@ -48,8 +48,23 @@ export function LegalNotice() {
           <h2>Données personnelles</h2>
           <p>
             ShredRGPD ne collecte aucune donnée personnelle : pas de compte, pas de cookie, pas de mesure d'audience.
-            Les lettres sont générées dans ton navigateur et le suivi est enregistré dans son stockage local, que tu
-            peux effacer à tout moment depuis la page <a href={href('/suivi')}>Suivi</a>.
+            Les lettres sont générées dans ton navigateur.
+          </p>
+          <p>Le stockage local de ton navigateur garde seulement ce que tu demandes, et rien n'en sort :</p>
+          <ul>
+            <li>
+              tes demandes, quand tu les ajoutes au suivi ; tu peux les effacer depuis la page{' '}
+              <a href={href('/suivi')}>Suivi</a> ;
+            </li>
+            <li>les étapes que tu coches dans un plan d'action (page Vérifier ou page d'une fuite) ;</li>
+            <li>
+              la date de ta dernière visite, seulement si tu as demandé à voir les nouvelles fuites ; le bouton « Ne
+              plus me les signaler » l'efface.
+            </li>
+          </ul>
+          <p>
+            Ces informations servent uniquement aux fonctions que tu utilises : c'est pourquoi le site n'affiche pas de
+            bandeau de consentement. Tu peux aussi tout effacer depuis les réglages de ton navigateur (données du site).
           </p>
           <p>
             Comme tout hébergeur, Vercel peut conserver des journaux techniques de connexion (adresse IP, page demandée,
