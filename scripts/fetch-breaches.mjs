@@ -35,7 +35,7 @@ const FIELDS = [
 
 try {
   const response = await fetch(URL_BREACHES, {
-    headers: { 'User-Agent': 'ShredRGPD-build (https://github.com/chadi-shwada/shred)' },
+    headers: { 'User-Agent': 'ShredRGPD-build (https://github.com/chadi-shwada/shredrgpd)' },
     signal: AbortSignal.timeout(20_000),
   });
   if (!response.ok) throw new Error(`HTTP ${response.status}`);

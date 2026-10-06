@@ -9,11 +9,11 @@
 Un outil gratuit, en français, pour voir ce qui a fuité et écrire à l'entreprise une lettre RGPD en quelques minutes.
 Sans compte, sans traceur : tes données restent dans ton navigateur.
 
-[**Ouvrir ShredRGPD →**](https://shred-delta.vercel.app)
+[**Ouvrir ShredRGPD →**](https://shredrgpd.fr)
 
-[![CI](https://github.com/chadi-shwada/shred/actions/workflows/ci.yml/badge.svg)](https://github.com/chadi-shwada/shred/actions/workflows/ci.yml)
+[![CI](https://github.com/chadi-shwada/shredrgpd/actions/workflows/ci.yml/badge.svg)](https://github.com/chadi-shwada/shredrgpd/actions/workflows/ci.yml)
 [![Licence MIT](https://img.shields.io/badge/licence-MIT-2F4BDC)](LICENSE)
-[![Fait en France](https://img.shields.io/badge/fait%20en-France-2F4BDC)](https://shred-delta.vercel.app)
+[![Fait en France](https://img.shields.io/badge/fait%20en-France-2F4BDC)](https://shredrgpd.fr)
 [![Sans traceur](https://img.shields.io/badge/traceurs-0-3ccf8e)](#vie-privée)
 
 <img src="docs/images/accueil.webp" alt="Page d'accueil de ShredRGPD : « Demande l'effacement de tes données »" width="900">
@@ -33,7 +33,7 @@ ShredRGPD s'occupe de tout ça :
 > Les lettres sont des modèles indicatifs, pas un conseil juridique.
 
 <p align="center">
-  <a href="https://shred-delta.vercel.app/videos/shred-presentation.mp4">
+  <a href="https://shredrgpd.fr/videos/shred-presentation.mp4">
     <img src="public/videos/shred-presentation.jpg" alt="Vidéo de présentation de ShredRGPD (45 secondes, sans son)" width="640">
   </a>
   <br>
@@ -91,14 +91,14 @@ Tout reste dans le stockage local de ton navigateur.
 
 ### Une page par fuite française
 
-Chaque fuite française a sa page, par exemple [`/fuite/free`](https://shred-delta.vercel.app/fuite/free). On y trouve :
+Chaque fuite française a sa page, par exemple [`/fuite/free`](https://shredrgpd.fr/fuite/free). On y trouve :
 - ce qui a fuité ;
 - comment savoir si tu es concerné ;
 - quoi faire ;
 - une lettre pré-remplie ;
 - une image de partage avec le logo de l'entreprise.
 
-Un [flux RSS](https://shred-delta.vercel.app/fuites.xml) annonce les nouvelles fuites. La liste se met à jour chaque jour.
+Un [flux RSS](https://shredrgpd.fr/fuites.xml) annonce les nouvelles fuites. La liste se met à jour chaque jour.
 
 <p align="center"><img src="docs/images/fuite.webp" alt="Page de la fuite Free" width="820"></p>
 
@@ -139,8 +139,8 @@ scripts/          téléchargement du catalogue HIBP, logos, images de partage
 Il faut Node 22.12 ou plus récent.
 
 ```bash
-git clone https://github.com/chadi-shwada/shred.git
-cd shred
+git clone https://github.com/chadi-shwada/shredrgpd.git
+cd shredrgpd
 npm install
 npm run dev
 ```
@@ -166,7 +166,7 @@ ShredRGPD n'inclut volontairement ni Vercel Analytics ni Speed Insights.
 
 ## Contribuer
 
-Tu as repéré une erreur dans une lettre, un bug, une idée ? [Ouvre une issue](https://github.com/chadi-shwada/shred/issues) ou propose une pull request.
+Tu as repéré une erreur dans une lettre, un bug, une idée ? [Ouvre une issue](https://github.com/chadi-shwada/shredrgpd/issues) ou propose une pull request.
 
 Quelques règles du projet :
 - **Ne jamais inventer un contact.** Un contact de DPO ou de responsable de traitement n'entre que s'il vient d'une source officielle, avec sa date de vérification.
