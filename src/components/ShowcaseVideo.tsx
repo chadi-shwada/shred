@@ -12,7 +12,7 @@ function canAutoplay(): boolean {
 }
 
 /**
- * Vidéo de présentation mise en avant : muette, en boucle, lancée seule quand
+ * Vidéo de présentation mise en avant : son coupé, en boucle, lancée seule quand
  * elle devient visible et mise en pause hors de l'écran (rien n'est téléchargé
  * avant). Bouton pause toujours présent (WCAG 2.2.2). Pas de lecture
  * automatique si prefers-reduced-motion ou mode économie de données : la
@@ -54,7 +54,7 @@ export function ShowcaseVideo({ video }: { video: Video }) {
           playsInline
           preload="none"
           poster={video.poster}
-          aria-label={`${video.title} (vidéo sans son, ${video.duration})`}
+          aria-label={`${video.title} (vidéo en boucle, son coupé, ${video.duration})`}
           onPlay={() => setPlaying(true)}
           onPause={() => setPlaying(false)}
         >
@@ -72,7 +72,7 @@ export function ShowcaseVideo({ video }: { video: Video }) {
       </div>
       <figcaption>
         <span className="video__title">{video.title}</span>
-        <span className="video__meta">{video.duration} · sans son · en boucle</span>
+        <span className="video__meta">{video.duration} · en boucle · son coupé</span>
         <VideoTranscript video={video} />
       </figcaption>
     </figure>

@@ -15,8 +15,8 @@ function groupByStep(cues: readonly Cue[]): { step?: string; lines: string[] }[]
 
 /**
  * Vidéo hébergée sur le site (aucun lecteur tiers). Rien n'est chargé avant
- * la lecture (preload="none"), pas de lecture automatique. Vidéo muette :
- * sous-titres disponibles dans le lecteur et transcription complète dessous.
+ * la lecture (preload="none"), pas de lecture automatique. Vidéo sans paroles,
+ * avec musique et bruitages : sous-titres disponibles dans le lecteur et transcription complète dessous.
  */
 export function VideoPlayer({ video }: { video: Video }) {
   const titleId = useId();
@@ -31,7 +31,7 @@ export function VideoPlayer({ video }: { video: Video }) {
         <span className="video__title" id={titleId}>
           {video.title}
         </span>
-        <span className="video__meta">{video.duration} · sans son</span>
+        <span className="video__meta">{video.duration} · musique, sans paroles</span>
         <VideoTranscript video={video} />
       </figcaption>
     </figure>

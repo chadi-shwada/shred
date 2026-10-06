@@ -34,10 +34,10 @@ ShredRGPD s'occupe de tout ça :
 
 <p align="center">
   <a href="https://shredrgpd.fr/videos/shred-presentation.mp4">
-    <img src="public/videos/shred-presentation.jpg" alt="Vidéo de présentation de ShredRGPD (45 secondes, sans son)" width="640">
+    <img src="public/videos/shred-presentation.jpg" alt="Vidéo de présentation de ShredRGPD (45 secondes)" width="640">
   </a>
   <br>
-  <sub>ShredRGPD en 45 secondes (vidéo sans son, sous-titres sur le site)</sub>
+  <sub>ShredRGPD en 45 secondes (musique sans paroles, sous-titres sur le site)</sub>
 </p>
 
 ## Ce que tu peux faire

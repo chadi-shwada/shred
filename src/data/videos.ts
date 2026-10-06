@@ -1,8 +1,9 @@
 /**
  * Vidéo de présentation du site (public/videos/shred-presentation.*) : le
- * principe de ShredRGPD en 45 s, en animation (pas de démo pas à pas). Muette : le
- * texte est incrusté à l'image, repris ici pour les sous-titres et la
- * transcription.
+ * principe de ShredRGPD en 45 s, en animation (pas de démo pas à pas). Sans
+ * paroles : le texte est incrusté à l'image, repris ici pour les sous-titres et
+ * la transcription. Bande-son (musique et bruitages) synthétisée par code, sans
+ * échantillon externe ; coupée sur l'accueil, où la vidéo démarre seule.
  * Fuites réelles (catalogue Have I Been Pwned, chiffres du 5 octobre 2026),
  * personne fictive.
  * Les fichiers .mp4 sont produits hors du dépôt (animation HTML rendue image
@@ -34,7 +35,7 @@ export const PRESENTATION: Video = {
     {
       start: 0,
       end: 5,
-      text: 'Tes données ont fuité. 1 039 fuites connues, dont 27 en France. Autour, des bribes de données masquées : e-mail, mot de passe, IBAN, date de naissance.',
+      text: '[Musique douce et bruitages] Tes données ont fuité. 1 039 fuites connues, dont 27 en France. Autour, des bribes de données masquées : e-mail, mot de passe, IBAN, date de naissance.',
     },
     {
       start: 5,
