@@ -54,6 +54,13 @@ function snapshot(): string {
   return window.location.pathname + window.location.hash;
 }
 
+/** Chemin rendu hors navigateur (pré-rendu des pages au build, scripts/prerender.mjs). */
+let serverLocation = '/';
+
+export function setServerLocation(path: string): void {
+  serverLocation = path;
+}
+
 function normalizePath(path: string): string {
   const clean = `/${path.replace(/^\/+/, '')}`.replace(/\/+$/, '');
   return clean || '/';
@@ -70,7 +77,7 @@ export function parseLocation(pathname: string, hash: string): Route {
 }
 
 export function useRoute(): Route {
-  const location = useSyncExternalStore(subscribe, snapshot, () => '/');
+  const location = useSyncExternalStore(subscribe, snapshot, () => serverLocation);
   const hashIndex = location.indexOf('#');
   return hashIndex === -1
     ? parseLocation(location, '')

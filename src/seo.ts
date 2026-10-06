@@ -12,6 +12,8 @@ export interface PageMeta {
   description: string;
   /** Image d'aperçu propre à la page (chemin depuis la racine) ; sinon /og.png. */
   image?: string;
+  /** Dernière modification connue (AAAA-MM-JJ), pour le sitemap. */
+  lastmod?: string;
 }
 
 export const PAGES: PageMeta[] = [
@@ -101,13 +103,43 @@ export function headTags(page: PageMeta, { noindex = false } = {}): string {
     `<meta name="twitter:description" content="${esc(page.description)}" />`,
     `<meta name="twitter:image" content="${image}" />`,
     `<link rel="alternate" type="application/atom+xml" title="Fuites de données en France" href="/fuites.xml" />`,
+    ...(page.path === '/' && !noindex ? [structuredData()] : []),
   ];
   return tags.join('\n    ');
 }
 
+/**
+ * Données structurées de l'accueil (schema.org, JSON-LD) : le site et l'outil gratuit. Bloc de données,
+ * jamais exécuté : la CSP (script-src 'self') ne le concerne pas.
+ */
+export function structuredData(): string {
+  const url = `${SITE_URL}/`;
+  const data = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      { '@type': 'WebSite', name: 'ShredRGPD', url, inLanguage: 'fr-FR', description: SITE_DESCRIPTION },
+      {
+        '@type': 'WebApplication',
+        name: 'ShredRGPD',
+        url,
+        description: SITE_DESCRIPTION,
+        inLanguage: 'fr-FR',
+        applicationCategory: 'UtilitiesApplication',
+        operatingSystem: 'Web',
+        isAccessibleForFree: true,
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
+      },
+    ],
+  };
+  // « < » échappé : le texte ne peut pas fermer la balise <script>.
+  return `<script type="application/ld+json">${JSON.stringify(data).replace(/</g, '\\u003c')}</script>`;
+}
+
 /** Plan du site : les pages fixes, plus les pages générées au build (une par fuite). */
 export function sitemapXml(extra: readonly PageMeta[] = []): string {
-  const urls = [...PAGES, ...extra].map((p) => `  <url><loc>${SITE_URL}${p.path}</loc></url>`).join('\n');
+  const urls = [...PAGES, ...extra]
+    .map((p) => `  <url><loc>${SITE_URL}${p.path}</loc>${p.lastmod ? `<lastmod>${p.lastmod}</lastmod>` : ''}</url>`)
+    .join('\n');
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
 }
 

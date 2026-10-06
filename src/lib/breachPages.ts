@@ -73,6 +73,8 @@ export interface BreachPageMeta {
   path: string;
   title: string;
   description: string;
+  /** Date d'ajout de la fuite au catalogue HIBP, pour le sitemap. */
+  lastmod?: string;
 }
 
 export function breachPageMeta(breach: Breach, slug: string): BreachPageMeta {
@@ -82,6 +84,7 @@ export function breachPageMeta(breach: Breach, slug: string): BreachPageMeta {
     path: BREACH_PATH_PREFIX + slug,
     title: `Fuite ${breach.title} (${formatMonthFr(breach.date)}) : que faire ? · ShredRGPD`,
     description: `Fuite de données ${breach.title} du ${formatLongFr(breach.date)} : ${accounts}${types}. Vérifie si tu es concerné et demande à l'entreprise ce qu'elle détient sur toi, avec une lettre RGPD gratuite.`,
+    ...(breach.addedDate ? { lastmod: breach.addedDate } : {}),
   };
 }
 

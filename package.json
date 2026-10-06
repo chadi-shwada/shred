@@ -11,7 +11,7 @@
   "scripts": {
     "dev": "vite",
     "prebuild": "node scripts/fetch-breaches.mjs && node scripts/og-logos.mjs",
-    "build": "vite build",
+    "build": "vite build && node scripts/prerender.mjs",
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
     "lint": "eslint .",

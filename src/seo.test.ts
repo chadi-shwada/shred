@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { PUBLIC_ROUTES } from './router';
-import { headTags, htmlFileName, NOT_FOUND, pageMeta, PAGES, sitemapXml } from './seo';
+import { headTags, htmlFileName, NOT_FOUND, pageMeta, PAGES, sitemapXml, structuredData } from './seo';
 
 describe('pages', () => {
   it('couvre exactement les routes de l’application', () => {
@@ -55,5 +55,24 @@ describe('sitemap', () => {
     expect(tags).toContain('content="https://shredrgpd.fr/og/free.jpg"');
     expect(tags).toContain('<meta property="og:image:alt" content="Fuite Free" />');
     expect(headTags(pageMeta('/'))).toContain('content="https://shredrgpd.fr/og.png"');
+  });
+});
+
+describe('référencement', () => {
+  it('ajoute la date de mise à jour des pages qui en ont une', () => {
+    const xml = sitemapXml([{ path: '/fuite/free', title: 'Fuite Free', description: 'x', lastmod: '2024-10-19' }]);
+    expect(xml).toContain('<url><loc>https://shredrgpd.fr/fuite/free</loc><lastmod>2024-10-19</lastmod></url>');
+    expect(xml).toContain('<url><loc>https://shredrgpd.fr/verifier</loc></url>');
+  });
+
+  it('décrit le site et l’outil gratuit en JSON-LD, sur l’accueil seulement', () => {
+    const block = structuredData();
+    const json = JSON.parse(block.replace(/^<script type="application\/ld\+json">|<\/script>$/g, ''));
+    expect(json['@graph'].map((n: { '@type': string }) => n['@type'])).toEqual(['WebSite', 'WebApplication']);
+    expect(json['@graph'][1].offers.price).toBe('0');
+    expect(block).not.toMatch(/<(?!script|\/script)/);
+    expect(headTags(pageMeta('/'))).toContain('application/ld+json');
+    expect(headTags(pageMeta('/verifier'))).not.toContain('application/ld+json');
+    expect(headTags(NOT_FOUND, { noindex: true })).not.toContain('application/ld+json');
   });
 });
