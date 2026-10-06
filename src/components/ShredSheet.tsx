@@ -4,8 +4,8 @@ import { Icon } from './Icon';
 /**
  * Animation d'accueil (décorative) : une fiche de fuite est analysée,
  * découpée en bandes comme le logo, puis remplacée par la confirmation.
- * La fiche reprend une vraie fuite (Deezer, 2019, diffusée sur BreachForums
- * en 2022) avec une personne fictive aux valeurs masquées.
+ * La fiche reprend une vraie fuite (Deezer, 2019, catalogue Have I Been
+ * Pwned) avec une personne fictive aux valeurs masquées.
  * Respecte prefers-reduced-motion (voir global.css).
  */
 
@@ -19,7 +19,7 @@ function LeakCard() {
         <span className="terminal__dot" />
         <span className="terminal__dot" />
         <span className="terminal__dot" />
-        <span className="terminal__title">breachforums · deezer_2019.csv</span>
+        <span className="terminal__title">extrait de fuite · deezer_2019</span>
       </div>
       <div className="terminal__body">
         <span className="terminal__alert">Fuite détectée · 4 champs exposés</span>
