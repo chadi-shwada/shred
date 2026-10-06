@@ -79,7 +79,7 @@ const GUIDES: Guide[] = [
       'Vérifie les appareils et sessions connectés à tes comptes importants et déconnecte ceux que tu ne reconnais pas.',
       'Utilise un mot de passe différent par site, gardé dans un gestionnaire de mots de passe.',
     ],
-    links: [{ label: 'Tester un mot de passe et en créer un', href: '/verifier' }],
+    links: [{ label: 'Tester un mot de passe et en créer un', href: '/verifier#parcours=mot-de-passe' }],
   },
   {
     id: 'carte',

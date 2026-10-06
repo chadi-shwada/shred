@@ -4659,3 +4659,232 @@ input[type='range'] {
 .breach-mark--lg.breach-mark--logo {
   padding: 0.45rem;
 }
+
+/* ---------- Page Vérifier : choix du parcours, étapes, mot de passe ---------- */
+.verify-page {
+  max-width: calc(54rem + 2 * var(--gutter));
+}
+
+.choices {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+@media (max-width: 900px) {
+  .choices {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.choice {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 0.25rem;
+  padding: 1rem 1.1rem 1.1rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  cursor: pointer;
+  transition:
+    border-color 140ms ease,
+    background-color 140ms ease,
+    transform 140ms ease;
+}
+
+.choice:hover {
+  border-color: var(--ink-3);
+  transform: translateY(-1px);
+}
+
+.choice input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.choice:has(input:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+.choice__icon {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0.75rem;
+  background: var(--surface-2);
+  color: var(--brand-text);
+}
+
+.choice strong {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.choice__hint {
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+}
+
+.choice:has(input:checked) {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+  box-shadow: inset 0 0 0 1px var(--brand);
+}
+
+.choice:has(input:checked) .choice__icon {
+  background: var(--brand);
+  color: var(--brand-ink);
+}
+
+.stepper--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.stepper--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.verify-flow {
+  scroll-margin-top: calc(var(--header-h) + 1rem);
+}
+
+/* Les trois gestes de l'étape 1 */
+.howto {
+  display: grid;
+  gap: 1rem;
+  margin: 1.25rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.howto > li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: start;
+}
+
+.howto__num {
+  display: grid;
+  place-items: center;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  background: var(--brand);
+  color: var(--brand-ink);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+.howto > li > div {
+  display: grid;
+  gap: 0.6rem;
+  justify-items: start;
+  padding-top: 0.2rem;
+}
+
+.howto .paste {
+  width: 100%;
+}
+
+/* Encadré d'alerte (mots de passe dans les fuites) */
+.callout {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 1rem;
+  margin: 1rem 0;
+  padding: 1rem 1.15rem;
+  border: 1px solid color-mix(in srgb, var(--danger) 45%, var(--line));
+  border-radius: var(--radius-lg);
+  background: var(--danger-soft);
+}
+
+.callout p {
+  margin: 0.3rem 0 0.75rem;
+  color: var(--ink-2);
+}
+
+.callout__icon {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 0.75rem;
+  background: var(--danger);
+  color: var(--bg);
+}
+
+/* Parcours mot de passe */
+.password-flow > * + * {
+  margin-top: 1rem;
+}
+
+.password-flow__tools {
+  display: grid;
+  gap: 1rem;
+  align-items: start;
+}
+
+@media (min-width: 820px) {
+  .password-flow__tools {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.how-pw {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0.5rem 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: how;
+}
+
+@media (max-width: 720px) {
+  .how-pw {
+    grid-template-columns: 1fr;
+  }
+}
+
+.how-pw li {
+  position: relative;
+  display: grid;
+  gap: 0.35rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface-2);
+}
+
+.how-pw__icon {
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  margin-bottom: 0.35rem;
+  border-radius: 0.7rem;
+  background: var(--ok-soft);
+  color: var(--ok);
+}
+
+.how-pw span:last-child {
+  color: var(--ink-2);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.verify-flow .wizard__nav .btn {
+  max-width: 100%;
+  white-space: normal;
+  text-align: left;
+}

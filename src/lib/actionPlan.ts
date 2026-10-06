@@ -33,7 +33,8 @@ const RULES: Rule[] = [
       {
         id: 'mdp-unique',
         title: 'Utilise un mot de passe unique par site',
-        detail: 'Un gestionnaire de mots de passe aide à les retenir. Le générateur de cette page en crée un solide.',
+        detail: 'Un gestionnaire de mots de passe aide à les retenir. Shred peut en créer un solide.',
+        link: { href: '/verifier#parcours=mot-de-passe', label: 'Tester ou créer un mot de passe' },
       },
     ],
   },
