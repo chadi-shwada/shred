@@ -1,5 +1,6 @@
 import { useId, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { copyText, downloadText } from '../browser';
+import { ConfirmDialog } from '../components/ConfirmDialog';
 import { ExternalLink } from '../components/ExternalLink';
 import { ShredBurst } from '../components/ShredBurst';
 import { Icon } from '../components/Icon';
@@ -116,8 +117,10 @@ export function Tracker() {
     if (status === 'satisfaite') setCelebrate((c) => ({ id, n: (c?.n ?? 0) + 1 }));
   };
 
+  /** Suppression en attente de confirmation : une demande, ou tout le suivi. */
+  const [pendingDelete, setPendingDelete] = useState<TrackedRequest | 'all' | null>(null);
+
   const remove = (request: TrackedRequest) => {
-    if (!window.confirm(`Supprimer la demande à ${request.site} ?`)) return;
     update((list) => list.filter((r) => r.id !== request.id));
     setFeedback({ tone: 'ok', text: `Demande à ${request.site} supprimée.` });
   };
@@ -165,9 +168,14 @@ export function Tracker() {
   };
 
   const onClear = () => {
-    if (!window.confirm('Effacer tout le suivi de ce navigateur ? Exporte-le avant si tu veux le garder.')) return;
     update(() => []);
     setFeedback({ tone: 'ok', text: 'Suivi effacé.' });
+  };
+
+  const confirmDelete = () => {
+    if (pendingDelete === 'all') onClear();
+    else if (pendingDelete) remove(pendingDelete);
+    setPendingDelete(null);
   };
 
   return (
@@ -291,7 +299,7 @@ export function Tracker() {
                 <button
                   type="button"
                   className="btn btn--sm btn--ghost btn--danger"
-                  onClick={onClear}
+                  onClick={() => setPendingDelete('all')}
                   disabled={requests.length === 0}
                 >
                   <Icon name="trash" size={16} />
@@ -460,7 +468,7 @@ export function Tracker() {
                         <button
                           type="button"
                           className="btn btn--sm btn--ghost btn--danger request__delete"
-                          onClick={() => remove(request)}
+                          onClick={() => setPendingDelete(request)}
                           aria-label={`Supprimer la demande à ${request.site}`}
                         >
                           <Icon name="trash" size={16} />
@@ -516,6 +524,26 @@ export function Tracker() {
           </section>
         </div>
       </div>
+
+      <ConfirmDialog
+        open={pendingDelete !== null}
+        title={pendingDelete === 'all' ? 'Effacer tout le suivi ?' : 'Supprimer cette demande ?'}
+        confirmLabel={pendingDelete === 'all' ? 'Tout effacer' : 'Supprimer'}
+        onConfirm={confirmDelete}
+        onCancel={() => setPendingDelete(null)}
+      >
+        {pendingDelete === 'all' ? (
+          <p>
+            Les {requests.length} demande{requests.length > 1 ? 's' : ''} de ce navigateur seront effacées. Exporte le
+            suivi avant si tu veux le garder.
+          </p>
+        ) : pendingDelete ? (
+          <p>
+            La demande à <strong>{pendingDelete.site}</strong> sera retirée du suivi de ce navigateur. Ça n'annule pas
+            la demande envoyée à l'entreprise.
+          </p>
+        ) : null}
+      </ConfirmDialog>
     </>
   );
 }
