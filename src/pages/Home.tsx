@@ -5,6 +5,8 @@ import { Icon, type IconName } from '../components/Icon';
 import { ScrambleText } from '../components/ScrambleText';
 import { ShredSheet } from '../components/ShredSheet';
 import { VerifyMock } from '../components/VerifyMock';
+import { VideoPlayer } from '../components/VideoPlayer';
+import { DEMO, EXPLAINER } from '../data/videos';
 import { formatLongFr, gdprDeadlines } from '../lib/dates';
 import { generateLetter } from '../lib/letters';
 import { href } from '../router';
@@ -145,6 +147,22 @@ export function Home() {
       </section>
 
       <DataStream />
+
+      <section className="section section--tight" aria-labelledby="video">
+        <div className="container">
+          <div className="section__head">
+            <span className="eyebrow">En vidéo</span>
+            <h2 id="video">Vois Shred en action</h2>
+            <p className="lead">
+              Le principe en 50 secondes, puis une démo complète : de la fuite trouvée à la plainte CNIL.
+            </p>
+          </div>
+          <div className="videos">
+            <VideoPlayer video={EXPLAINER} />
+            <VideoPlayer video={DEMO} />
+          </div>
+        </div>
+      </section>
 
       <section className="section section--tight" aria-labelledby="commencer-par">
         <div className="container">

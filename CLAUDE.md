@@ -23,6 +23,7 @@ npx prettier --write "src/**/*.{ts,tsx}"   # mise en forme (.prettierrc)
 - `src/data/contacts.ts` : contacts DPO indexés par le nom HIBP de la fuite, utilisés par les lettres groupées. Source (page officielle) et date de vérification obligatoires (`contacts.test.ts`). Vide : les sites des entreprises n'étaient pas joignables depuis l'environnement de dev, et un résumé de moteur de recherche ne suffit pas (règle 3).
 - `localStorage` : `shred.suivi.v1` (suivi, avec copies facultatives des lettres), `shred.plan.v1` (plan d'action coché), `shred.verifier.derniereVisite` (bandeau des nouvelles fuites françaises). Accès via `readStorage`/`writeStorage` de `src/browser.ts`.
 - `src/data/sites.ts` : sites connus. Source et date de vérification obligatoires (vérifié par `sites.test.ts`). Vide pour l'instant.
+- `public/videos/` : vidéos muettes hébergées sur le site (explication 50 s, démo de A à Z 2 min), avec affiche `.jpg` et sous-titres `.vtt`. Textes dans `src/data/videos.ts` (source unique : transcription affichée et `.vtt`, alignement vérifié par `videos.test.ts`, format par `src/lib/vtt.ts`). Lecteur `VideoPlayer` : `preload="none"`, pas de lecture automatique, transcription repliable. Fuites réelles (catalogue HIBP), personne fictive. Les `.mp4` sont produits hors du dépôt (rendu image par image avec Playwright).
 - `src/pages/`, `src/components/` : interface. `ShredSheet`, `BinaryField`, `ScrambleText`, `DataStream`, `FooterWord` et `Logo` sont décoratifs (`aria-hidden`, figés si `prefers-reduced-motion`).
 - `src/styles/global.css` : tokens de couleur et de typographie, mode sombre inclus. Le site est entièrement sombre : `<html class="theme-dark">` dans `index.html` (choix de design). Les tokens clairs de `:root` restent comme base.
 - Identité : bleu `#2F4BDC` du logo (`public/logo.png`, tracé vectoriel dans `Logo.tsx` et `public/favicon.svg`), polices Inter et JetBrains Mono auto-hébergées via `@fontsource-variable` (OFL).
@@ -54,7 +55,8 @@ Fait :
 - suivi local avec échéances (1 mois, 3 si prolongé), export et import JSON, rappel `.ics`, copie facultative des lettres envoyées et dossier de plainte CNIL (récapitulatif, lettres, pièces à joindre) ;
 - mentions légales (éditeur Cha4Sh, hébergeur Vercel Inc.), aperçu de partage, sitemap ;
 - accueil : section « Par où commencer ? » (4 cartes vers les parcours de Vérifier et Que faire ?), frise des étapes verticale sur mobile ; liste des fuites compacte (6 puis « Afficher plus », lien vers la fiche HIBP en icône) ; tous les types de données HIBP du catalogue traduits en français ;
-- pages ressources et à propos, logo, animation d'accueil ;
+- pages ressources et à propos, logo, animation d'accueil (fiche et aperçu de recherche avec de vraies fuites du catalogue HIBP : Deezer, Free, La Poste Mobile, ActMobile ; personne fictive, valeurs masquées) ;
+- vidéos : section « En vidéo » sur l'accueil (explication + démo), démo sur la page Ressources ;
 - CI GitHub Actions ; déploiement Vercel depuis `main` (`vercel.json`). GitHub Pages abandonné : le dépôt est privé.
 - Ne jamais ajouter `@vercel/analytics` ni `@vercel/speed-insights` (règle 1).
 
@@ -63,6 +65,8 @@ Vérifié dans Chromium (Playwright) : rendu bureau 1440 px et mobile 390 px, cl
 Non vérifié : Safari et Firefox, lecteurs d'écran réels, appareils mobiles physiques.
 
 À faire :
+- Relance lancée depuis le suivi : le contexte « violation » n'est pas transmis (le suivi ne le stocke pas), la lettre repart en « exposition » (« diffusées sur le site … ») tant que la personne ne change pas « Situation ».
+- Vidéos : lecture non vérifiée dans un vrai navigateur (le Chromium de test ne lit pas le H.264 ; lecture, CSP et sous-titres vérifiés avec une copie WebM). La mention « diffusée sur BreachForums en 2022 » de la fiche Deezer (accueil, vidéo d'explication) vient de la presse, non vérifiée depuis l'environnement de dev.
 - Faire relire les lettres par un juriste. Leur structure suit le modèle CNIL (art. 17.1, 12.3, 19), mais le texte complet du modèle n'a pas pu être consulté depuis l'environnement de développement.
 - Vérifier la disponibilité du nom (domaine, INPI).
 - Vérifier en production (non testable depuis l'environnement de dev, réseau bloqué) : que `api.pwnedpasswords.com` répond bien depuis le navigateur (CORS, testé seulement avec un faux service) et que le catalogue HIBP est bien téléchargé au build Vercel (log `[fetch-breaches]`).

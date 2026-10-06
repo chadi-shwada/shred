@@ -3908,3 +3908,78 @@ input[type='range'] {
 .request__letters {
   margin: 0 0 1rem;
 }
+
+/* Vidéos (hébergées sur le site, lancées par la personne) */
+.videos {
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 900px) {
+  .videos {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.video {
+  margin: 0;
+  min-width: 0;
+}
+
+.prose .video {
+  margin: 1rem 0 2rem;
+}
+
+.video video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  background: #000;
+}
+
+.video figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.video__title {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.video__meta {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+}
+
+.video__transcript {
+  flex-basis: 100%;
+  font-size: 0.9375rem;
+  color: var(--ink-2);
+}
+
+.video__transcript summary {
+  width: fit-content;
+  color: var(--brand-text);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.video__transcript h3 {
+  margin: 1rem 0 0.25rem;
+  font-size: 0.9375rem;
+  color: var(--ink);
+}
+
+.video__transcript p {
+  margin: 0.5rem 0 0;
+  line-height: 1.55;
+}

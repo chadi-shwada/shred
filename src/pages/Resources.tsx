@@ -2,6 +2,8 @@ import { ExternalLink } from '../components/ExternalLink';
 import { Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
 import { PageHead } from '../components/PageHead';
+import { VideoPlayer } from '../components/VideoPlayer';
+import { DEMO } from '../data/videos';
 import { href } from '../router';
 
 const TIMELINE = [
@@ -108,6 +110,10 @@ export function Resources() {
                 Écrire ma lettre
               </a>
             </p>
+
+            <h2>La démo, de A à Z</h2>
+            <p>Le parcours complet sur une vraie fuite (Deezer, 2019), avec une personne fictive.</p>
+            <VideoPlayer video={DEMO} />
 
             <h2>Comment envoyer ta demande</h2>
             <p>
