@@ -24,13 +24,10 @@ describe.each([PRESENTATION])('vidéo $id', (video) => {
 });
 
 describe('vidéo de présentation', () => {
-  it('enchaîne le principe puis la démo, sans dépasser la durée du fichier', () => {
+  it('présente le principe en 45 s, sans la démo pas à pas', () => {
     const texts = PRESENTATION.cues.map((c) => c.text);
-    expect(texts[0]).toContain('fuite Deezer de 2019');
-    expect(texts).not.toContain(
-      'Reprends le contrôle de tes données. shred-delta.vercel.app. Modèles de lettres indicatifs, pas un conseil juridique.',
-    );
-    expect(PRESENTATION.cues.find((c) => c.text.startsWith('Shred, de A à Z'))?.start).toBe(44);
-    expect(PRESENTATION.cues.at(-1)!.end).toBeLessThanOrEqual(165.5);
+    expect(texts[0]).toContain('Tes données ont fuité');
+    expect(texts.some((t) => t.startsWith('Shred, de A à Z'))).toBe(false);
+    expect(PRESENTATION.cues.at(-1)!.end).toBeLessThanOrEqual(45);
   });
 });
