@@ -15,4 +15,4 @@ export function downloadLogos(
     fetchImpl?: (url: string, init?: RequestInit) => Promise<Response>;
     log?: Pick<Console, 'warn'>;
   },
-): Promise<Record<string, string>>;
+): Promise<Record<string, { src: string; light: boolean }>>;

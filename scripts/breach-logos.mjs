@@ -5,10 +5,13 @@
  * avec une entreprise identifiée, et seulement des images matricielles
  * (PNG, JPEG, GIF, WebP) vérifiées par leur signature : pas de SVG, qui peut
  * contenir du code. Sans logo, le site affiche un médaillon (BreachMark).
+ * Un logo clair sur fond transparent (isLightLogo) est noté « light » : le
+ * site et les images de partage le posent sur un fond sombre.
  * Les logos sont des marques de leurs propriétaires.
  */
 
 import { mkdir, rm, writeFile } from 'node:fs/promises';
+import { decodeLogo, isLightLogo } from './og-logos.mjs';
 
 /** Poids maximal d'un logo. */
 export const MAX_LOGO_BYTES = 300_000;
@@ -55,8 +58,19 @@ export function logoFileName(name, type) {
   return `${name.replace(/[^A-Za-z0-9_-]/g, '')}.${type}`;
 }
 
+/** Logo clair sur fond transparent ? Faux si l'image ne se décode pas (GIF, WebP). */
+function lightness(bytes) {
+  try {
+    const img = decodeLogo(bytes);
+    return img ? isLightLogo(img) : false;
+  } catch {
+    return false;
+  }
+}
+
 /**
- * Télécharge les logos dans outDir et renvoie { Name: "/logos/Free.png" }.
+ * Télécharge les logos dans outDir et renvoie
+ * { Name: { src: "/logos/Free.png", light: false } }.
  * Chaque échec est ignoré : la fuite garde son médaillon.
  */
 export async function downloadLogos(rawBreaches, outDir, { fetchImpl = fetch, log = console } = {}) {
@@ -75,7 +89,7 @@ export async function downloadLogos(rawBreaches, outDir, { fetchImpl = fetch, lo
         if (!type) throw new Error('format refusé');
         const file = logoFileName(b.Name, type);
         await writeFile(`${outDir}/${file}`, bytes);
-        manifest[b.Name] = `/logos/${file}`;
+        manifest[b.Name] = { src: `/logos/${file}`, light: lightness(bytes) };
       } catch (error) {
         log.warn(`[fetch-breaches] Logo de ${b.Name} ignoré : ${error.message}.`);
       }
