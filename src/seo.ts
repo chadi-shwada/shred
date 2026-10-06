@@ -97,12 +97,14 @@ export function headTags(page: PageMeta, { noindex = false } = {}): string {
     `<meta name="twitter:title" content="${esc(page.title)}" />`,
     `<meta name="twitter:description" content="${esc(page.description)}" />`,
     `<meta name="twitter:image" content="${image}" />`,
+    `<link rel="alternate" type="application/atom+xml" title="Fuites de données en France" href="/fuites.xml" />`,
   ];
   return tags.join('\n    ');
 }
 
-export function sitemapXml(): string {
-  const urls = PAGES.map((p) => `  <url><loc>${SITE_URL}${p.path}</loc></url>`).join('\n');
+/** Plan du site : les pages fixes, plus les pages générées au build (une par fuite). */
+export function sitemapXml(extra: readonly PageMeta[] = []): string {
+  const urls = [...PAGES, ...extra].map((p) => `  <url><loc>${SITE_URL}${p.path}</loc></url>`).join('\n');
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
 }
 

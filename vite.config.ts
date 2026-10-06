@@ -1,6 +1,10 @@
+import { existsSync, readFileSync } from 'node:fs';
 import type { Plugin } from 'vite';
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
+import { SITE_URL } from './src/config';
+import { allBreachPageMeta, breachFeed, catalogSummary } from './src/lib/breachPages';
+import { EMPTY_CATALOG, parseCatalog, type BreachCatalog } from './src/lib/breaches';
 import { headTags, htmlFileName, NOT_FOUND, pageMeta, PAGES, robotsTxt, sitemapXml } from './src/seo';
 import { CSP_META } from './src/security';
 
@@ -22,10 +26,37 @@ function csp(): Plugin {
 
 const SEO_MARKER = '<!-- shred:seo -->';
 
+/** Catalogue HIBP téléchargé par prebuild (scripts/fetch-breaches.mjs) ; vide s'il manque. */
+function readCatalog(): BreachCatalog {
+  const file = new URL('./src/data/breaches.generated.json', import.meta.url);
+  if (!existsSync(file)) return EMPTY_CATALOG;
+  try {
+    return parseCatalog(JSON.parse(readFileSync(file, 'utf8')));
+  } catch {
+    return EMPTY_CATALOG;
+  }
+}
+
+const SUMMARY_ID = 'virtual:catalog-summary';
+
+/**
+ * Module virtuel « virtual:catalog-summary » : quelques chiffres et les dernières
+ * fuites françaises pour l'accueil, sans charger tout le catalogue.
+ */
+function catalogSummaryModule(): Plugin {
+  return {
+    name: 'shred-catalog-summary',
+    resolveId: (id) => (id === SUMMARY_ID ? `\0${SUMMARY_ID}` : null),
+    load: (id) =>
+      id === `\0${SUMMARY_ID}` ? `export default ${JSON.stringify(catalogSummary(readCatalog()))};` : null,
+  };
+}
+
 /**
  * Une page HTML par adresse (index.html, verifier.html…) avec son titre, sa
  * description, son adresse canonique et son aperçu de partage, plus 404.html
- * (non indexée), robots.txt et sitemap.xml. Vercel sert verifier.html sur
+ * (non indexée), robots.txt et sitemap.xml, plus une page par fuite française
+ * (fuite/free.html…) et le flux Atom fuites.xml, tirés du catalogue HIBP. Vercel sert verifier.html sur
  * /verifier grâce à cleanUrls (vercel.json). Source : src/seo.ts.
  */
 function seo(): Plugin {
@@ -46,7 +77,9 @@ function seo(): Plugin {
       }
       const template = index.source as string;
       if (!template.includes(SEO_MARKER)) this.error('marqueur SEO absent de index.html');
-      for (const page of PAGES) {
+      const catalog = readCatalog();
+      const breachPages = allBreachPageMeta(catalog.breaches);
+      for (const page of [...PAGES, ...breachPages]) {
         const html = template.replace(SEO_MARKER, headTags(page));
         if (page.path === '/') index.source = html;
         else this.emitFile({ type: 'asset', fileName: htmlFileName(page), source: html });
@@ -57,7 +90,10 @@ function seo(): Plugin {
         source: template.replace(SEO_MARKER, headTags(NOT_FOUND, { noindex: true })),
       });
       this.emitFile({ type: 'asset', fileName: 'robots.txt', source: robotsTxt() });
-      this.emitFile({ type: 'asset', fileName: 'sitemap.xml', source: sitemapXml() });
+      this.emitFile({ type: 'asset', fileName: 'sitemap.xml', source: sitemapXml(breachPages) });
+      if (catalog.breaches.length > 0) {
+        this.emitFile({ type: 'asset', fileName: 'fuites.xml', source: breachFeed(catalog, SITE_URL) });
+      }
     },
   };
 }
@@ -65,7 +101,7 @@ function seo(): Plugin {
 export default defineConfig({
   // Chemins absolus : les pages ont de vraies adresses (/lettre, /verifier…).
   base: '/',
-  plugins: [react(), csp(), seo()],
+  plugins: [react(), csp(), catalogSummaryModule(), seo()],
   build: {
     // Pas de fichiers intégrés en data: : la CSP n'autorise que font-src 'self'.
     assetsInlineLimit: 0,

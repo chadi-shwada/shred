@@ -2341,7 +2341,8 @@ fieldset:last-child {
   margin-top: 0.75rem;
 }
 
-.starts .start {
+.starts .start,
+.recent-breaches .start {
   text-decoration: none;
 }
 
@@ -3982,4 +3983,138 @@ input[type='range'] {
 .video__transcript p {
   margin: 0.5rem 0 0;
   line-height: 1.55;
+}
+
+/* Accueil : dernières fuites en France */
+.eyebrow--live::before {
+  border-radius: 50%;
+  background: var(--danger);
+  box-shadow: 0 0 10px var(--danger);
+  animation: live-pulse 2s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eyebrow--live::before {
+    animation: none;
+  }
+}
+
+.recent-breaches {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (max-width: 900px) {
+  .recent-breaches {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .recent-breaches {
+    grid-template-columns: 1fr;
+  }
+}
+
+.recent-breach__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 1.0625rem;
+}
+
+.recent-breach__date,
+.recent-breach__count {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+.recent-breach__count {
+  margin-top: 0.35rem;
+  color: var(--ink-2);
+}
+
+.recent-breach__types {
+  flex: 1;
+  margin-top: 0.6rem;
+  color: var(--ink-2);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.recent-breaches__more {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin: 1.25rem 0 0;
+  font-size: 0.9375rem;
+}
+
+/* Page d'une fuite */
+.breach-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: 1rem;
+  margin: 0 0 2.5rem;
+}
+
+.breach-facts div {
+  padding: 1rem 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface-2);
+}
+
+.breach-facts dt {
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+}
+
+.breach-facts dd {
+  margin: 0.3rem 0 0;
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.breach-page .prose .plan {
+  margin: 1rem 0;
+}
+
+.breach-page__side h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1rem;
+}
+
+.breach-links {
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.breach-links li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.breach-links .hint {
+  margin: 0;
+  white-space: nowrap;
 }

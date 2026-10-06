@@ -7,6 +7,9 @@ import { ShredSheet } from '../components/ShredSheet';
 import { VerifyMock } from '../components/VerifyMock';
 import { VideoPlayer } from '../components/VideoPlayer';
 import { DEMO, EXPLAINER } from '../data/videos';
+import summary from 'virtual:catalog-summary';
+import { formatMonthFr } from '../lib/breachPages';
+import { formatCount } from '../lib/breaches';
 import { formatLongFr, gdprDeadlines } from '../lib/dates';
 import { generateLetter } from '../lib/letters';
 import { href } from '../router';
@@ -189,6 +192,49 @@ export function Home() {
           </ul>
         </div>
       </section>
+
+      {summary.latest.length > 0 && (
+        <section className="section section--tight" aria-labelledby="recentes">
+          <div className="container">
+            <div className="section__head">
+              <span className="eyebrow eyebrow--live">En ce moment</span>
+              <h2 id="recentes">Les dernières fuites en France</h2>
+              <p className="lead">
+                {formatCount(summary.total)} fuites connues dans le monde, dont {summary.french} touchant la France
+                {summary.fetchedOn && <> (catalogue Have I Been Pwned du {formatLongFr(summary.fetchedOn)})</>}. Tu
+                étais client ? Vois ce qui a fuité et quoi faire.
+              </p>
+            </div>
+            <ul className="recent-breaches">
+              {summary.latest.map((b) => (
+                <li key={b.path}>
+                  <a className="start recent-breach" href={b.path}>
+                    <span className="recent-breach__head">
+                      <strong>{b.title}</strong>
+                      <span className="recent-breach__date">{formatMonthFr(b.date)}</span>
+                    </span>
+                    {b.pwnCount > 0 && <span className="recent-breach__count">{formatCount(b.pwnCount)} comptes</span>}
+                    <span className="recent-breach__types">
+                      {b.dataClasses.slice(0, 3).join(' · ')}
+                      {b.dataClasses.length > 3 && ` · +${b.dataClasses.length - 3}`}
+                    </span>
+                    <span className="start__action">
+                      Que faire ?
+                      <Icon name="arrow" size={16} />
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <p className="recent-breaches__more">
+              <a href={href('/verifier')}>Chercher parmi toutes les fuites</a>
+              <a href="/fuites.xml" type="application/atom+xml">
+                Suivre les nouvelles fuites (flux RSS)
+              </a>
+            </p>
+          </div>
+        </section>
+      )}
 
       <section className="section section--glow" aria-labelledby="verifier">
         <div className="container showcase showcase--reverse">

@@ -9,13 +9,16 @@ import { Notice } from '../components/Notice';
 import { PageHead } from '../components/PageHead';
 import { PasswordGenerator } from '../components/PasswordGenerator';
 import { PasteResults } from '../components/PasteResults';
+import { breachPathsByName } from '../lib/breachPages';
 import {
   dataClassLabel,
+  formatCount,
   HIBP_LICENSE_URL,
   HIBP_URL,
   hibpBreachUrl,
   newFrenchBreachesSince,
   recentFrenchBreaches,
+  RISKY_DATA_CLASSES,
   searchBreaches,
   type Breach,
   type BreachCatalog,
@@ -43,11 +46,7 @@ function asSituation(value: string | null): Situation {
 /** Les outils de mot de passe sont repliés sur petit écran pour garder le parcours court. */
 const WIDE_QUERY = '(min-width: 961px)';
 
-const RISKY = new Set(['Passwords', 'Credit cards', 'Partial credit card data', 'Bank account numbers']);
-
-function formatCount(n: number): string {
-  return new Intl.NumberFormat('fr-FR').format(n);
-}
+const RISKY = RISKY_DATA_CLASSES;
 
 type PwnedState =
   | { status: 'idle' }
@@ -217,6 +216,7 @@ export function Verify() {
     [catalog, selected],
   );
   const exposed = useMemo(() => [...new Set(chosen.flatMap((b) => b.dataClasses))], [chosen]);
+  const breachPaths = useMemo(() => breachPathsByName(catalog?.breaches ?? []), [catalog]);
 
   const toggle = (name: string) => setSelected((s) => (s.includes(name) ? s.filter((n) => n !== name) : [...s, name]));
   const addMany = (names: string[]) => setSelected((s) => [...s, ...names.filter((n) => !s.includes(n))]);
@@ -501,7 +501,15 @@ export function Verify() {
                     <li key={b.name}>
                       <div>
                         <strong>{b.title}</strong>
-                        <span className="hint">Fuite du {formatLongFr(b.date)}</span>
+                        <span className="hint">
+                          Fuite du {formatLongFr(b.date)}
+                          {breachPaths.has(b.name) && (
+                            <>
+                              {' · '}
+                              <a href={breachPaths.get(b.name)}>Tout savoir sur cette fuite</a>
+                            </>
+                          )}
+                        </span>
                       </div>
                       <div className="btn-row">
                         <a className="btn btn--primary btn--sm" href={href('/lettre', breachLetterQuery(b, 'acces'))}>

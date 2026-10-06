@@ -97,6 +97,13 @@ export function upgradeLegacyUrl(): void {
   navigate(`${route.path}${search ? `#${search}` : ''}`, { replace: true });
 }
 
+/** Lien vers une page de l'application, et pas vers un fichier (/fuites.xml, /videos/…mp4). */
+export function isAppLink(raw: string): boolean {
+  if (!raw.startsWith('/') || raw.startsWith('//')) return false;
+  const path = raw.split(/[?#]/)[0] ?? '';
+  return !/\.[a-z0-9]+$/i.test(path);
+}
+
 /**
  * Intercepte les clics sur les liens internes pour naviguer sans recharger la page.
  * Laisse passer les liens externes, les nouveaux onglets et les touches de modification.
@@ -107,7 +114,7 @@ export function interceptLinks(event: MouseEvent): void {
   const anchor = (event.target as Element | null)?.closest?.('a');
   if (!anchor || anchor.target || anchor.hasAttribute('download')) return;
   const raw = anchor.getAttribute('href');
-  if (!raw || !raw.startsWith('/') || raw.startsWith('//')) return;
+  if (!raw || !isAppLink(raw)) return;
   event.preventDefault();
   navigate(raw);
 }
