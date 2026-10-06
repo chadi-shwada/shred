@@ -45,7 +45,7 @@ export const PRESENTATION: Video = {
       start: 9.3,
       end: 16.1,
       step: '01. Vérifier',
-      text: 'Vois ce qui a fuité. Cherche ton e-mail sur Have I Been Pwned, coche les fuites : Free, Deezer. Ton e-mail ne passe jamais par Shred.',
+      text: 'Vois ce qui a fuité. Cherche ton e-mail sur Have I Been Pwned, coche les fuites : Free, Deezer (logos des entreprises, marques de leurs propriétaires). Ton e-mail ne passe jamais par Shred.',
     },
     {
       start: 16.1,

@@ -39,6 +39,15 @@ export function Layout({ path, children }: LayoutProps) {
     return () => window.removeEventListener('keydown', onKey);
   }, [menuOpen]);
 
+  // Barre de navigation détachée et arrondie dès que la page défile.
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 12);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   const skipToContent = (event: MouseEvent) => {
     event.preventDefault();
     mainRef.current?.focus();
@@ -49,10 +58,11 @@ export function Layout({ path, children }: LayoutProps) {
       <a className="skip-link" href="#contenu" onClick={skipToContent}>
         Aller au contenu
       </a>
-      <header className="site-header theme-dark">
+      <header className="site-header theme-dark" data-scrolled={scrolled}>
         <div className="container site-header__inner">
-          <a className="brand" href={href('/')} aria-label="Shred, accueil">
+          <a className="brand" href={href('/')} aria-label="Shred, outil français, accueil">
             <Logo />
+            <span className="brand__flag" aria-hidden="true" title="Fait en France" />
           </a>
           <button
             type="button"

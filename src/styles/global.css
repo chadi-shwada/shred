@@ -330,10 +330,20 @@ code {
   position: sticky;
   top: 0;
   z-index: 50;
+  /* Hauteur fixe : la barre flottante tient dedans, la page ne saute pas. */
+  height: var(--header-h);
+}
+
+/* Fond pleine largeur en haut de page, effacé quand la barre se détache. */
+.site-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
   background: color-mix(in srgb, var(--bg) 97%, transparent);
   backdrop-filter: saturate(1.8) blur(14px);
   -webkit-backdrop-filter: saturate(1.8) blur(14px);
   border-bottom: 1px solid var(--line);
+  transition: opacity 250ms ease;
 }
 
 .site-header__inner {
@@ -341,6 +351,93 @@ code {
   align-items: center;
   gap: 1rem;
   height: var(--header-h);
+  border: 1px solid transparent;
+  transition:
+    max-width 350ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    height 350ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    margin-top 350ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    padding 350ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-radius 350ms ease,
+    background-color 250ms ease,
+    border-color 250ms ease,
+    box-shadow 250ms ease;
+}
+
+/* Au défilement : barre détachée, arrondie, flottante (Layout pose data-scrolled). */
+.site-header[data-scrolled='true']::before {
+  opacity: 0;
+}
+
+.site-header[data-scrolled='true'] .site-header__inner {
+  max-width: min(66rem, calc(100% - 1.5rem));
+  height: calc(var(--header-h) - 0.9rem);
+  margin-top: 0.55rem;
+  padding-inline: 0.55rem 0.45rem;
+  border-color: var(--line-strong);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--surface) 82%, transparent);
+  backdrop-filter: saturate(1.8) blur(16px);
+  -webkit-backdrop-filter: saturate(1.8) blur(16px);
+  box-shadow:
+    0 12px 40px -12px rgb(0 0 0 / 70%),
+    0 0 0 1px rgb(255 255 255 / 3%) inset;
+}
+
+.site-header[data-scrolled='true'] .brand {
+  padding-left: 0.4rem;
+}
+
+@media (max-width: 820px) {
+  .site-header[data-scrolled='true'] .site-header__inner {
+    border-radius: var(--radius-lg);
+  }
+
+  .site-header[data-scrolled='true'] .nav-wrap {
+    top: calc(100% + 0.5rem);
+    border: 1px solid var(--line-strong);
+    border-radius: var(--radius-lg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header::before,
+  .site-header__inner {
+    transition: none;
+  }
+}
+
+/* Petit drapeau français à côté du logo (décoratif). */
+.brand__flag {
+  display: inline-block;
+  width: 1.15rem;
+  height: 0.8rem;
+  margin-left: 0.1rem;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #000091 0 33.4%, #ffffff 33.4% 66.6%, #e1000f 66.6% 100%);
+  box-shadow: 0 0 0 1px rgb(255 255 255 / 18%);
+  transform-origin: left center;
+}
+
+.brand:hover .brand__flag {
+  animation: flag-wave 900ms ease-in-out;
+}
+
+@keyframes flag-wave {
+  25% {
+    transform: skewY(-6deg) scaleX(0.94);
+  }
+  50% {
+    transform: skewY(5deg) scaleX(1);
+  }
+  75% {
+    transform: skewY(-3deg) scaleX(0.97);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand:hover .brand__flag {
+    animation: none;
+  }
 }
 
 .brand {
@@ -528,6 +625,90 @@ code {
 
 .btn--danger {
   --btn-ink: var(--danger);
+}
+
+.btn--danger-solid {
+  --btn-bg: var(--danger);
+  --btn-ink: var(--bg);
+  --btn-line: var(--danger);
+}
+
+.btn--danger-solid:hover {
+  color: var(--bg);
+  background: color-mix(in srgb, var(--danger) 85%, var(--ink));
+}
+
+/* ---------- Fenêtre de confirmation (ConfirmDialog) ---------- */
+
+.confirm {
+  width: min(28rem, calc(100% - 2 * var(--gutter)));
+  max-width: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+}
+
+.confirm::backdrop {
+  background: rgb(3 4 8 / 62%);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.confirm__box {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-lg);
+}
+
+.confirm[open] .confirm__box {
+  animation: confirm-in 180ms ease-out;
+}
+
+@keyframes confirm-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+.confirm__icon {
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--radius);
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.confirm__title {
+  margin: 0;
+  font-size: 1.125rem;
+  letter-spacing: -0.01em;
+}
+
+.confirm__text p {
+  margin: 0;
+  color: var(--ink-2);
+}
+
+.confirm__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confirm[open] .confirm__box {
+    animation: none;
+  }
 }
 
 .btn--lg {
@@ -3392,6 +3573,10 @@ input[type='range'] {
 }
 
 @media (min-width: 821px) {
+  .site-header[data-scrolled='true'] .nav a[aria-current='page']::after {
+    bottom: -0.2rem;
+  }
+
   .nav a[aria-current='page']::after {
     content: '';
     position: absolute;
