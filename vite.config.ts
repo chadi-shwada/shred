@@ -78,7 +78,11 @@ function seo(): Plugin {
       const template = index.source as string;
       if (!template.includes(SEO_MARKER)) this.error('marqueur SEO absent de index.html');
       const catalog = readCatalog();
-      const breachPages = allBreachPageMeta(catalog.breaches);
+      // Image d'aperçu par fuite si scripts/og-images.mjs l'a générée ; sinon og.png.
+      const breachPages = allBreachPageMeta(catalog.breaches).map((page) => {
+        const image = `/og/${page.path.slice('/fuite/'.length)}.jpg`;
+        return existsSync(new URL(`./public${image}`, import.meta.url)) ? { ...page, image } : page;
+      });
       for (const page of [...PAGES, ...breachPages]) {
         const html = template.replace(SEO_MARKER, headTags(page));
         if (page.path === '/') index.source = html;

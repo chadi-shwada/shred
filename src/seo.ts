@@ -10,6 +10,8 @@ export interface PageMeta {
   path: string;
   title: string;
   description: string;
+  /** Image d'aperçu propre à la page (chemin depuis la racine) ; sinon /og.png. */
+  image?: string;
 }
 
 export const PAGES: PageMeta[] = [
@@ -78,7 +80,8 @@ const esc = (text: string) =>
 /** Balises <head> d'une page. La page 404 n'a pas d'adresse canonique et n'est pas indexée. */
 export function headTags(page: PageMeta, { noindex = false } = {}): string {
   const url = `${SITE_URL}${page.path === '/' ? '/' : page.path}`;
-  const image = `${SITE_URL}/og.png`;
+  const image = `${SITE_URL}${page.image ?? '/og.png'}`;
+  const imageAlt = page.image ? page.title : "Shred : demande l'effacement de tes données";
   const tags = [
     `<title>${esc(page.title)}</title>`,
     `<meta name="description" content="${esc(page.description)}" />`,
@@ -92,7 +95,7 @@ export function headTags(page: PageMeta, { noindex = false } = {}): string {
     `<meta property="og:image" content="${image}" />`,
     '<meta property="og:image:width" content="1200" />',
     '<meta property="og:image:height" content="630" />',
-    `<meta property="og:image:alt" content="Shred : demande l'effacement de tes données" />`,
+    `<meta property="og:image:alt" content="${esc(imageAlt)}" />`,
     '<meta name="twitter:card" content="summary_large_image" />',
     `<meta name="twitter:title" content="${esc(page.title)}" />`,
     `<meta name="twitter:description" content="${esc(page.description)}" />`,
