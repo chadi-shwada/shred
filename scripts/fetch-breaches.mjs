@@ -54,7 +54,11 @@ try {
   const withFrench = raw.map((b, i) => ({ ...b, IsFrench: breaches[i].IsFrench }));
   const logos = await downloadLogos(withFrench, LOGOS_DIR);
   await writeFile(LOGOS_MANIFEST, JSON.stringify(logos) + '\n');
-  console.log(`[fetch-breaches] ${Object.keys(logos).length} logos enregistrés.`);
+  const light = Object.keys(logos).filter((name) => logos[name].light);
+  console.log(
+    `[fetch-breaches] ${Object.keys(logos).length} logos enregistrés` +
+      (light.length > 0 ? `, dont ${light.length} clairs sur fond sombre (${light.join(', ')}).` : '.'),
+  );
 } catch (error) {
   console.warn(`[fetch-breaches] Catalogue non téléchargé : ${error.message}. Le build continue sans.`);
 }

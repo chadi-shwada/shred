@@ -4737,6 +4737,12 @@ input[type='range'] {
   box-shadow: inset 0 0 0 1px rgb(0 0 0 / 8%);
 }
 
+/* Logo clair (blanc sur fond transparent) : fond sombre, sinon il disparaît. */
+.breach-mark--logo-light {
+  background: #1a1d2b;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 14%);
+}
+
 .breach-mark--logo img {
   display: block;
   width: 100%;

@@ -1,7 +1,8 @@
 /**
  * Au build, colle le logo de l'entreprise (public/logos/, téléchargé par
  * fetch-breaches.mjs) dans l'image de partage de chaque page de fuite, à la
- * place du médaillon : carré blanc arrondi, logo centré. Les images de base
+ * place du médaillon : carré arrondi, blanc ou sombre pour un logo clair
+ * (isLightLogo), logo centré. Les images de base
  * et la position du médaillon (public/og/marks.json) viennent de
  * scripts/og-images.mjs. Résultat dans public/og-logo/ (non versionné) ;
  * vite.config.ts le préfère à public/og/ quand il existe. Sans logo, l'image
@@ -15,6 +16,42 @@ import { PNG } from 'pngjs';
 
 /** Part de la taille du médaillon laissée en marge autour du logo. */
 const PADDING = 0.14;
+
+/** Fond du carré : blanc, ou sombre derrière un logo clair (même teinte que le site). */
+export const LIGHT_BG = [255, 255, 255];
+export const DARK_BG = [26, 29, 43];
+
+/** Luminance moyenne au-delà de laquelle un logo transparent ne se voit pas sur du blanc. */
+export const LIGHT_LUMINANCE = 0.5;
+
+/** Composante sRGB (0 à 255) en valeur linéaire, pour la luminance relative (WCAG). */
+const linear = (v) => {
+  const c = v / 255;
+  return c <= 0.04045 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+};
+
+/**
+ * Vrai pour un logo clair sur fond transparent (logo blanc, par exemple) :
+ * posé sur du blanc, il disparaîtrait. Luminance relative moyenne des pixels
+ * visibles, pondérée par leur opacité. Un logo opaque porte son propre fond :
+ * jamais clair au sens de cette règle.
+ */
+export function isLightLogo(img) {
+  const n = img.width * img.height;
+  let sum = 0;
+  let weight = 0;
+  let transparent = 0;
+  for (let i = 0; i < n * 4; i += 4) {
+    const a = img.data[i + 3] / 255;
+    if (a < 0.5) transparent++;
+    if (a === 0) continue;
+    const l = 0.2126 * linear(img.data[i]) + 0.7152 * linear(img.data[i + 1]) + 0.0722 * linear(img.data[i + 2]);
+    sum += l * a;
+    weight += a;
+  }
+  if (weight === 0 || transparent / n < 0.05) return false;
+  return sum / weight > LIGHT_LUMINANCE;
+}
 
 const clamp01 = (v) => Math.min(1, Math.max(0, v));
 
@@ -54,19 +91,20 @@ function sample(img, fx, fy) {
 }
 
 /**
- * Dessine un carré blanc arrondi sur base (RGBA) à l'emplacement du médaillon,
- * puis le logo centré dedans, réduit pour tenir dans la marge. Modifie base.
+ * Dessine un carré arrondi (blanc par défaut) sur base (RGBA) à l'emplacement
+ * du médaillon, puis le logo centré dedans, réduit pour tenir dans la marge.
+ * Modifie base.
  */
-export function compositeLogo(base, mark, logo) {
+export function compositeLogo(base, mark, logo, background = LIGHT_BG) {
   const { x, y, size, radius } = mark;
-  // Carré blanc, un pixel plus large pour couvrir le bord du médaillon d'origine.
+  // Carré, un pixel plus large pour couvrir le bord du médaillon d'origine.
   for (let py = y - 1; py <= y + size + 1; py++) {
     for (let px = x - 1; px <= x + size + 1; px++) {
       if (px < 0 || py < 0 || px >= base.width || py >= base.height) continue;
       const c = roundedCoverage(px + 0.5, py + 0.5, x - 1, y - 1, size + 2, radius + 1);
       if (c === 0) continue;
       const i = (py * base.width + px) * 4;
-      for (let k = 0; k < 3; k++) base.data[i + k] = Math.round(base.data[i + k] * (1 - c) + 255 * c);
+      for (let k = 0; k < 3; k++) base.data[i + k] = Math.round(base.data[i + k] * (1 - c) + background[k] * c);
     }
   }
   const inner = size * (1 - 2 * PADDING);
@@ -111,14 +149,14 @@ function main() {
   mkdirSync(out, { recursive: true });
   let n = 0;
   for (const [slug, mark] of Object.entries(marks)) {
-    const logoPath = logos[mark.name];
+    const entry = logos[mark.name];
     const basePath = `${root}public/og/${slug}.jpg`;
-    if (!logoPath || !existsSync(basePath)) continue;
+    if (!entry || !existsSync(basePath)) continue;
     try {
-      const logo = decodeLogo(readFileSync(`${root}public${logoPath}`));
+      const logo = decodeLogo(readFileSync(`${root}public${entry.src}`));
       if (!logo) continue;
       const base = jpeg.decode(readFileSync(basePath), { useTArray: true, formatAsRGBA: true });
-      compositeLogo(base, mark, logo);
+      compositeLogo(base, mark, logo, entry.light ? DARK_BG : LIGHT_BG);
       writeFileSync(`${out}/${slug}.jpg`, jpeg.encode(base, 86).data);
       n++;
     } catch (error) {

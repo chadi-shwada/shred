@@ -65,8 +65,24 @@ describe('logos des fuites (build)', () => {
       dir,
       { fetchImpl, log: { warn: (m: string) => warnings.push(m) } },
     );
-    expect(manifest).toEqual({ Free: '/logos/Free.png' });
+    expect(manifest).toEqual({ Free: { src: '/logos/Free.png', light: false } });
     expect(await readdir(dir)).toEqual(['Free.png']);
     expect(warnings).toHaveLength(3);
+  });
+
+  it('note les logos clairs sur fond transparent', async () => {
+    dir = await mkdtemp(join(tmpdir(), 'logos-'));
+    // 8 × 8, carré blanc au centre, reste transparent (logo blanc).
+    const white = Uint8Array.from(
+      atob(
+        'iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAI0lEQVR4nGNgoBQwwhj/////jyLByMjIwMDAwETIBMoVUA4A8sQECEIiHkUAAAAASUVORK5CYII=',
+      ),
+      (c) => c.charCodeAt(0),
+    );
+    const manifest = await downloadLogos([breach({ Name: 'Questel' })], dir, {
+      fetchImpl: async () => new Response(new Blob([white])),
+      log: { warn: () => {} },
+    });
+    expect(manifest).toEqual({ Questel: { src: '/logos/Questel.png', light: true } });
   });
 });
