@@ -6,8 +6,7 @@ import { ScrambleText } from '../components/ScrambleText';
 import { ShredSheet } from '../components/ShredSheet';
 import { VerifyMock } from '../components/VerifyMock';
 import { ShowcaseVideo } from '../components/ShowcaseVideo';
-import { VideoPlayer } from '../components/VideoPlayer';
-import { DEMO, EXPLAINER } from '../data/videos';
+import { PRESENTATION } from '../data/videos';
 import summary from 'virtual:catalog-summary';
 import { formatMonthFr } from '../lib/breachPages';
 import { formatCount } from '../lib/breaches';
@@ -157,19 +156,12 @@ export function Home() {
           <div className="section__head">
             <span className="eyebrow">En vidéo</span>
             <h2 id="video">Vois Shred en action</h2>
-            <p className="lead">Le principe en 50 secondes, puis la démo complète pour te lancer.</p>
+            <p className="lead">
+              Le principe, puis la démo complète sur une vraie fuite : trouver la fuite, écrire à l'entreprise, suivre
+              le délai, relancer.
+            </p>
           </div>
-          <ShowcaseVideo video={EXPLAINER} />
-          <div className="videos-demo">
-            <div>
-              <h3>La démo complète, pas à pas</h3>
-              <p>
-                Deux minutes sur une vraie fuite (Deezer, 2019) : trouver la fuite, écrire à l'entreprise, suivre le
-                délai, relancer et préparer la plainte CNIL.
-              </p>
-            </div>
-            <VideoPlayer video={DEMO} />
-          </div>
+          <ShowcaseVideo video={PRESENTATION} />
         </div>
       </section>
 
