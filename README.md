@@ -34,7 +34,7 @@ Node 22.12 ou plus récent.
 ## Déploiement
 
 Site statique déployé sur Vercel depuis la branche `main`. Une page HTML par adresse, servie grâce à
-`cleanUrls`. Redéploiement hebdomadaire (liste des fuites à jour) si le secret GitHub `VERCEL_DEPLOY_HOOK`
+`cleanUrls`. Redéploiement quotidien (liste des fuites à jour) si le secret GitHub `VERCEL_DEPLOY_HOOK`
 contient l'URL d'un Deploy Hook Vercel. La configuration est dans `vercel.json` :
 build `npm run build`, dossier `dist`, et en-têtes de sécurité (CSP identique à celle injectée dans
 la page, plus `frame-ancestors 'none'`). Aucun script Vercel (Analytics, Speed Insights) n'est inclus.
