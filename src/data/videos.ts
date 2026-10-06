@@ -35,7 +35,7 @@ export const PRESENTATION: Video = {
     {
       start: 0,
       end: 5,
-      text: '[Musique douce et bruitages] Tes données ont fuité. 1 039 fuites connues, dont 27 en France. Autour, des bribes de données masquées : e-mail, mot de passe, IBAN, date de naissance.',
+      text: '[Musique électronique sombre et bruitages] Tes données ont fuité. 1 039 fuites connues, dont 27 en France. Autour, des bribes de données masquées : e-mail, mot de passe, IBAN, date de naissance.',
     },
     {
       start: 5,
