@@ -128,6 +128,22 @@ describe('copies des lettres', () => {
     ]);
   });
 
+  it('garde le contexte de la lettre et ignore une valeur inconnue', () => {
+    const raw = JSON.parse(
+      serializeExport(
+        [
+          { ...req(), context: 'violation' },
+          { ...req(), id: 'b' },
+        ],
+        '2026-10-05',
+      ),
+    );
+    raw.requests[1].context = 'autre';
+    const [first, second] = parseExport(JSON.stringify(raw));
+    expect(first?.context).toBe('violation');
+    expect(second).not.toHaveProperty('context');
+  });
+
   it('reste compatible avec les exports sans lettres', () => {
     expect(parseExport(serializeExport([req()], '2026-10-05'))[0]).not.toHaveProperty('letters');
   });

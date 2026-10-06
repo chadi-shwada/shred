@@ -4,7 +4,7 @@
  */
 
 import { daysBetween, gdprDeadlines, isValidIsoDate, type IsoDate } from './dates';
-import { INITIAL_KINDS, isInitialKind, type InitialKind } from './letters';
+import { INITIAL_KINDS, isInitialKind, type InitialKind, type LetterContext } from './letters';
 
 export type Channel = 'email' | 'formulaire' | 'courrier';
 
@@ -38,6 +38,11 @@ export interface TrackedRequest {
   sentOn: IsoDate;
   status: Status;
   notes: string;
+  /**
+   * Contexte de la première lettre (un site publie les données, ou l'entreprise
+   * a subi la fuite), repris par la relance. Absent dans les suivis anciens.
+   */
+  context?: LetterContext;
   /**
    * Copies des lettres envoyées, gardées seulement si la personne le choisit
    * (elles contiennent son nom). Servent au dossier de plainte CNIL.
@@ -123,7 +128,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 function parseRequest(value: unknown, index: number): TrackedRequest {
   const where = `Demande n° ${index + 1}`;
   if (!isRecord(value)) throw new ImportError(`${where} : format invalide.`);
-  const { id, site, kind, channel, sentOn, status, notes, letters } = value;
+  const { id, site, kind, channel, sentOn, status, notes, letters, context } = value;
   if (typeof id !== 'string' || !id) throw new ImportError(`${where} : identifiant manquant.`);
   if (typeof site !== 'string' || !site.trim()) throw new ImportError(`${where} : site manquant.`);
   if (!isInitialKind(kind)) throw new ImportError(`${where} : type inconnu.`);
@@ -138,6 +143,7 @@ function parseRequest(value: unknown, index: number): TrackedRequest {
     sentOn,
     status: status as Status,
     notes: typeof notes === 'string' ? notes : '',
+    ...((context === 'exposition' || context === 'violation') && { context }),
     ...(Array.isArray(letters) && { letters: letters.filter(isSavedLetter) }),
   };
 }

@@ -211,6 +211,7 @@ export function Generator({ route }: { route: Route }) {
       sentOn: form.date,
       status: 'envoyee',
       notes: '',
+      context: form.context,
     };
     update((list) => [...list, keepCopy ? withLetter(request, copy) : request]);
     setFeedback({
