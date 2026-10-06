@@ -1,6 +1,6 @@
 /**
  * Vidéo de présentation du site (public/videos/shred-presentation.*) : le
- * principe de Shred en 45 s, en animation (pas de démo pas à pas). Muette : le
+ * principe de ShredRGPD en 45 s, en animation (pas de démo pas à pas). Muette : le
  * texte est incrusté à l'image, repris ici pour les sous-titres et la
  * transcription.
  * Fuites réelles (catalogue Have I Been Pwned, chiffres du 5 octobre 2026),
@@ -25,7 +25,7 @@ export interface Video {
 
 export const PRESENTATION: Video = {
   id: 'presentation',
-  title: 'Shred en 45 secondes',
+  title: 'ShredRGPD en 45 secondes',
   duration: '45 s',
   src: '/videos/shred-presentation.mp4',
   poster: '/videos/shred-presentation.jpg',
@@ -39,13 +39,13 @@ export const PRESENTATION: Video = {
     {
       start: 5,
       end: 9.3,
-      text: 'Un extrait de la fuite Deezer de 2019 passe au broyeur. Shred : demande l’effacement de tes données. Gratuit, sans compte, sans traceur.',
+      text: 'Un extrait de la fuite Deezer de 2019 passe au broyeur. ShredRGPD : demande l’effacement de tes données. Gratuit, sans compte, sans traceur.',
     },
     {
       start: 9.3,
       end: 16.1,
       step: '01. Vérifier',
-      text: 'Vois ce qui a fuité. Cherche ton e-mail sur Have I Been Pwned, coche les fuites : Free, Deezer (logos des entreprises, marques de leurs propriétaires). Ton e-mail ne passe jamais par Shred.',
+      text: 'Vois ce qui a fuité. Cherche ton e-mail sur Have I Been Pwned, coche les fuites : Free, Deezer (logos des entreprises, marques de leurs propriétaires). Ton e-mail ne passe jamais par ShredRGPD.',
     },
     {
       start: 16.1,

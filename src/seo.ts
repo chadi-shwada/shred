@@ -18,50 +18,50 @@ export const PAGES: PageMeta[] = [
   { path: '/', title: SITE_TITLE, description: SITE_DESCRIPTION },
   {
     path: '/verifier',
-    title: 'Vérifier mes fuites · Shred',
+    title: 'Vérifier mes fuites · ShredRGPD',
     description:
       "Repère les fuites qui contiennent ton e-mail, vois quelles données sont exposées et teste un mot de passe sans le confier à personne. Puis écris à l'entreprise en un clic.",
   },
   {
     path: '/que-faire',
-    title: 'Que faire après une fuite ? · Shred',
+    title: 'Que faire après une fuite ? · ShredRGPD',
     description:
       'SMS, appel ou e-mail suspect, carte bancaire, pièce d’identité ou mot de passe exposé : les bons réflexes et les canaux officiels de signalement.',
   },
   {
     path: '/lettre',
-    title: 'Écrire une lettre RGPD · Shred',
+    title: 'Écrire une lettre RGPD · ShredRGPD',
     description:
       "Génère une lettre d'effacement, d'accès, d'opposition, de relance ou un signalement à l'hébergeur, avec les bons articles du RGPD. Gratuit, dans ton navigateur.",
   },
   {
     path: '/suivi',
-    title: 'Suivi de mes demandes · Shred',
+    title: 'Suivi de mes demandes · ShredRGPD',
     description:
       "Suis tes demandes RGPD : échéance d'un mois calculée, rappel dans ton agenda, relance et récapitulatif de plainte CNIL. Tout reste dans ton navigateur.",
   },
   {
     path: '/ressources',
-    title: 'Mes droits, étape par étape · Shred',
+    title: 'Mes droits, étape par étape · ShredRGPD',
     description:
       "Comment faire effacer tes données après une fuite : preuves, bon contact, envoi, relance, signalement à l'hébergeur et plainte à la CNIL.",
   },
   {
     path: '/a-propos',
-    title: 'À propos · Shred',
+    title: 'À propos · ShredRGPD',
     description:
-      'Shred aide les victimes de fuites de données à exercer leurs droits RGPD, sans compte, sans traceur et sans base de fuites.',
+      'ShredRGPD aide les victimes de fuites de données à exercer leurs droits RGPD, sans compte, sans traceur et sans base de fuites.',
   },
   {
     path: '/mentions-legales',
-    title: 'Mentions légales · Shred',
-    description: 'Éditeur, hébergeur et traitement des données du site Shred.',
+    title: 'Mentions légales · ShredRGPD',
+    description: 'Éditeur, hébergeur et traitement des données du site ShredRGPD.',
   },
 ];
 
 export const NOT_FOUND: PageMeta = {
   path: '/404',
-  title: 'Page introuvable · Shred',
+  title: 'Page introuvable · ShredRGPD',
   description: "Cette page n'existe pas.",
 };
 
@@ -81,14 +81,14 @@ const esc = (text: string) =>
 export function headTags(page: PageMeta, { noindex = false } = {}): string {
   const url = `${SITE_URL}${page.path === '/' ? '/' : page.path}`;
   const image = `${SITE_URL}${page.image ?? '/og.png'}`;
-  const imageAlt = page.image ? page.title : "Shred : demande l'effacement de tes données";
+  const imageAlt = page.image ? page.title : "ShredRGPD : demande l'effacement de tes données";
   const tags = [
     `<title>${esc(page.title)}</title>`,
     `<meta name="description" content="${esc(page.description)}" />`,
     noindex ? '<meta name="robots" content="noindex" />' : `<link rel="canonical" href="${url}" />`,
     '<meta property="og:type" content="website" />',
     '<meta property="og:locale" content="fr_FR" />',
-    '<meta property="og:site_name" content="Shred" />',
+    '<meta property="og:site_name" content="ShredRGPD" />',
     `<meta property="og:title" content="${esc(page.title)}" />`,
     `<meta property="og:description" content="${esc(page.description)}" />`,
     ...(noindex ? [] : [`<meta property="og:url" content="${url}" />`]),

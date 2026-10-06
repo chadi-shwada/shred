@@ -21,7 +21,7 @@ const STARTS: { icon: IconName; title: string; text: string; link: string; actio
   {
     icon: 'search',
     title: 'Je veux savoir si je suis concerné',
-    text: 'Cherche ton e-mail sur Have I Been Pwned, colle les résultats : Shred coche les fuites pour toi.',
+    text: 'Cherche ton e-mail sur Have I Been Pwned, colle les résultats : ShredRGPD coche les fuites pour toi.',
     link: href('/verifier'),
     action: 'Vérifier mes fuites',
   },
@@ -50,12 +50,12 @@ const STARTS: { icon: IconName; title: string; text: string; link: string; actio
 
 const FAQ = [
   {
-    q: 'Est-ce que Shred voit mes données ?',
+    q: 'Est-ce que ShredRGPD voit mes données ?',
     a: "Non. Tout se passe dans ton navigateur : il n'y a pas de serveur applicatif, pas de compte, pas de traceur. La page bloque toute requête réseau, sauf vers Pwned Passwords quand tu lances un test de mot de passe : seuls 5 caractères de son empreinte partent, jamais le mot de passe.",
   },
   {
-    q: 'Est-ce que Shred vérifie si mes données ont fuité ?',
-    a: "Il t'y aide sans voir tes données. Tu cherches ton e-mail sur Have I Been Pwned, puis tu coches les fuites trouvées dans Shred, qui affiche les données exposées et prépare la lettre. Shred n'héberge aucune base de fuites : seulement la liste publique des fuites connues.",
+    q: 'Est-ce que ShredRGPD vérifie si mes données ont fuité ?',
+    a: "Il t'y aide sans voir tes données. Tu cherches ton e-mail sur Have I Been Pwned, puis tu coches les fuites trouvées dans ShredRGPD, qui affiche les données exposées et prépare la lettre. ShredRGPD n'héberge aucune base de fuites : seulement la liste publique des fuites connues.",
   },
   {
     q: 'Une lettre suffit-elle à faire supprimer mes données ?',
@@ -100,8 +100,8 @@ export function Home() {
               Demande l'effacement de <ScrambleText className="accent" text="tes données" />
             </h1>
             <p className="lead">
-              Un site expose tes informations issues d'une fuite ? Shred rédige ta demande RGPD, calcule les délais et
-              t'aide à relancer. Sans jamais voir tes données.
+              Un site expose tes informations issues d'une fuite ? ShredRGPD rédige ta demande RGPD, calcule les délais
+              et t'aide à relancer. Sans jamais voir tes données.
             </p>
             <div className="btn-row">
               <a className="btn btn--primary btn--lg btn--glow" href={href('/lettre')}>
@@ -138,7 +138,7 @@ export function Home() {
         <div className="container">
           <div className="section__head">
             <span className="eyebrow">En vidéo</span>
-            <h2 id="video">Vois Shred en action</h2>
+            <h2 id="video">Vois ShredRGPD en action</h2>
             <p className="lead">
               Le principe en 45 secondes, sur de vraies fuites : voir ce qui a fuité, écrire à l'entreprise, suivre le
               délai.
@@ -242,7 +242,7 @@ export function Home() {
               </li>
               <li>
                 <Icon name="check" size={18} />
-                Ton e-mail ne passe jamais par Shred : tu le cherches sur Have I Been Pwned.
+                Ton e-mail ne passe jamais par ShredRGPD : tu le cherches sur Have I Been Pwned.
               </li>
               <li>
                 <Icon name="check" size={18} />
@@ -264,7 +264,7 @@ export function Home() {
             <span className="eyebrow eyebrow--ok">Confidentialité</span>
             <h2 id="principes">Tes données restent chez toi</h2>
             <p className="lead">
-              Un outil pour te défendre, qui n'héberge rien : Shred n'a rien à protéger, parce qu'il ne garde rien.
+              Un outil pour te défendre, qui n'héberge rien : ShredRGPD n'a rien à protéger, parce qu'il ne garde rien.
             </p>
           </div>
           <dl className="zeros">
@@ -336,7 +336,7 @@ export function Home() {
             </article>
             <article className="tile tile--half">
               <h3>Aucune base de fuites</h3>
-              <p>Shred ne stocke et ne recherche aucune donnée fuitée, même hachée. Il aide, il n'archive pas.</p>
+              <p>ShredRGPD ne stocke et ne recherche aucune donnée fuitée, même hachée. Il aide, il n'archive pas.</p>
               <div className="tile__visual" aria-hidden="true">
                 <div className="bits-art">
                   {'01101110 01101111 '}

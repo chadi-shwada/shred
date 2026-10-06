@@ -167,7 +167,7 @@ export function parseExport(text: string): TrackedRequest[] {
     throw new ImportError("Ce fichier n'est pas du JSON valide.");
   }
   if (!isRecord(data) || data.format !== EXPORT_FORMAT) {
-    throw new ImportError("Ce fichier n'est pas un export de suivi Shred.");
+    throw new ImportError("Ce fichier n'est pas un export de suivi ShredRGPD.");
   }
   if (data.version !== EXPORT_VERSION) {
     throw new ImportError(`Version d'export non prise en charge : ${String(data.version)}.`);

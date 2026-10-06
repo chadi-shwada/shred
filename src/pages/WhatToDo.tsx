@@ -145,7 +145,7 @@ export function WhatToDo() {
     <>
       <PageHead
         eyebrow="Que faire ?"
-        command={{ input: 'shred aide --urgence', output: 'canaux officiels · démarches' }}
+        command={{ input: 'shredrgpd aide --urgence', output: 'canaux officiels · démarches' }}
         title="Les bons réflexes après une fuite"
       >
         Un message suspect, une carte exposée, un mot de passe dans la nature : voici à qui t'adresser, avec les canaux

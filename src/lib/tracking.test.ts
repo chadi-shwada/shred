@@ -62,7 +62,7 @@ describe('export et import', () => {
 
   it('refuse un fichier étranger ou abîmé', () => {
     expect(() => parseExport('pas du json')).toThrow(ImportError);
-    expect(() => parseExport('{"format":"autre"}')).toThrow("n'est pas un export de suivi Shred");
+    expect(() => parseExport('{"format":"autre"}')).toThrow("n'est pas un export de suivi ShredRGPD");
     expect(() => parseExport('{"format":"shred-suivi","version":2,"requests":[]}')).toThrow('Version');
   });
 

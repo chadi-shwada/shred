@@ -1,5 +1,5 @@
 /**
- * Logo de Shred (décoratif) : un S découpé en bandes sur fond bleu.
+ * Logo de ShredRGPD (décoratif) : un S découpé en bandes sur fond bleu.
  * Tracé vectoriel fidèle à public/logo.png (grille 256, rayon 56).
  */
 
@@ -23,7 +23,9 @@ export function Logo({ size = 28 }: LogoMarkProps) {
   return (
     <>
       <LogoMark size={size} />
-      <span>Shred</span>
+      <span className="brand__name">
+        Shred<span className="brand__rgpd">RGPD</span>
+      </span>
     </>
   );
 }

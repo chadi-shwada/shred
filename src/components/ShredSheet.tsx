@@ -42,7 +42,7 @@ function LeakCard() {
           </div>
         </dl>
         <p className="terminal__prompt">
-          <b>$</b> shred --effacer --rgpd art.17
+          <b>$</b> shredrgpd --effacer --rgpd art.17
           <span className="terminal__cursor" />
         </p>
         <p className="terminal__hex">

@@ -8,22 +8,23 @@ export function About() {
     <>
       <PageHead
         eyebrow="À propos"
-        command={{ input: 'shred --a-propos', output: 'gratuit · sans compte · sans traceur' }}
+        command={{ input: 'shredrgpd --a-propos', output: 'gratuit · sans compte · sans traceur' }}
         title="Un outil pour se défendre, pas pour surveiller"
       >
-        Shred aide les personnes dont les données ont fuité à exercer leurs droits, sans rien leur demander en retour.
+        ShredRGPD aide les personnes dont les données ont fuité à exercer leurs droits, sans rien leur demander en
+        retour.
       </PageHead>
 
       <div className="container page-body">
         <div className="prose">
-          <h2>Ce que fait Shred</h2>
+          <h2>Ce que fait ShredRGPD</h2>
           <ul>
             <li>Il rédige des lettres d'effacement, d'accès et de relance fondées sur le RGPD.</li>
             <li>Il calcule les délais légaux de réponse et t'aide à suivre tes demandes.</li>
             <li>Il te renvoie vers les bons interlocuteurs, à commencer par la CNIL.</li>
           </ul>
 
-          <h2>Ce que Shred ne fera jamais</h2>
+          <h2>Ce que ShredRGPD ne fera jamais</h2>
           <ul>
             <li>
               Envoyer tes données à un serveur ou à un tiers. Le site est statique et n'a pas de serveur applicatif.
@@ -40,13 +41,13 @@ export function About() {
             seule exception, <code>api.pwnedpasswords.com</code>.
           </p>
           <p>
-            Cette exception sert au test de mot de passe, et seulement quand tu le lances. Shred calcule l'empreinte
+            Cette exception sert au test de mot de passe, et seulement quand tu le lances. ShredRGPD calcule l'empreinte
             SHA-1 du mot de passe dans ton navigateur et n'en envoie que les 5 premiers caractères. Le service renvoie
             des centaines d'empreintes qui commencent pareil et la comparaison se fait chez toi (k-anonymat).
           </p>
           <p>
-            Pour ton adresse e-mail, Shred ne fait aucune requête : tu la cherches toi-même sur Have I Been Pwned. La
-            liste des fuites connues est intégrée au site au moment de sa publication (source : Have I Been Pwned,
+            Pour ton adresse e-mail, ShredRGPD ne fait aucune requête : tu la cherches toi-même sur Have I Been Pwned.
+            La liste des fuites connues est intégrée au site au moment de sa publication (source : Have I Been Pwned,
             licence CC BY 4.0). Elle contient des informations publiques sur les fuites, jamais les données fuitées.
           </p>
           <p>
@@ -56,7 +57,7 @@ export function About() {
           </p>
           <p>
             Le bouton « Ouvrir dans ma messagerie » passe la lettre à ton logiciel de messagerie : c'est lui qui
-            l'envoie, pas Shred. Les liens vers des sites externes s'ouvrent sans transmettre d'adresse d'origine.
+            l'envoie, pas ShredRGPD. Les liens vers des sites externes s'ouvrent sans transmettre d'adresse d'origine.
           </p>
 
           <h2>Sites connus</h2>

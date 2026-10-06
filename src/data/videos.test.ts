@@ -27,7 +27,7 @@ describe('vidéo de présentation', () => {
   it('présente le principe en 45 s, sans la démo pas à pas', () => {
     const texts = PRESENTATION.cues.map((c) => c.text);
     expect(texts[0]).toContain('Tes données ont fuité');
-    expect(texts.some((t) => t.startsWith('Shred, de A à Z'))).toBe(false);
+    expect(texts.some((t) => t.startsWith('ShredRGPD, de A à Z'))).toBe(false);
     expect(PRESENTATION.cues.at(-1)!.end).toBeLessThanOrEqual(45);
   });
 });

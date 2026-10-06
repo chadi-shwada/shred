@@ -80,7 +80,7 @@ export function breachPageMeta(breach: Breach, slug: string): BreachPageMeta {
   const accounts = breach.pwnCount > 0 ? `${count(breach.pwnCount)} comptes, ` : '';
   return {
     path: BREACH_PATH_PREFIX + slug,
-    title: `Fuite ${breach.title} (${formatMonthFr(breach.date)}) : que faire ? · Shred`,
+    title: `Fuite ${breach.title} (${formatMonthFr(breach.date)}) : que faire ? · ShredRGPD`,
     description: `Fuite de données ${breach.title} du ${formatLongFr(breach.date)} : ${accounts}${types}. Vérifie si tu es concerné et demande à l'entreprise ce qu'elle détient sur toi, avec une lettre RGPD gratuite.`,
   };
 }
@@ -156,7 +156,7 @@ export function breachFeed(catalog: BreachCatalog, siteUrl: string, limit = 30):
   });
   return `<?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="fr">
-  <title>Shred · Fuites de données en France</title>
+  <title>ShredRGPD · Fuites de données en France</title>
   <subtitle>Fuites françaises du catalogue public Have I Been Pwned (CC BY 4.0), avec la marche à suivre.</subtitle>
   <link href="${xml(siteUrl)}/fuites.xml" rel="self" />
   <link href="${xml(siteUrl)}/" />

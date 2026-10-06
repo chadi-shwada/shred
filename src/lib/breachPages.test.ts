@@ -70,7 +70,7 @@ describe('pages de fuite', () => {
 
   it('décrit la page avec les vraies métadonnées', () => {
     const meta = breachPageMeta(CATALOG.breaches[0]!, 'free');
-    expect(meta.title).toBe('Fuite Free (oct. 2024) : que faire ? · Shred');
+    expect(meta.title).toBe('Fuite Free (oct. 2024) : que faire ? · ShredRGPD');
     // Intl sépare les milliers par une espace fine insécable.
     expect(meta.description).toMatch(/du 17 octobre 2024 : 13\s926\s173 comptes, numéros de compte bancaire, noms/);
     expect(allBreachPageMeta(CATALOG.breaches).map((m) => m.path)).toHaveLength(4);

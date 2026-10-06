@@ -321,7 +321,7 @@ export function Generator({ route }: { route: Route }) {
     <>
       <PageHead
         eyebrow="Générateur"
-        command={{ input: 'shred lettre --rgpd art.17', output: "modèle prêt · rien n'est envoyé" }}
+        command={{ input: 'shredrgpd lettre --rgpd art.17', output: "modèle prêt · rien n'est envoyé" }}
         title="Écris ta lettre"
       >
         Cinq étapes courtes : le type de demande, le site, ce qui a fuité, toi, puis ta lettre prête à envoyer. Rien

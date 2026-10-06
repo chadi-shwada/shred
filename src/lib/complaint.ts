@@ -37,7 +37,7 @@ export function complaintSummary(request: TrackedRequest, today: IsoDate): strin
  */
 export function cnilDossier(request: TrackedRequest, today: IsoDate): string {
   const parts = [
-    'DOSSIER DE PLAINTE CNIL (préparé avec Shred, modèle indicatif)',
+    'DOSSIER DE PLAINTE CNIL (préparé avec ShredRGPD, modèle indicatif)',
     '',
     complaintSummary(request, today),
   ];

@@ -63,6 +63,7 @@ body{width:1200px;height:630px;overflow:hidden;font-family:Inter;color:#f4f5fb;
 background:radial-gradient(ellipse 70% 80% at 85% 0%,rgba(47,75,220,.45),transparent 60%),radial-gradient(ellipse 50% 60% at 0% 100%,rgba(47,75,220,.18),transparent 70%),#05060b;padding:56px 64px;display:flex;flex-direction:column}
 .top{display:flex;align-items:center;gap:16px;font-size:30px;font-weight:700;letter-spacing:-.02em}
 .top svg{width:48px;height:48px}
+.top .rgpd{color:#8f9dff}
 .eyebrow{margin-top:44px;font:600 20px 'JB Mono';letter-spacing:.1em;text-transform:uppercase;color:#8f9dff}
 .head{display:flex;align-items:center;gap:28px;margin-top:14px}
 .mark{width:104px;height:104px;border-radius:28px;display:grid;place-items:center;font-size:56px;font-weight:800;color:#fff;
@@ -77,7 +78,7 @@ h1.is-long{font-size:60px}
 .foot b{color:#f4f5fb}
 .url{font:600 22px 'JB Mono';color:#8f9dff;white-space:nowrap;flex:none}
 </style></head><body>
-<div class="top">${logo}Shred</div>
+<div class="top">${logo}<span>Shred<span class="rgpd">RGPD</span></span></div>
 <div class="eyebrow">Fuite de données · que faire ?</div>
 <div class="head"><div class="mark">${esc(breach.title.charAt(0).toUpperCase())}</div><h1 class="${title}">Fuite ${esc(breach.title)}</h1></div>
 <div class="facts"><span>${esc(facts)}</span><span class="risk">● ${RISK_LABELS[risk]}</span></div>

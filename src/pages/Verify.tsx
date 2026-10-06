@@ -134,7 +134,7 @@ function PasswordCheck() {
       </div>
 
       <p className="hint verify__how" id={`${id}-how`}>
-        Shred calcule l'empreinte SHA-1 dans ton navigateur et n'envoie que ses 5 premiers caractères à{' '}
+        ShredRGPD calcule l'empreinte SHA-1 dans ton navigateur et n'envoie que ses 5 premiers caractères à{' '}
         <ExternalLink href="https://haveibeenpwned.com/Passwords">Pwned Passwords</ExternalLink>. Le service renvoie des
         centaines d'empreintes qui commencent pareil, et la comparaison se fait chez toi. Ton mot de passe ne quitte
         jamais ton appareil.
@@ -314,7 +314,7 @@ function BreachFlow({ mode, catalog }: { mode: 'verifier' | 'message'; catalog: 
           </h2>
           <p className="muted">
             Have I Been Pwned, le service de référence, liste les fuites qui contiennent ton adresse. Ton e-mail ne
-            passe jamais par Shred : tu le tapes sur leur site.
+            passe jamais par ShredRGPD : tu le tapes sur leur site.
           </p>
           <ol className="howto">
             <li>
@@ -339,7 +339,7 @@ function BreachFlow({ mode, catalog }: { mode: 'verifier' | 'message'; catalog: 
             <li>
               <span className="howto__num">3</span>
               <div>
-                <strong>Colle ici : Shred reconnaît les fuites pour toi.</strong>
+                <strong>Colle ici : ShredRGPD reconnaît les fuites pour toi.</strong>
                 {catalog && catalog.breaches.length > 0 && <PasteResults breaches={catalog.breaches} onAdd={addMany} />}
               </div>
             </li>
@@ -628,7 +628,9 @@ function PasswordFlow() {
               <Icon name="check" />
             </span>
             <strong>Comparaison chez toi</strong>
-            <span>Le service renvoie des centaines d'empreintes ; Shred cherche la tienne dans ton navigateur.</span>
+            <span>
+              Le service renvoie des centaines d'empreintes ; ShredRGPD cherche la tienne dans ton navigateur.
+            </span>
           </li>
         </ol>
       </section>
@@ -690,11 +692,11 @@ export function Verify() {
     <>
       <PageHead
         eyebrow="Vérifier"
-        command={{ input: 'shred verifier --email ••••••', output: 'aucune donnée envoyée à Shred' }}
+        command={{ input: 'shredrgpd verifier --email ••••••', output: 'aucune donnée envoyée à ShredRGPD' }}
         title="Qu'est-ce qui a fuité ?"
       >
         Vérifie ton adresse e-mail ou un mot de passe, vois quelles données sont exposées, puis écris à l'entreprise en
-        un clic. Rien de ce que tu vérifies ne passe par Shred.
+        un clic. Rien de ce que tu vérifies ne passe par ShredRGPD.
       </PageHead>
 
       <div className="container page-body verify-page">

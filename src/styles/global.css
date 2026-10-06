@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Shred : tokens de couleur et de typographie, mode sombre inclus.
+   ShredRGPD : tokens de couleur et de typographie, mode sombre inclus.
    Polices Inter et JetBrains Mono (OFL) servies par le site lui-même : aucun CDN.
    Le site entier utilise le thème sombre : <html class="theme-dark"> dans index.html.
    Les tokens clairs de :root restent la base si on réintroduit un thème clair.
@@ -406,6 +406,11 @@ code {
   .site-header__inner {
     transition: none;
   }
+}
+
+/* Nom : « Shred » puis « RGPD » en bleu, collés. */
+.brand__rgpd {
+  color: var(--brand-text);
 }
 
 /* Petit drapeau français à côté du logo (décoratif). */
@@ -3470,7 +3475,7 @@ input[type='range'] {
   height: 0.74em;
   overflow: hidden;
   font-family: var(--font-sans);
-  font-size: clamp(6rem, 27vw, 26rem);
+  font-size: clamp(3rem, 15vw, 14.5rem);
   font-weight: 800;
   line-height: 0.92;
   letter-spacing: -0.065em;

@@ -1,7 +1,7 @@
 import { useRef, type PointerEvent } from 'react';
 
 /**
- * Grand mot « Shred » en bandes verticales (décoratif), rappel du logo.
+ * Grand mot « ShredRGPD » en bandes verticales (décoratif), rappel du logo.
  * Gris au repos ; au survol, un dégradé coloré suit le pointeur.
  */
 export function FooterWord() {
@@ -17,8 +17,8 @@ export function FooterWord() {
 
   return (
     <div ref={ref} className="footer-word" aria-hidden="true" onPointerMove={onPointerMove}>
-      <span className="footer-word__base" data-text="Shred" />
-      <span className="footer-word__glow" data-text="Shred" />
+      <span className="footer-word__base" data-text="ShredRGPD" />
+      <span className="footer-word__glow" data-text="ShredRGPD" />
     </div>
   );
 }
