@@ -11,7 +11,7 @@ Sans compte, sans traceur : tes données restent dans ton navigateur.
 
 [**Ouvrir ShredRGPD →**](https://shredrgpd.fr)
 
-[![CI](https://github.com/chadi-shwada/shred/actions/workflows/ci.yml/badge.svg)](https://github.com/chadi-shwada/shred/actions/workflows/ci.yml)
+[![CI](https://github.com/chadi-shwada/shredrgpd/actions/workflows/ci.yml/badge.svg)](https://github.com/chadi-shwada/shredrgpd/actions/workflows/ci.yml)
 [![Licence MIT](https://img.shields.io/badge/licence-MIT-2F4BDC)](LICENSE)
 [![Fait en France](https://img.shields.io/badge/fait%20en-France-2F4BDC)](https://shredrgpd.fr)
 [![Sans traceur](https://img.shields.io/badge/traceurs-0-3ccf8e)](#vie-privée)
@@ -139,8 +139,8 @@ scripts/          téléchargement du catalogue HIBP, logos, images de partage
 Il faut Node 22.12 ou plus récent.
 
 ```bash
-git clone https://github.com/chadi-shwada/shred.git
-cd shred
+git clone https://github.com/chadi-shwada/shredrgpd.git
+cd shredrgpd
 npm install
 npm run dev
 ```
@@ -166,7 +166,7 @@ ShredRGPD n'inclut volontairement ni Vercel Analytics ni Speed Insights.
 
 ## Contribuer
 
-Tu as repéré une erreur dans une lettre, un bug, une idée ? [Ouvre une issue](https://github.com/chadi-shwada/shred/issues) ou propose une pull request.
+Tu as repéré une erreur dans une lettre, un bug, une idée ? [Ouvre une issue](https://github.com/chadi-shwada/shredrgpd/issues) ou propose une pull request.
 
 Quelques règles du projet :
 - **Ne jamais inventer un contact.** Un contact de DPO ou de responsable de traitement n'entre que s'il vient d'une source officielle, avec sa date de vérification.
