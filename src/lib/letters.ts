@@ -432,7 +432,7 @@ export function letterToText(letter: Letter): string {
   return `Objet : ${letter.subject}\n\n${letter.body}\n`;
 }
 
-/** Lien mailto: ouvert dans le logiciel de messagerie de la personne, rien ne transite par Shred. */
+/** Lien mailto: ouvert dans le logiciel de messagerie de la personne, rien ne transite par ShredRGPD. */
 export function mailtoHref(letter: Letter, to = ''): string {
   const params = `subject=${encodeURIComponent(letter.subject)}&body=${encodeURIComponent(letter.body)}`;
   return `mailto:${to.trim().replace(/[?&#\s]/g, '')}?${params}`;

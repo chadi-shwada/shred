@@ -78,7 +78,7 @@ export function BreachPage({ slug }: { slug: string }) {
     <>
       <PageHead
         eyebrow="Fuite de données"
-        command={{ input: `shred fuite ${slug}`, output: `${breach.dataClasses.length} types de données exposés` }}
+        command={{ input: `shredrgpd fuite ${slug}`, output: `${breach.dataClasses.length} types de données exposés` }}
         title={`Fuite ${breach.title}`}
       >
         {breach.domain ? `${breach.title} (${breach.domain})` : breach.title} a subi une fuite de données le{' '}
@@ -119,7 +119,7 @@ export function BreachPage({ slug }: { slug: string }) {
             <h2>Es-tu concerné ?</h2>
             <p>
               Cherche ton adresse e-mail sur Have I Been Pwned : si elle apparaît dans la fuite {breach.title}, tes
-              données en font partie. Ton e-mail ne passe jamais par Shred.
+              données en font partie. Ton e-mail ne passe jamais par ShredRGPD.
             </p>
             <p className="btn-row">
               <ExternalLink href={HIBP_URL} className="btn btn--primary">

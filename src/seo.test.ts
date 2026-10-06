@@ -24,7 +24,7 @@ describe('headTags', () => {
     const tags = headTags(pageMeta('/verifier'));
     expect(tags).toContain('<link rel="canonical" href="https://shred-delta.vercel.app/verifier" />');
     expect(tags).toContain('<meta property="og:url" content="https://shred-delta.vercel.app/verifier" />');
-    expect(tags).toContain('<title>Vérifier mes fuites · Shred</title>');
+    expect(tags).toContain('<title>Vérifier mes fuites · ShredRGPD</title>');
   });
 
   it("l'accueil pointe vers « / »", () => {

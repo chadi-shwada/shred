@@ -60,7 +60,7 @@ export function Layout({ path, children }: LayoutProps) {
       </a>
       <header className="site-header theme-dark" data-scrolled={scrolled}>
         <div className="container site-header__inner">
-          <a className="brand" href={href('/')} aria-label="Shred, outil français, accueil">
+          <a className="brand" href={href('/')} aria-label="ShredRGPD, outil français, accueil">
             <Logo />
             <span className="brand__flag" aria-hidden="true" title="Fait en France" />
           </a>
@@ -99,7 +99,7 @@ export function Layout({ path, children }: LayoutProps) {
         <div className="container">
           <div className="site-footer__grid">
             <div className="site-footer__brand">
-              <a className="brand" href={href('/')} aria-label="Shred, accueil">
+              <a className="brand" href={href('/')} aria-label="ShredRGPD, accueil">
                 <Logo />
               </a>
               <p>

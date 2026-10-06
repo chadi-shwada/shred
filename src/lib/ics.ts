@@ -55,7 +55,7 @@ export function buildIcs(reminder: Reminder, now: Date = new Date()): string {
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Shred//Suivi RGPD//FR',
+    'PRODID:-//ShredRGPD//Suivi RGPD//FR',
     'CALSCALE:GREGORIAN',
     'BEGIN:VEVENT',
     `UID:${reminder.uid}@shred`,

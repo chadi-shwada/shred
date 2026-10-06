@@ -59,7 +59,7 @@ export function App() {
   useEffect(() => {
     // Les pages de fuite posent leur titre une fois le catalogue chargé.
     document.title = route.path.startsWith(BREACH_PATH_PREFIX)
-      ? 'Fuite de données · Shred'
+      ? 'Fuite de données · ShredRGPD'
       : pageMeta(route.path).title;
     if (first.current) {
       first.current = false;

@@ -2,29 +2,29 @@
 
 <img src="public/logo.png" alt="" width="96" height="96">
 
-# Shred
+# ShredRGPD
 
 **Tes données ont fuité ? Demande leur effacement.**
 
 Un outil gratuit, en français, pour voir ce qui a fuité et écrire à l'entreprise une lettre RGPD en quelques minutes.
 Sans compte, sans traceur : tes données restent dans ton navigateur.
 
-[**Ouvrir Shred →**](https://shred-delta.vercel.app)
+[**Ouvrir ShredRGPD →**](https://shred-delta.vercel.app)
 
 [![CI](https://github.com/chadi-shwada/shred/actions/workflows/ci.yml/badge.svg)](https://github.com/chadi-shwada/shred/actions/workflows/ci.yml)
 [![Licence MIT](https://img.shields.io/badge/licence-MIT-2F4BDC)](LICENSE)
 [![Fait en France](https://img.shields.io/badge/fait%20en-France-2F4BDC)](https://shred-delta.vercel.app)
 [![Sans traceur](https://img.shields.io/badge/traceurs-0-3ccf8e)](#vie-privée)
 
-<img src="docs/images/accueil.webp" alt="Page d'accueil de Shred : « Demande l'effacement de tes données »" width="900">
+<img src="docs/images/accueil.webp" alt="Page d'accueil de ShredRGPD : « Demande l'effacement de tes données »" width="900">
 
 </div>
 
-## Pourquoi Shred
+## Pourquoi ShredRGPD
 
 Free, Deezer, Bouygues Telecom… Quand une entreprise se fait voler les données de ses clients, le RGPD te donne des droits : savoir ce qu'elle détient sur toi, faire effacer tes données, obtenir une réponse sous un mois. Encore faut-il savoir à qui écrire, quoi demander et quels articles citer.
 
-Shred s'occupe de tout ça :
+ShredRGPD s'occupe de tout ça :
 
 1. **Vérifier** ce qui a fuité, à partir des fuites connues ;
 2. **Écrire** une lettre RGPD pré-remplie, avec les bons articles ;
@@ -34,19 +34,19 @@ Shred s'occupe de tout ça :
 
 <p align="center">
   <a href="https://shred-delta.vercel.app/videos/shred-presentation.mp4">
-    <img src="public/videos/shred-presentation.jpg" alt="Vidéo de présentation de Shred (45 secondes, sans son)" width="640">
+    <img src="public/videos/shred-presentation.jpg" alt="Vidéo de présentation de ShredRGPD (45 secondes, sans son)" width="640">
   </a>
   <br>
-  <sub>Shred en 45 secondes (vidéo sans son, sous-titres sur le site)</sub>
+  <sub>ShredRGPD en 45 secondes (vidéo sans son, sous-titres sur le site)</sub>
 </p>
 
 ## Ce que tu peux faire
 
 ### Vérifier ce qui a fuité
 
-Cherche ton adresse e-mail sur [Have I Been Pwned](https://haveibeenpwned.com), puis colle la page de résultats dans Shred : les fuites sont reconnues et cochées d'un coup. Le texte collé est effacé dès l'analyse, il ne quitte jamais ton navigateur.
+Cherche ton adresse e-mail sur [Have I Been Pwned](https://haveibeenpwned.com), puis colle la page de résultats dans ShredRGPD : les fuites sont reconnues et cochées d'un coup. Le texte collé est effacé dès l'analyse, il ne quitte jamais ton navigateur.
 
-Tu peux aussi partir d'un message reçu d'une entreprise, ou de données publiées sur un site. Pour chaque fuite, Shred affiche les données exposées, un niveau de risque et un plan d'action à cocher.
+Tu peux aussi partir d'un message reçu d'une entreprise, ou de données publiées sur un site. Pour chaque fuite, ShredRGPD affiche les données exposées, un niveau de risque et un plan d'action à cocher.
 
 <p align="center"><img src="docs/images/verifier.webp" alt="Page Vérifier : deux fuites reconnues et cochées, Deezer et Free" width="820"></p>
 
@@ -104,16 +104,16 @@ Un [flux RSS](https://shred-delta.vercel.app/fuites.xml) annonce les nouvelles f
 
 ### Sur mobile aussi
 
-<p align="center"><img src="docs/images/mobile.webp" alt="Shred sur mobile : accueil, Vérifier et Suivi" width="820"></p>
+<p align="center"><img src="docs/images/mobile.webp" alt="ShredRGPD sur mobile : accueil, Vérifier et Suivi" width="820"></p>
 
 ## Vie privée
 
-Shred est un site statique : il n'a pas de serveur à lui, et donc rien où stocker tes données.
+ShredRGPD est un site statique : il n'a pas de serveur à lui, et donc rien où stocker tes données.
 
 - **Aucune donnée personnelle ne quitte ton navigateur.** Pas de compte, pas de cookie, pas de mesure d'audience, pas de police ni de script chargés depuis un autre site.
-- **Ton e-mail ne passe jamais par Shred.** La recherche se fait sur Have I Been Pwned, que tu ouvres toi-même.
+- **Ton e-mail ne passe jamais par ShredRGPD.** La recherche se fait sur Have I Been Pwned, que tu ouvres toi-même.
 - **Une seule requête externe, et seulement à ta demande** : le test de mot de passe vers `api.pwnedpasswords.com`, qui ne reçoit que 5 caractères de l'empreinte. La politique de sécurité du contenu (CSP) bloque toute autre connexion.
-- **Aucune base de fuites.** Shred n'embarque que les métadonnées publiques du catalogue Have I Been Pwned (nom, date, types de données), jamais les données fuitées.
+- **Aucune base de fuites.** ShredRGPD n'embarque que les métadonnées publiques du catalogue Have I Been Pwned (nom, date, types de données), jamais les données fuitées.
 - Les paramètres d'une lettre pré-remplie passent dans la partie de l'adresse après `#`, que le navigateur n'envoie pas au serveur.
 
 ## Comment c'est fait
@@ -162,7 +162,7 @@ Le site se déploie sur [Vercel](https://vercel.com) depuis la branche `main`. T
 
 Pour la mise à jour quotidienne de la liste des fuites, crée un *Deploy Hook* Vercel sur `main`. Ajoute ensuite son URL dans le secret GitHub `VERCEL_DEPLOY_HOOK`. Sans ce secret, le workflow ne fait rien.
 
-Shred n'inclut volontairement ni Vercel Analytics ni Speed Insights.
+ShredRGPD n'inclut volontairement ni Vercel Analytics ni Speed Insights.
 
 ## Contribuer
 
@@ -181,7 +181,7 @@ Le détail est dans [`CLAUDE.md`](CLAUDE.md).
 - Catalogue des fuites : [Have I Been Pwned](https://haveibeenpwned.com), sous licence [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 - Test de mot de passe : [Pwned Passwords](https://haveibeenpwned.com/Passwords).
 - Polices [Inter](https://rsms.me/inter/) et [JetBrains Mono](https://www.jetbrains.com/lp/mono/), sous licence SIL OFL, hébergées par le site.
-- Les logos des entreprises sont des marques de leurs propriétaires, sans lien avec Shred.
+- Les logos des entreprises sont des marques de leurs propriétaires, sans lien avec ShredRGPD.
 
 ## Licence
 

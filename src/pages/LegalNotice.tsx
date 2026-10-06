@@ -15,8 +15,8 @@ export function LegalNotice() {
     <>
       <PageHead
         eyebrow="Mentions légales"
-        command={{ input: 'shred --mentions-legales', output: 'éditeur · hébergeur · données' }}
-        title="Qui édite et héberge Shred"
+        command={{ input: 'shredrgpd --mentions-legales', output: 'éditeur · hébergeur · données' }}
+        title="Qui édite et héberge ShredRGPD"
       >
         Informations prévues par l'article 1-1 de la loi pour la confiance dans l'économie numérique (LCEN).
       </PageHead>
@@ -25,9 +25,9 @@ export function LegalNotice() {
         <div className="prose">
           <h2>Éditeur</h2>
           <p>
-            Shred est édité par <strong>{AUTHOR.name}</strong>, personne physique agissant à titre non professionnel.
-            Comme le permet l'article 1-1, II de la LCEN, l'éditeur ne publie pas son identité ; ses éléments
-            d'identification sont connus de l'hébergeur.
+            ShredRGPD est édité par <strong>{AUTHOR.name}</strong>, personne physique agissant à titre non
+            professionnel. Comme le permet l'article 1-1, II de la LCEN, l'éditeur ne publie pas son identité ; ses
+            éléments d'identification sont connus de l'hébergeur.
           </p>
           <p>
             Contact : <ExternalLink href={AUTHOR.url}>{AUTHOR.url.replace(/^https:\/\//, '')}</ExternalLink>
@@ -47,9 +47,9 @@ export function LegalNotice() {
 
           <h2>Données personnelles</h2>
           <p>
-            Shred ne collecte aucune donnée personnelle : pas de compte, pas de cookie, pas de mesure d'audience. Les
-            lettres sont générées dans ton navigateur et le suivi est enregistré dans son stockage local, que tu peux
-            effacer à tout moment depuis la page <a href={href('/suivi')}>Suivi</a>.
+            ShredRGPD ne collecte aucune donnée personnelle : pas de compte, pas de cookie, pas de mesure d'audience.
+            Les lettres sont générées dans ton navigateur et le suivi est enregistré dans son stockage local, que tu
+            peux effacer à tout moment depuis la page <a href={href('/suivi')}>Suivi</a>.
           </p>
           <p>
             Comme tout hébergeur, Vercel peut conserver des journaux techniques de connexion (adresse IP, page demandée,
@@ -70,7 +70,7 @@ export function LegalNotice() {
               <ExternalLink href={HIBP_LICENSE_URL}>CC BY 4.0</ExternalLink>.
             </li>
             <li>Polices Inter et JetBrains Mono, sous licence SIL Open Font License 1.1.</li>
-            <li>Textes, logo et code de Shred : {AUTHOR.name}, © 2026.</li>
+            <li>Textes, logo et code de ShredRGPD : {AUTHOR.name}, © 2026.</li>
           </ul>
 
           <h2>Responsabilité</h2>

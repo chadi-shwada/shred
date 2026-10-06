@@ -83,7 +83,7 @@ export function Resources() {
     <>
       <PageHead
         eyebrow="Ressources"
-        command={{ input: 'shred droits --aide', output: 'RGPD · CNIL · DSA' }}
+        command={{ input: 'shredrgpd droits --aide', output: 'RGPD · CNIL · DSA' }}
         title="Tes droits, étape par étape"
       >
         Le RGPD te permet d'obtenir l'effacement de données publiées sans base légale. Voici comment t'y prendre, et
@@ -112,7 +112,9 @@ export function Resources() {
             </p>
 
             <h2>En vidéo</h2>
-            <p>Le principe de Shred en 45 secondes, sur de vraies fuites (Free, Deezer), avec une personne fictive.</p>
+            <p>
+              Le principe de ShredRGPD en 45 secondes, sur de vraies fuites (Free, Deezer), avec une personne fictive.
+            </p>
             <VideoPlayer video={PRESENTATION} />
 
             <h2>Comment envoyer ta demande</h2>
@@ -131,8 +133,8 @@ export function Resources() {
                 recommandé en ligne.
               </li>
               <li>
-                Note la date de réception dans le <a href={href('/suivi')}>suivi</a> : Shred calcule l'échéance et peut
-                l'ajouter à ton agenda.
+                Note la date de réception dans le <a href={href('/suivi')}>suivi</a> : ShredRGPD calcule l'échéance et
+                peut l'ajouter à ton agenda.
               </li>
             </ul>
 
@@ -157,11 +159,11 @@ export function Resources() {
               Le RGPD s'applique aussi aux sites qui ciblent des personnes dans l'Union (article 3.2), mais le faire
               respecter est plus difficile. Écris quand même, garde tes preuves et signale le contenu à son hébergeur.
             </p>
-            <h3>Est-ce que Shred vérifie si mes données ont fuité ?</h3>
+            <h3>Est-ce que ShredRGPD vérifie si mes données ont fuité ?</h3>
             <p>
-              Shred t'y aide sans voir tes données : tu cherches ton e-mail sur Have I Been Pwned, puis tu coches les
-              fuites trouvées sur la page <a href={href('/verifier')}>Vérifier</a>. Shred affiche les données exposées
-              et prépare la lettre. Il n'héberge aucune base de fuites.
+              ShredRGPD t'y aide sans voir tes données : tu cherches ton e-mail sur Have I Been Pwned, puis tu coches
+              les fuites trouvées sur la page <a href={href('/verifier')}>Vérifier</a>. ShredRGPD affiche les données
+              exposées et prépare la lettre. Il n'héberge aucune base de fuites.
             </p>
 
             <Notice>

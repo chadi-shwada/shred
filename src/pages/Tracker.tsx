@@ -130,7 +130,7 @@ export function Tracker() {
       uid: request.id,
       date: deadline,
       summary: `Échéance RGPD : ${request.site}`,
-      description: `Demande (${KIND_LABELS[request.kind].toLowerCase()}) envoyée le ${formatLongFr(request.sentOn)}. Sans réponse satisfaisante, prépare une relance depuis le suivi de Shred.`,
+      description: `Demande (${KIND_LABELS[request.kind].toLowerCase()}) envoyée le ${formatLongFr(request.sentOn)}. Sans réponse satisfaisante, prépare une relance depuis le suivi de ShredRGPD.`,
     });
     downloadText(`shred-echeance-${slugify(request.site)}.ics`, ics, 'text/calendar');
   };
@@ -182,7 +182,7 @@ export function Tracker() {
     <>
       <PageHead
         eyebrow="Suivi"
-        command={{ input: 'shred suivi --echeances', output: 'délai légal : 1 mois (art. 12.3)' }}
+        command={{ input: 'shredrgpd suivi --echeances', output: 'délai légal : 1 mois (art. 12.3)' }}
         title="Tes demandes en cours"
       >
         Le site a un mois pour te répondre à compter de la réception (article 12.3 du RGPD), trois s'il t'a prévenu
