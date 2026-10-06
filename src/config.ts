@@ -7,11 +7,10 @@ export const SITE_URL = 'https://shred-delta.vercel.app';
 export const AUTHOR = { name: 'Cha4Sh', url: 'https://x.com/Cha4Sh' } as const;
 
 /**
- * Lien vers le code source. null tant que le dépôt est privé : les liens et la
- * mention « code ouvert » sont alors masqués (un lien vers un dépôt privé renvoie 404).
- * Mettre l'adresse du dépôt ici le jour où il devient public.
+ * Lien vers le code source (dépôt public depuis le 6 octobre 2026). Avec null,
+ * les liens « Code source » et la mention « code ouvert » sont masqués.
  */
-export const SOURCE_CODE_URL: string | null = null;
+export const SOURCE_CODE_URL: string | null = 'https://github.com/chadi-shwada/shred';
 
 export const SITE_TITLE = "Shred · Demande l'effacement de tes données";
 export const SITE_DESCRIPTION =
