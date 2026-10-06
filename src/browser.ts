@@ -52,3 +52,12 @@ export function writeStorage(key: string, value: string): boolean {
     return false;
   }
 }
+
+/** Suppression d'une clé du stockage local, sans planter en navigation privée. */
+export function removeStorage(key: string): void {
+  try {
+    window.localStorage.removeItem(key);
+  } catch {
+    // Rien à effacer si le stockage est inaccessible.
+  }
+}
