@@ -111,8 +111,8 @@ export function Resources() {
               </a>
             </p>
 
-            <h2>En vidéo, de A à Z</h2>
-            <p>Le principe, puis le parcours complet sur une vraie fuite (Deezer, 2019), avec une personne fictive.</p>
+            <h2>En vidéo</h2>
+            <p>Le principe de Shred en 45 secondes, sur de vraies fuites (Free, Deezer), avec une personne fictive.</p>
             <VideoPlayer video={PRESENTATION} />
 
             <h2>Comment envoyer ta demande</h2>

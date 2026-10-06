@@ -1,0 +1,191 @@
+{
+  "questel": {
+    "name": "Questel",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  },
+  "association-nationale-des-premiers-secours": {
+    "name": "ANPS",
+    "x": 64,
+    "y": 196,
+    "size": 75,
+    "radius": 28
+  },
+  "passsport": {
+    "name": "PassSport",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  },
+  "eurofiber": {
+    "name": "Eurofiber",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  },
+  "bouygues-telecom": {
+    "name": "BouyguesTelecom",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  },
+  "autosur": {
+    "name": "AUTOSUR",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  },
+  "free": {
+    "name": "FreeMobile",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  },
+  "boulanger": {
+    "name": "Boulanger",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  },
+  "cultura": {
+    "name": "Cultura",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  },
+  "sport-2000": {
+    "name": "Sport2000",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  },
+  "le-slip-francais": {
+    "name": "LeSlipFrancais",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  },
+  "ldlc": {
+    "name": "LDLC",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  },
+  "zadig-voltaire": {
+    "name": "ZadigVoltaire",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  },
+  "federation-francaise-de-rugby": {
+    "name": "FFR",
+    "x": 64,
+    "y": 196,
+    "size": 100,
+    "radius": 28
+  },
+  "la-poste-mobile": {
+    "name": "LaPosteMobile",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  },
+  "macgeneration": {
+    "name": "MacGeneration",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  },
+  "short-edition": {
+    "name": "ShortEdition",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  },
+  "bourse-des-vols": {
+    "name": "BourseDesVols",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  },
+  "wizishop": {
+    "name": "WiziShop",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  },
+  "artvalue-com": {
+    "name": "Artvalue",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  },
+  "deezer": {
+    "name": "Deezer",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  },
+  "pemiblanc": {
+    "name": "Pemiblanc",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  },
+  "appartoo": {
+    "name": "Appartoo",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  },
+  "dailymotion": {
+    "name": "Dailymotion",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  },
+  "pokebip": {
+    "name": "Pokebip",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  },
+  "minefield": {
+    "name": "Minefield",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  },
+  "dominos": {
+    "name": "Dominos",
+    "x": 64,
+    "y": 188,
+    "size": 104,
+    "radius": 28
+  }
+}

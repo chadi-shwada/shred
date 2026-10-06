@@ -80,8 +80,12 @@ function seo(): Plugin {
       const catalog = readCatalog();
       // Image d'aperçu par fuite si scripts/og-images.mjs l'a générée ; sinon og.png.
       const breachPages = allBreachPageMeta(catalog.breaches).map((page) => {
-        const image = `/og/${page.path.slice('/fuite/'.length)}.jpg`;
-        return existsSync(new URL(`./public${image}`, import.meta.url)) ? { ...page, image } : page;
+        const slug = page.path.slice('/fuite/'.length);
+        // Avec logo (scripts/og-logos.mjs, au build) si possible, sinon l'image de base.
+        const image = [`/og-logo/${slug}.jpg`, `/og/${slug}.jpg`].find((path) =>
+          existsSync(new URL(`./public${path}`, import.meta.url)),
+        );
+        return image ? { ...page, image } : page;
       });
       for (const page of [...PAGES, ...breachPages]) {
         const html = template.replace(SEO_MARKER, headTags(page));

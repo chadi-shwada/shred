@@ -7,6 +7,8 @@
  * À lancer à la main, après un build qui a téléchargé le catalogue :
  *   CHROMIUM_PATH=/chemin/vers/chrome node scripts/og-images.mjs
  * Les fuites sans image gardent public/og.png (vite.config.ts vérifie).
+ * Écrit aussi public/og/marks.json (position du médaillon) : au build,
+ * scripts/og-logos.mjs y colle le logo de l'entreprise s'il est disponible.
  * Métadonnées publiques du catalogue HIBP seulement ; aucune personne.
  */
 
@@ -87,11 +89,22 @@ h1.is-long{font-size:60px}
 const browser = await chromium.launch(process.env.CHROMIUM_PATH ? { executablePath: process.env.CHROMIUM_PATH } : {});
 const tab = await browser.newPage({ viewport: { width: 1200, height: 630 } });
 let n = 0;
+// Position du médaillon dans chaque image : scripts/og-logos.mjs y colle le logo au build.
+const marks = {};
 for (const [slug, breach] of breachSlugs(pageBreaches(catalog.breaches))) {
   await tab.setContent(page(breach, slug), { waitUntil: 'load' });
   await tab.evaluate(() => document.fonts.ready);
   writeFileSync(`${out}/${slug}.jpg`, await tab.screenshot({ type: 'jpeg', quality: 86 }));
+  const box = await tab.locator('.mark').boundingBox();
+  marks[slug] = {
+    name: breach.name,
+    x: Math.round(box.x),
+    y: Math.round(box.y),
+    size: Math.round(box.width),
+    radius: 28,
+  };
   n++;
 }
+writeFileSync(`${out}/marks.json`, JSON.stringify(marks, null, 2) + '\n');
 await browser.close();
 console.log(`[og-images] ${n} images dans public/og/ (catalogue du ${catalog.fetchedOn ?? 'inconnu'}).`);

@@ -6,3 +6,4 @@ dist
 src/data/breaches.generated.json
 src/data/breach-logos.generated.json
 public/logos/
+public/og-logo/

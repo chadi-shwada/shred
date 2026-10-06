@@ -140,8 +140,8 @@ export function Home() {
             <span className="eyebrow">En vidéo</span>
             <h2 id="video">Vois Shred en action</h2>
             <p className="lead">
-              Le principe, puis la démo complète sur une vraie fuite : trouver la fuite, écrire à l'entreprise, suivre
-              le délai, relancer.
+              Le principe en 45 secondes, sur de vraies fuites : voir ce qui a fuité, écrire à l'entreprise, suivre le
+              délai.
             </p>
           </div>
           <ShowcaseVideo video={PRESENTATION} />
