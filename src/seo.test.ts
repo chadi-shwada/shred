@@ -22,13 +22,13 @@ describe('pages', () => {
 describe('headTags', () => {
   it('chaque page est sa propre adresse canonique', () => {
     const tags = headTags(pageMeta('/verifier'));
-    expect(tags).toContain('<link rel="canonical" href="https://shred-delta.vercel.app/verifier" />');
-    expect(tags).toContain('<meta property="og:url" content="https://shred-delta.vercel.app/verifier" />');
+    expect(tags).toContain('<link rel="canonical" href="https://shredrgpd.fr/verifier" />');
+    expect(tags).toContain('<meta property="og:url" content="https://shredrgpd.fr/verifier" />');
     expect(tags).toContain('<title>Vérifier mes fuites · ShredRGPD</title>');
   });
 
   it("l'accueil pointe vers « / »", () => {
-    expect(headTags(pageMeta('/'))).toContain('href="https://shred-delta.vercel.app/"');
+    expect(headTags(pageMeta('/'))).toContain('href="https://shredrgpd.fr/"');
   });
 
   it("la page 404 n'est pas indexée et n'a pas d'adresse canonique", () => {
@@ -46,14 +46,14 @@ describe('headTags', () => {
 describe('sitemap', () => {
   it('liste toutes les pages, sans la 404', () => {
     const xml = sitemapXml();
-    for (const p of PAGES) expect(xml).toContain(`<loc>https://shred-delta.vercel.app${p.path}</loc>`);
+    for (const p of PAGES) expect(xml).toContain(`<loc>https://shredrgpd.fr${p.path}</loc>`);
     expect(xml).not.toContain('404');
   });
 
   it('utilise l’image propre à la page quand elle existe', () => {
     const tags = headTags({ path: '/fuite/free', title: 'Fuite Free', description: 'x', image: '/og/free.jpg' });
-    expect(tags).toContain('content="https://shred-delta.vercel.app/og/free.jpg"');
+    expect(tags).toContain('content="https://shredrgpd.fr/og/free.jpg"');
     expect(tags).toContain('<meta property="og:image:alt" content="Fuite Free" />');
-    expect(headTags(pageMeta('/'))).toContain('content="https://shred-delta.vercel.app/og.png"');
+    expect(headTags(pageMeta('/'))).toContain('content="https://shredrgpd.fr/og.png"');
   });
 });

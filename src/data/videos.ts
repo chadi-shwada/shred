@@ -73,7 +73,7 @@ export const PRESENTATION: Video = {
     {
       start: 40.1,
       end: 45,
-      text: 'Reprends le contrôle de tes données. shred-delta.vercel.app. Gratuit, sans compte. Modèles de lettres indicatifs, pas un conseil juridique.',
+      text: 'Reprends le contrôle de tes données. shredrgpd.fr. Gratuit, sans compte. Modèles de lettres indicatifs, pas un conseil juridique.',
     },
   ],
 };

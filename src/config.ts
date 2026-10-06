@@ -1,7 +1,7 @@
 /** Réglages du site, regroupés ici pour être modifiés en une ligne. */
 
 /** Adresse publique du site (aperçus de partage, sitemap). */
-export const SITE_URL = 'https://shred-delta.vercel.app';
+export const SITE_URL = 'https://shredrgpd.fr';
 
 /** Auteur, affiché dans le pied de page et les mentions légales. */
 export const AUTHOR = { name: 'Cha4Sh', url: 'https://x.com/Cha4Sh' } as const;
