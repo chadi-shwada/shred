@@ -39,6 +39,10 @@ export const EMPTY_CATALOG: BreachCatalog = { fetchedOn: null, breaches: [] };
 
 export const HIBP_URL = 'https://haveibeenpwned.com';
 
+/** Mention affichée près des logos d'entreprises (scripts/breach-logos.mjs). */
+export const LOGO_NOTICE =
+  "Logos fournis par Have I Been Pwned. Les marques appartiennent à leurs propriétaires ; Shred n'a aucun lien avec ces entreprises.";
+
 /** Types de données les plus sensibles, mis en avant en rouge. */
 export const RISKY_DATA_CLASSES: ReadonlySet<string> = new Set([
   'Passwords',

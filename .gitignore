@@ -4,3 +4,5 @@ dist
 .DS_Store
 *.local
 src/data/breaches.generated.json
+src/data/breach-logos.generated.json
+public/logos/

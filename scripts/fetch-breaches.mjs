@@ -6,14 +6,18 @@
  * Aucune donnée personnelle n'est envoyée : c'est une requête anonyme vers
  * un point d'accès public, faite par la machine de build, pas par les visiteurs.
  * En cas d'échec, le build continue : le site affiche « liste indisponible ».
+ * Télécharge aussi les logos des fuites françaises (scripts/breach-logos.mjs).
  */
 
 import { writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
+import { downloadLogos } from './breach-logos.mjs';
 import { isFrenchBreach } from './french.mjs';
 
 const URL_BREACHES = 'https://haveibeenpwned.com/api/v3/breaches';
 const OUTPUT = fileURLToPath(new URL('../src/data/breaches.generated.json', import.meta.url));
+const LOGOS_DIR = fileURLToPath(new URL('../public/logos', import.meta.url));
+const LOGOS_MANIFEST = fileURLToPath(new URL('../src/data/breach-logos.generated.json', import.meta.url));
 const FIELDS = [
   'Name',
   'Title',
@@ -46,6 +50,11 @@ try {
   const fetchedOn = new Date().toISOString().slice(0, 10);
   await writeFile(OUTPUT, JSON.stringify({ fetchedOn, breaches }) + '\n');
   console.log(`[fetch-breaches] ${breaches.length} fuites enregistrées dont ${french} françaises (${fetchedOn}).`);
+  // Logos des entreprises (fuites françaises) : servis par le site, jamais chargés chez HIBP par les visiteurs.
+  const withFrench = raw.map((b, i) => ({ ...b, IsFrench: breaches[i].IsFrench }));
+  const logos = await downloadLogos(withFrench, LOGOS_DIR);
+  await writeFile(LOGOS_MANIFEST, JSON.stringify(logos) + '\n');
+  console.log(`[fetch-breaches] ${Object.keys(logos).length} logos enregistrés.`);
 } catch (error) {
   console.warn(`[fetch-breaches] Catalogue non téléchargé : ${error.message}. Le build continue sans.`);
 }

@@ -97,6 +97,7 @@ export interface CatalogSummary {
   total: number;
   french: number;
   latest: {
+    name: string;
     title: string;
     path: string;
     date: IsoDate;
@@ -114,6 +115,7 @@ export function catalogSummary(catalog: BreachCatalog, latest = 6): CatalogSumma
     total: catalog.breaches.length,
     french: french.length,
     latest: french.slice(0, latest).map((b) => ({
+      name: b.name,
       title: b.title,
       path: paths.get(b.name)!,
       date: b.date,
