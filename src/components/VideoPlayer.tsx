@@ -32,22 +32,29 @@ export function VideoPlayer({ video }: { video: Video }) {
           {video.title}
         </span>
         <span className="video__meta">{video.duration} · sans son</span>
-        <details className="video__transcript">
-          <summary>Lire la transcription</summary>
-          {groupByStep(video.cues).map((group, i) =>
-            group.step ? (
-              <div key={i}>
-                <h3>{group.step}</h3>
-                {group.lines.map((line) => (
-                  <p key={line}>{line}</p>
-                ))}
-              </div>
-            ) : (
-              group.lines.map((line) => <p key={line}>{line}</p>)
-            ),
-          )}
-        </details>
+        <VideoTranscript video={video} />
       </figcaption>
     </figure>
+  );
+}
+
+/** Transcription repliable sous une vidéo. */
+export function VideoTranscript({ video }: { video: Video }) {
+  return (
+    <details className="video__transcript">
+      <summary>Lire la transcription</summary>
+      {groupByStep(video.cues).map((group, i) =>
+        group.step ? (
+          <div key={i}>
+            <h3>{group.step}</h3>
+            {group.lines.map((line) => (
+              <p key={line}>{line}</p>
+            ))}
+          </div>
+        ) : (
+          group.lines.map((line) => <p key={line}>{line}</p>)
+        ),
+      )}
+    </details>
   );
 }

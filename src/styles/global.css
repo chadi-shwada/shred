@@ -3915,17 +3915,6 @@ input[type='range'] {
 }
 
 /* Vidéos (hébergées sur le site, lancées par la personne) */
-.videos {
-  display: grid;
-  gap: 1.5rem;
-}
-
-@media (min-width: 900px) {
-  .videos {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
 .video {
   margin: 0;
   min-width: 0;
@@ -4224,4 +4213,119 @@ input[type='range'] {
   border-radius: 50%;
   background: var(--ok);
   color: var(--bg);
+}
+
+/* Vidéo de présentation : lecture automatique en boucle, bordure animée */
+@property --frame-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+.showcase-video {
+  max-width: 64rem;
+  margin: 0 auto;
+}
+
+.showcase-video__frame {
+  position: relative;
+  padding: 2px;
+  border-radius: calc(var(--radius-xl) + 2px);
+  background: conic-gradient(
+    from var(--frame-angle),
+    #2f4bdc,
+    #8f9dff 18%,
+    rgb(143 157 255 / 15%) 35%,
+    rgb(47 75 220 / 25%) 60%,
+    #5fd39a 78%,
+    #2f4bdc
+  );
+  box-shadow:
+    0 0 0 1px rgb(143 157 255 / 12%),
+    0 30px 90px -30px rgb(47 75 220 / 70%),
+    0 0 60px -10px rgb(47 75 220 / 35%);
+  animation: frame-spin 8s linear infinite;
+}
+
+@keyframes frame-spin {
+  to {
+    --frame-angle: 360deg;
+  }
+}
+
+.showcase-video__media {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-xl);
+  background: #05060b;
+}
+
+.showcase-video__toggle {
+  position: absolute;
+  right: 0.9rem;
+  bottom: 0.9rem;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid rgb(255 255 255 / 22%);
+  border-radius: 50%;
+  background: rgb(5 6 11 / 72%);
+  color: #fff;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  transition:
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+.showcase-video__toggle:hover {
+  background: rgb(47 75 220 / 85%);
+  transform: scale(1.06);
+}
+
+.showcase-video__toggle:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.showcase-video figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.75rem;
+  margin-top: 1rem;
+}
+
+.videos-demo {
+  display: grid;
+  gap: 1.25rem 2.5rem;
+  align-items: center;
+  max-width: 64rem;
+  margin: clamp(2.5rem, 6vw, 4rem) auto 0;
+}
+
+@media (min-width: 900px) {
+  .videos-demo {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  }
+}
+
+.videos-demo h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.375rem;
+  letter-spacing: -0.02em;
+}
+
+.videos-demo p {
+  margin: 0;
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .showcase-video__frame {
+    animation: none;
+  }
 }
