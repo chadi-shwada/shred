@@ -58,28 +58,26 @@ Fait :
 - page Vérifier : choix « Que veux-tu vérifier ? » en 4 cartes (e-mail, mot de passe `#parcours=mot-de-passe`, entreprise qui a prévenu `#parcours=message`, données publiées `#parcours=publie`) ; parcours e-mail en étapes (cherche ton e-mail en 3 gestes, coche les fuites, quoi faire) et parcours « message » en 2 étapes, avec indicateur cliquable ; encadré « Des mots de passe font partie de ces fuites » qui mène au parcours mot de passe (fonctionnement du k-anonymat montré en 3 étapes, test, générateur, bons réflexes) ; collage de la page de résultats HIBP pour cocher les fuites d'un coup (texte effacé après analyse, jamais stocké ; format réel de la page HIBP non vérifié, d'où la confirmation), aide quand HIBP ne trouve rien, lien vers HIBP pour l'e-mail, recherche dans le catalogue des fuites, données exposées et conseils, lettre pré-remplie, plan d'action à cocher, lettres groupées (une par fuite choisie), lien vers la fiche HIBP, bandeau des fuites françaises ajoutées depuis la dernière visite ; test de mot de passe Pwned Passwords et générateur de mot de passe ;
 - page « Que faire ? » : canaux officiels pour un message suspect (33700, Signal Spam, Phishing Initiative, SignalConso, Pharos ; fin de Bloctel le 11 août 2026) et démarches selon la donnée qui a fuité, vérifiés le 5 octobre 2026 ;
 - suivi local avec échéances (1 mois, 3 si prolongé), export et import JSON, rappel `.ics`, copie facultative des lettres envoyées et dossier de plainte CNIL (récapitulatif, lettres, pièces à joindre) ;
-- mentions légales (éditeur Cha4Sh, hébergeur Vercel Inc.), aperçu de partage, sitemap ;
+- mentions légales (éditeur Cha4Sh, anonyme comme le permet l'article 1-1, II de la LCEN, ancien article 6, III : son identité est connue de Vercel, compte à son nom, confirmé par l'auteur le 6 octobre 2026 ; hébergeur Vercel Inc., nom et adresse seulement, le téléphone n'est pas exigé dans ce régime), aperçu de partage, sitemap ;
 - accueil en 8 sections (accroche, vidéo, dernières fuites, par où commencer, Vérifier, confidentialité et principes, lettre d'exemple sur la vraie fuite Free, questions, appel final), apparitions au défilement, médaillons et badges de risque sur les fuites, fuites récentes en bande défilante et fiche d'accroche masquée sur mobile ; pages de fuite avec image d'aperçu propre ;
 - accueil : section « Par où commencer ? » (4 cartes vers les parcours de Vérifier et Que faire ?), frise des étapes verticale sur mobile ; liste des fuites compacte (6 puis « Afficher plus », lien vers la fiche HIBP en icône) ; tous les types de données HIBP du catalogue traduits en français ;
 - pages ressources et à propos, logo, animation d'accueil (fiche et aperçu de recherche avec de vraies fuites du catalogue HIBP : Deezer, Free, La Poste Mobile, ActMobile ; personne fictive, valeurs masquées) ;
 - vidéo : une seule vidéo de présentation (principe en 45 s, sans la démo), en lecture automatique et en boucle sur l'accueil, avec contrôles sur la page Ressources ;
 - accueil « Les dernières fuites en France » (vrais chiffres du catalogue), pages par fuite française, flux Atom, lien « Une erreur, une idée ? » vers l'auteur ; suivi : demande satisfaite mise en avant, relance qui garde le contexte « violation » ;
-- CI GitHub Actions ; déploiement Vercel depuis `main` (`vercel.json`). GitHub Pages abandonné : le dépôt est privé.
+- CI GitHub Actions ; déploiement Vercel depuis `main` (`vercel.json`). Mise à jour hebdomadaire du catalogue en service : secret `VERCEL_DEPLOY_HOOK` créé, premier lancement manuel le 6 octobre 2026 (redéploiement de production, log `[fetch-breaches] 1039 fuites enregistrées dont 30 françaises`). GitHub Pages abandonné : le dépôt est privé.
 - Ne jamais ajouter `@vercel/analytics` ni `@vercel/speed-insights` (règle 1).
 
 Vérifié dans Chromium (Playwright) : rendu bureau 1440 px et mobile 390 px, clair, sombre et animations réduites, sans débordement horizontal ; aucune violation CSP ni requête externe ; contrastes des tokens ≥ 4,5:1 (clair, sombre, `.theme-dark`).
 
-Non vérifié : Safari et Firefox, lecteurs d'écran réels, appareils mobiles physiques.
+Vérifié par l'auteur le 6 octobre 2026 (vrai navigateur) : test de mot de passe contre le vrai `api.pwnedpasswords.com`, lecture automatique de la vidéo dans Chrome, site sur iPhone (Safari) et dans Firefox, les 6 logos clairs sur fond sombre, une image de partage avec le vrai logo.
+
+Non vérifié : lecteurs d'écran réels, appareils Android physiques.
 
 À faire :
 - Relance depuis le suivi : les demandes ajoutées à la main dans le suivi (sans passer par le générateur) n'ont pas de contexte et repartent en « exposition ».
-- Mise à jour hebdomadaire du catalogue : le workflow n'a encore jamais tourné (6 octobre 2026) ; vérifier que le secret `VERCEL_DEPLOY_HOOK` existe, sinon les fuites récentes, les pages et le flux se figent.
-- Images d'aperçu des pages de fuite : générées le 6 octobre 2026 (27 fuites) ; les fuites ajoutées ensuite gardent `og.png` tant que `scripts/og-images.mjs` n'est pas relancé. Le rendu des vrais logos dans ces images n'a pas été vu depuis l'environnement de dev (testé avec un logo de remplacement).
-- Vidéos : lecture non vérifiée dans un vrai navigateur (le Chromium de test ne lit pas le H.264 ; lecture, CSP et sous-titres vérifiés avec une copie WebM).
+- Images d'aperçu des pages de fuite : générées le 6 octobre 2026 (27 fuites) ; les fuites ajoutées ensuite gardent `og.png` tant que `scripts/og-images.mjs` n'est pas relancé.
 - Faire relire les lettres par un juriste. Leur structure suit le modèle CNIL (art. 17.1, 12.3, 19), mais le texte complet du modèle n'a pas pu être consulté depuis l'environnement de développement.
 - Vérifier la disponibilité du nom (domaine, INPI).
-- Vérifier en production (non testable depuis l'environnement de dev, réseau bloqué) : que `api.pwnedpasswords.com` répond bien depuis le navigateur (CORS, testé seulement avec un faux service) et que le catalogue HIBP est bien téléchargé au build Vercel (log `[fetch-breaches]`).
 - Test d'e-mail intégré via l'API HIBP : écarté (envoie l'e-mail à un tiers, clé payante).
-- Mentions légales : l'éditeur reste anonyme (personne physique non professionnelle) ; à confirmer par l'auteur. Le téléphone de l'hébergeur, demandé par la LCEN, n'est pas indiqué faute de source vérifiée.
 - Renseigner `src/data/contacts.ts` (contacts DPO des fuites françaises) depuis les pages officielles, avec source et date.
 - Rendre le dépôt public puis renseigner `SOURCE_CODE_URL`, ou retirer la licence MIT annoncée dans le README.

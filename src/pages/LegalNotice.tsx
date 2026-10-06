@@ -5,7 +5,8 @@ import { HIBP_LICENSE_URL, HIBP_URL } from '../lib/breaches';
 import { href } from '../router';
 
 /**
- * Mentions légales (loi n° 2004-575 du 21 juin 2004, LCEN, article 6).
+ * Mentions légales (loi n° 2004-575 du 21 juin 2004, LCEN, article 1-1, issu de la
+ * loi SREN n° 2024-449 du 21 mai 2024 ; ancien article 6, III).
  * Hébergeur : adresse publiée par Vercel dans sa politique de confidentialité
  * (vercel.com/legal/privacy-notice), vérifiée le 5 octobre 2026.
  */
@@ -17,7 +18,7 @@ export function LegalNotice() {
         command={{ input: 'shred --mentions-legales', output: 'éditeur · hébergeur · données' }}
         title="Qui édite et héberge Shred"
       >
-        Informations prévues par l'article 6 de la loi pour la confiance dans l'économie numérique (LCEN).
+        Informations prévues par l'article 1-1 de la loi pour la confiance dans l'économie numérique (LCEN).
       </PageHead>
 
       <div className="container page-body">
@@ -25,8 +26,8 @@ export function LegalNotice() {
           <h2>Éditeur</h2>
           <p>
             Shred est édité par <strong>{AUTHOR.name}</strong>, personne physique agissant à titre non professionnel.
-            Comme le permet l'article 6 de la LCEN, l'éditeur ne publie pas son identité ; ses éléments d'identification
-            sont connus de l'hébergeur.
+            Comme le permet l'article 1-1, II de la LCEN, l'éditeur ne publie pas son identité ; ses éléments
+            d'identification sont connus de l'hébergeur.
           </p>
           <p>
             Contact : <ExternalLink href={AUTHOR.url}>{AUTHOR.url.replace(/^https:\/\//, '')}</ExternalLink>
