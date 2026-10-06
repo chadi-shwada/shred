@@ -1,5 +1,6 @@
 import { useId, useMemo, useState, type ChangeEvent } from 'react';
 import { copyText, downloadText } from '../browser';
+import { ShredBurst } from '../components/ShredBurst';
 import { ExternalLink } from '../components/ExternalLink';
 import { Icon } from '../components/Icon';
 import { Notice } from '../components/Notice';
@@ -98,6 +99,8 @@ type Feedback = { tone: 'ok' | 'warn'; text: string } | null;
 export function Generator({ route }: { route: Route }) {
   const [form, setForm] = useState<FormState>(() => initialState(route));
   const [feedback, setFeedback] = useState<Feedback>(null);
+  /** Rejoue l'animation du broyeur à chaque copie ou téléchargement réussi. */
+  const [burst, setBurst] = useState(0);
   const [keepCopy, setKeepCopy] = useState(false);
   const { requests, update, saveFailed } = useTracking();
   const uid = useId();
@@ -173,6 +176,7 @@ export function Generator({ route }: { route: Route }) {
   const onCopy = async () => {
     if (!letter) return;
     const ok = await copyText(letterToText(letter));
+    if (ok) setBurst((n) => n + 1);
     setFeedback(
       ok
         ? { tone: 'ok', text: 'Lettre copiée. Colle-la dans ton e-mail ou dans le formulaire du site.' }
@@ -183,6 +187,7 @@ export function Generator({ route }: { route: Route }) {
   const onDownload = () => {
     if (!letter) return;
     downloadText(`shred-${form.kind}-${slugify(form.siteName)}.txt`, letterToText(letter));
+    setBurst((n) => n + 1);
   };
 
   const onTrack = () => {
@@ -535,27 +540,30 @@ export function Generator({ route }: { route: Route }) {
                 )}
               </div>
 
-              <article
-                className="paper"
-                aria-live="polite"
-                aria-atomic="false"
-                aria-label="Texte de la lettre"
-                tabIndex={0}
-              >
-                {letter ? (
-                  <>
-                    <p className="paper__subject">Objet : {letter.subject}</p>
-                    <pre className="paper__body">{letter.body}</pre>
-                  </>
-                ) : (
-                  <div className="paper__empty">
-                    <div className="bits-art" aria-hidden="true">
-                      {'01001100 01100101 01110100\n01110100 01110010 01100101\n00100000 01110000 01110010'}
+              <div className="paper-wrap">
+                <article
+                  className="paper"
+                  aria-live="polite"
+                  aria-atomic="false"
+                  aria-label="Texte de la lettre"
+                  tabIndex={0}
+                >
+                  {letter ? (
+                    <>
+                      <p className="paper__subject">Objet : {letter.subject}</p>
+                      <pre className="paper__body">{letter.body}</pre>
+                    </>
+                  ) : (
+                    <div className="paper__empty">
+                      <div className="bits-art" aria-hidden="true">
+                        {'01001100 01100101 01110100\n01110100 01110010 01100101\n00100000 01110000 01110010'}
+                      </div>
+                      <p>Pour afficher ta lettre, indique {result.missing.join(', ')}.</p>
                     </div>
-                    <p>Pour afficher ta lettre, indique {result.missing.join(', ')}.</p>
-                  </div>
-                )}
-              </article>
+                  )}
+                </article>
+                {burst > 0 && <ShredBurst key={burst} />}
+              </div>
 
               <div className="preview-actions">
                 {relanceTooEarly && (
