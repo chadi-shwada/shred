@@ -143,15 +143,26 @@ export function Layout({ path, children }: LayoutProps) {
                     <a href={href('/a-propos')}>À propos</a>
                   </li>
                   <li>
+                    <ExternalLink href={AUTHOR.url}>Une erreur, une idée ? Écris-moi</ExternalLink>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h2>Légal</h2>
+                <ul>
+                  <li>
                     <a href={href('/mentions-legales')}>Mentions légales</a>
                   </li>
                   <li>
-                    <ExternalLink href={AUTHOR.url}>Une erreur, une idée ? Écris-moi</ExternalLink>
+                    <a href={`${href('/mentions-legales')}#donnees-personnelles`}>Données personnelles</a>
+                  </li>
+                  <li>
+                    <a href={`${href('/mentions-legales')}#licences`}>Licences et crédits</a>
                   </li>
                   {SOURCE_CODE_URL && (
                     <li>
                       <a href={SOURCE_CODE_URL} rel="noopener noreferrer">
-                        Code source
+                        Code source (licence MIT)
                       </a>
                     </li>
                   )}
@@ -160,7 +171,7 @@ export function Layout({ path, children }: LayoutProps) {
             </div>
           </div>
           <div className="site-footer__legal">
-            <span>Modèles indicatifs, pas un conseil juridique.</span>
+            <a href={`${href('/mentions-legales')}#responsabilite`}>Modèles indicatifs, pas un conseil juridique.</a>
             <span>
               Conçu avec ❤️ par <ExternalLink href={AUTHOR.url}>{AUTHOR.name}</ExternalLink> et l'IA · © 2026
             </span>

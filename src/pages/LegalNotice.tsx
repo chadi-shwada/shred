@@ -1,6 +1,6 @@
 import { ExternalLink } from '../components/ExternalLink';
 import { PageHead } from '../components/PageHead';
-import { AUTHOR, SITE_URL } from '../config';
+import { AUTHOR, SITE_URL, SOURCE_CODE_URL } from '../config';
 import { HIBP_LICENSE_URL, HIBP_URL } from '../lib/breaches';
 import { href } from '../router';
 
@@ -23,7 +23,7 @@ export function LegalNotice() {
 
       <div className="container page-body">
         <div className="prose">
-          <h2>Éditeur</h2>
+          <h2 id="editeur">Éditeur</h2>
           <p>
             ShredRGPD est édité par <strong>{AUTHOR.name}</strong>, personne physique agissant à titre non
             professionnel. Comme le permet l'article 1-1, II de la LCEN, l'éditeur ne publie pas son identité ; ses
@@ -34,7 +34,7 @@ export function LegalNotice() {
           </p>
           <p>Adresse du site : {SITE_URL.replace(/^https:\/\//, '')}</p>
 
-          <h2>Hébergeur</h2>
+          <h2 id="hebergeur">Hébergeur</h2>
           <p>
             Vercel Inc.
             <br />
@@ -45,7 +45,7 @@ export function LegalNotice() {
             <ExternalLink href="https://vercel.com">vercel.com</ExternalLink>
           </p>
 
-          <h2>Données personnelles</h2>
+          <h2 id="donnees-personnelles">Données personnelles</h2>
           <p>
             L'application ShredRGPD ne collecte pas les données que tu saisis : pas de compte, pas de cookie, pas de
             mesure d'audience. Les lettres sont générées dans ton navigateur.
@@ -78,7 +78,7 @@ export function LegalNotice() {
             sur la page <a href={href('/a-propos')}>À propos</a>.
           </p>
 
-          <h2>Contenus et licences</h2>
+          <h2 id="licences">Contenus et licences</h2>
           <ul>
             <li>
               Liste des fuites : <ExternalLink href={HIBP_URL}>Have I Been Pwned</ExternalLink>, sous licence{' '}
@@ -86,9 +86,18 @@ export function LegalNotice() {
             </li>
             <li>Polices Inter et JetBrains Mono, sous licence SIL Open Font License 1.1.</li>
             <li>Textes, logo et code de ShredRGPD : {AUTHOR.name}, © 2026.</li>
+            {SOURCE_CODE_URL && (
+              <li>
+                Code source publié sous licence MIT :{' '}
+                <a href={SOURCE_CODE_URL} rel="noopener noreferrer">
+                  dépôt GitHub
+                </a>
+                .
+              </li>
+            )}
           </ul>
 
-          <h2>Responsabilité</h2>
+          <h2 id="responsabilite">Responsabilité</h2>
           <p>
             Les modèles de lettres sont fournis à titre indicatif et ne constituent pas un conseil juridique. Relis
             chaque lettre et adapte-la à ta situation avant de l'envoyer. En cas de doute, rapproche-toi d'une

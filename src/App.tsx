@@ -14,7 +14,7 @@ import { WhatToDo } from './pages/WhatToDo';
 import { BREACH_PATH_PREFIX } from './lib/breachPages';
 import { revealOnScroll } from './reveal';
 import { pageMeta } from './seo';
-import { interceptLinks, upgradeLegacyUrl, useRoute, type Route } from './router';
+import { anchorId, interceptLinks, upgradeLegacyUrl, useRoute, type Route } from './router';
 
 function Page({ route }: { route: Route }) {
   switch (route.path) {
@@ -68,8 +68,11 @@ export function App() {
       first.current = false;
       return;
     }
-    // Changement de page : on remonte en haut et on place le focus sur le contenu.
-    window.scrollTo(0, 0);
+    // Changement de page : on remonte en haut (ou à l'ancre demandée) et on place le focus sur le contenu.
+    const id = anchorId(window.location.hash);
+    const target = id ? document.getElementById(id) : null;
+    if (target) target.scrollIntoView();
+    else window.scrollTo(0, 0);
     document.getElementById('contenu')?.focus({ preventScroll: true });
   }, [route.path]);
 

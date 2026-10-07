@@ -3393,7 +3393,8 @@ input[type='range'] {
 
 .site-footer__cols {
   display: flex;
-  gap: clamp(2.5rem, 7vw, 6rem);
+  flex-wrap: wrap;
+  gap: 2rem clamp(2.5rem, 6vw, 5rem);
 }
 
 .site-footer a {
@@ -5557,4 +5558,9 @@ input[type='range'] {
   .stats-table td:nth-child(4) {
     display: none;
   }
+}
+
+/* Ancres (pied de page vers les sections des mentions légales) : sous l'en-tête flottant. */
+h2[id] {
+  scroll-margin-top: calc(var(--header-h) + 1.5rem);
 }

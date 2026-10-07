@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { href, isAppLink, parseLocation } from './router';
+import { anchorId, href, isAppLink, parseLocation } from './router';
 
 describe('href', () => {
   it('place les paramètres dans le fragment, jamais envoyé au serveur', () => {
@@ -40,5 +40,19 @@ describe('isAppLink', () => {
     expect(isAppLink('/videos/shred-demo.mp4')).toBe(false);
     expect(isAppLink('//exemple.test/page')).toBe(false);
     expect(isAppLink('https://exemple.test')).toBe(false);
+  });
+});
+
+describe('anchorId', () => {
+  it('reconnaît une ancre de section', () => {
+    expect(anchorId('#donnees-personnelles')).toBe('donnees-personnelles');
+    expect(anchorId('#contenu')).toBe('contenu');
+  });
+
+  it('ignore les fragments à paramètres et les anciennes adresses', () => {
+    expect(anchorId('')).toBeNull();
+    expect(anchorId('#site=exemple.com')).toBeNull();
+    expect(anchorId('#annee=2024&donnee=Passwords')).toBeNull();
+    expect(anchorId('#/lettre?site=x')).toBeNull();
   });
 });

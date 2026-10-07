@@ -106,6 +106,15 @@ export function upgradeLegacyUrl(): void {
   navigate(`${route.path}${search ? `#${search}` : ''}`, { replace: true });
 }
 
+/**
+ * Identifiant d'ancre du fragment (« #donnees-personnelles » → « donnees-personnelles »), ou null
+ * si le fragment porte des paramètres (« #site=… », « #annee=2024 ») ou une ancienne adresse (« #/… »).
+ */
+export function anchorId(hash: string): string | null {
+  const id = hash.replace(/^#/, '');
+  return /^[a-z][a-z0-9-]*$/i.test(id) ? id : null;
+}
+
 /** Lien vers une page de l'application, et pas vers un fichier (/fuites.xml, /videos/…mp4). */
 export function isAppLink(raw: string): boolean {
   if (!raw.startsWith('/') || raw.startsWith('//')) return false;
@@ -125,5 +134,12 @@ export function interceptLinks(event: MouseEvent): void {
   const raw = anchor.getAttribute('href');
   if (!raw || !isAppLink(raw)) return;
   event.preventDefault();
+  const before = window.location.pathname;
   navigate(raw);
+  if (window.location.pathname !== before) return;
+  // Lien vers la page ouverte : comme sans JavaScript, on va à l'ancre, ou en haut s'il n'y a pas de fragment.
+  const hash = raw.includes('#') ? raw.slice(raw.indexOf('#')) : '';
+  const id = anchorId(hash);
+  if (id) document.getElementById(id)?.scrollIntoView();
+  else if (!hash) window.scrollTo(0, 0);
 }
