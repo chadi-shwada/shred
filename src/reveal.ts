@@ -10,7 +10,6 @@ const SELECTOR = [
   '.starts > li',
   '.recent-breaches > li',
   '.showcase > *',
-  '.zeros',
   '.bento > *',
   '.faq',
   '.cta-band',

@@ -134,20 +134,6 @@ export function Home() {
 
       <DataStream />
 
-      <section className="section section--tight" aria-labelledby="video">
-        <div className="container">
-          <div className="section__head">
-            <span className="eyebrow">En vidéo</span>
-            <h2 id="video">Vois ShredRGPD en action</h2>
-            <p className="lead">
-              Le principe en 45 secondes, sur de vraies fuites : voir ce qui a fuité, écrire à l'entreprise, suivre le
-              délai.
-            </p>
-          </div>
-          <ShowcaseVideo video={PRESENTATION} />
-        </div>
-      </section>
-
       {summary.latest.length > 0 && (
         <section className="section section--tight" aria-labelledby="recentes">
           <div className="container">
@@ -199,6 +185,20 @@ export function Home() {
           </div>
         </section>
       )}
+
+      <section className="section section--tight" aria-labelledby="video">
+        <div className="container">
+          <div className="section__head">
+            <span className="eyebrow">En vidéo</span>
+            <h2 id="video">Vois ShredRGPD en action</h2>
+            <p className="lead">
+              Le principe en 45 secondes, sur de vraies fuites : voir ce qui a fuité, écrire à l'entreprise, suivre le
+              délai.
+            </p>
+          </div>
+          <ShowcaseVideo video={PRESENTATION} />
+        </div>
+      </section>
 
       <section className="section section--tight" aria-labelledby="commencer-par">
         <div className="container">
@@ -267,26 +267,6 @@ export function Home() {
               Un outil pour te défendre, qui n'héberge rien : ShredRGPD n'a rien à protéger, parce qu'il ne garde rien.
             </p>
           </div>
-          <dl className="zeros">
-            <div>
-              <dt>donnée saisie gardée par ShredRGPD</dt>
-              <dd>0</dd>
-            </div>
-            <div>
-              <dt>cookie ou traceur</dt>
-              <dd>0</dd>
-            </div>
-            <div>
-              <dt>compte à créer</dt>
-              <dd>0</dd>
-            </div>
-            <div>
-              <dt>exécuté dans ton navigateur</dt>
-              <dd>
-                100<span>%</span>
-              </dd>
-            </div>
-          </dl>
           <div className="bento">
             <article className="tile tile--wide">
               <h3>Ce que tu saisis reste dans ton navigateur</h3>
