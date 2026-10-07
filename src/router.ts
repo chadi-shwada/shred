@@ -17,6 +17,7 @@ export type RoutePath =
   | '/lettre'
   | '/suivi'
   | '/ressources'
+  | '/chiffres'
   | '/a-propos'
   | '/mentions-legales';
 
@@ -28,6 +29,7 @@ export const PUBLIC_ROUTES: readonly RoutePath[] = [
   '/lettre',
   '/suivi',
   '/ressources',
+  '/chiffres',
   '/a-propos',
   '/mentions-legales',
 ];

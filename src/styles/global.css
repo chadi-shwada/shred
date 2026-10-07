@@ -5135,3 +5135,189 @@ input[type='range'] {
   white-space: normal;
   text-align: left;
 }
+
+/* ---------- Page « Chiffres » ----------
+   Graphiques en HTML (texte réel, lisible par les lecteurs d'écran) et barres
+   en SVG décoratif : largeurs et hauteurs en attributs, la CSP interdisant les
+   styles en ligne. Une seule série par graphique, bleu --brand-hover (contraste
+   ≥ 3:1 sur --bg et --surface, vérifié). Pas de cadre : blocs ouverts. */
+
+.stats-page > * {
+  max-width: 60rem;
+}
+
+.figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr));
+  gap: 1.5rem 2rem;
+  margin: 0 0 clamp(2.5rem, 6vw, 4rem);
+  padding: 1.5rem 0;
+  border-block: 1px solid var(--line);
+}
+
+.figures > div {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 0.35rem;
+}
+
+.figures dt {
+  font-size: 0.875rem;
+  color: var(--ink-2);
+}
+
+.figures dd {
+  margin: 0;
+  font-size: clamp(1.75rem, 1.3rem + 1.8vw, 2.5rem);
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--ink);
+}
+
+.stats-block {
+  margin-bottom: clamp(2.5rem, 6vw, 4rem);
+}
+
+.stats-block > h2 {
+  margin: 0 0 0.4rem;
+  font-size: clamp(1.35rem, 1.15rem + 0.8vw, 1.75rem);
+  letter-spacing: -0.02em;
+}
+
+.stats-block__lead {
+  max-width: 44rem;
+  margin: 0 0 1.5rem;
+  color: var(--ink-2);
+}
+
+/* Colonnes par année : valeur, colonne, année. La ligne de base est tracée
+   juste au-dessus de la rangée des années (hauteur fixe --year-row). */
+.colchart {
+  --year-row: 1.6rem;
+  display: grid;
+  grid-auto-columns: minmax(0, 1fr);
+  grid-auto-flow: column;
+  align-items: end;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: linear-gradient(var(--line-strong), var(--line-strong)) left bottom var(--year-row) / 100% 1px
+    no-repeat;
+}
+
+.colchart li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+
+.colchart__value {
+  margin-bottom: 0.2rem;
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-2);
+}
+
+.colchart__bar {
+  display: block;
+  width: 100%;
+  max-width: 24px;
+  height: 11rem;
+  margin-bottom: 1px;
+  fill: var(--brand-hover);
+}
+
+.colchart__year {
+  height: var(--year-row);
+  padding-top: 0.35rem;
+  font-size: 0.75rem;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  /* Une année sur deux, pour que les libellés ne se chevauchent pas. */
+  .colchart__odd .colchart__year {
+    visibility: hidden;
+  }
+
+  .colchart__value {
+    font-size: 0.6875rem;
+  }
+
+  .colchart__bar {
+    height: 8rem;
+  }
+}
+
+/* Barres horizontales */
+.barlist {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.barlist li {
+  display: grid;
+  grid-template-columns: minmax(9rem, 14rem) minmax(0, 1fr) 6.5rem;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  border-radius: var(--radius);
+}
+
+.barlist__label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.15rem 0.5rem;
+  color: var(--ink);
+}
+
+.barlist__meta {
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+}
+
+.barlist__tag {
+  padding: 0.05rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.barlist__bar {
+  display: block;
+  width: 100%;
+  height: 14px;
+  fill: var(--brand-hover);
+}
+
+.barlist__value {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  color: var(--ink-2);
+  white-space: nowrap;
+}
+
+.barlist li:hover .barlist__bar {
+  fill: var(--brand-text);
+}
+
+@media (max-width: 640px) {
+  .barlist li {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .barlist__label {
+    grid-column: 1 / -1;
+  }
+}

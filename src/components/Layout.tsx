@@ -136,6 +136,9 @@ export function Layout({ path, children }: LayoutProps) {
                     <a href={href('/ressources')}>Ressources</a>
                   </li>
                   <li>
+                    <a href={href('/chiffres')}>Les fuites en chiffres</a>
+                  </li>
+                  <li>
                     <a href={href('/a-propos')}>À propos</a>
                   </li>
                   <li>

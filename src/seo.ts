@@ -49,6 +49,12 @@ export const PAGES: PageMeta[] = [
       "Comment faire effacer tes données après une fuite : preuves, bon contact, envoi, relance, signalement à l'hébergeur et plainte à la CNIL.",
   },
   {
+    path: '/chiffres',
+    title: 'Fuites de données en France : les chiffres · ShredRGPD',
+    description:
+      'Combien de fuites touchent des entreprises françaises, quelles données sont exposées, les plus grosses fuites : les chiffres du catalogue Have I Been Pwned, mis à jour chaque jour.',
+  },
+  {
     path: '/a-propos',
     title: 'À propos · ShredRGPD',
     description:

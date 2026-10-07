@@ -4,6 +4,7 @@ import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { SITE_URL } from './src/config';
 import { allBreachPageMeta, breachFeed, catalogSummary } from './src/lib/breachPages';
+import { breachStats } from './src/lib/breachStats';
 import { EMPTY_CATALOG, parseCatalog, type BreachCatalog } from './src/lib/breaches';
 import { headTags, htmlFileName, NOT_FOUND, pageMeta, PAGES, robotsTxt, sitemapXml } from './src/seo';
 import { CSP_META } from './src/security';
@@ -37,18 +38,24 @@ function readCatalog(): BreachCatalog {
   }
 }
 
-const SUMMARY_ID = 'virtual:catalog-summary';
-
 /**
- * Module virtuel « virtual:catalog-summary » : quelques chiffres et les dernières
- * fuites françaises pour l'accueil, sans charger tout le catalogue.
+ * Modules virtuels calculés au build à partir du catalogue, sans le charger en entier :
+ * « virtual:catalog-summary » (chiffres et dernières fuites françaises pour l'accueil)
+ * et « virtual:breach-stats » (page /chiffres).
  */
-function catalogSummaryModule(): Plugin {
+const VIRTUAL_MODULES: Record<string, () => unknown> = {
+  'virtual:catalog-summary': () => catalogSummary(readCatalog()),
+  'virtual:breach-stats': () => breachStats(readCatalog()),
+};
+
+function catalogModules(): Plugin {
   return {
-    name: 'shred-catalog-summary',
-    resolveId: (id) => (id === SUMMARY_ID ? `\0${SUMMARY_ID}` : null),
-    load: (id) =>
-      id === `\0${SUMMARY_ID}` ? `export default ${JSON.stringify(catalogSummary(readCatalog()))};` : null,
+    name: 'shred-catalog-modules',
+    resolveId: (id) => (id in VIRTUAL_MODULES ? `\0${id}` : null),
+    load: (id) => {
+      const make = id.startsWith('\0') ? VIRTUAL_MODULES[id.slice(1)] : undefined;
+      return make ? `export default ${JSON.stringify(make())};` : null;
+    },
   };
 }
 
@@ -109,7 +116,7 @@ function seo(): Plugin {
 export default defineConfig({
   // Chemins absolus : les pages ont de vraies adresses (/lettre, /verifier…).
   base: '/',
-  plugins: [react(), csp(), catalogSummaryModule(), seo()],
+  plugins: [react(), csp(), catalogModules(), seo()],
   build: {
     // Pas de fichiers intégrés en data: : la CSP n'autorise que font-src 'self'.
     assetsInlineLimit: 0,

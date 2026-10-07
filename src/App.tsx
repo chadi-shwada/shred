@@ -7,6 +7,7 @@ import { Home } from './pages/Home';
 import { LegalNotice } from './pages/LegalNotice';
 import { NotFound } from './pages/NotFound';
 import { Resources } from './pages/Resources';
+import { Stats } from './pages/Stats';
 import { Tracker } from './pages/Tracker';
 import { Verify } from './pages/Verify';
 import { WhatToDo } from './pages/WhatToDo';
@@ -30,6 +31,8 @@ function Page({ route }: { route: Route }) {
       return <Tracker />;
     case '/ressources':
       return <Resources />;
+    case '/chiffres':
+      return <Stats />;
     case '/a-propos':
       return <About />;
     case '/mentions-legales':
