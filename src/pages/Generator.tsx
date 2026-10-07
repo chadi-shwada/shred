@@ -387,6 +387,14 @@ export function Generator({ route }: { route: Route }) {
                     </div>
                   </fieldset>
 
+                  {(form.kind === 'effacement' || form.kind === 'fermeture') && (
+                    <p className="hint">
+                      L'effacement n'est pas automatique : il faut l'un des motifs de l'article 17.1 (données plus
+                      nécessaires, consentement retiré, traitement illicite…). Selon ta situation, certaines données
+                      peuvent devoir être conservées pour respecter une obligation légale (article 17.3 b).
+                    </p>
+                  )}
+
                   {form.kind === 'relance' && (
                     <div className="field-row">
                       <div className="field">

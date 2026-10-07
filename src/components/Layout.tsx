@@ -160,7 +160,7 @@ export function Layout({ path, children }: LayoutProps) {
             <span>
               Conçu avec ❤️ par <ExternalLink href={AUTHOR.url}>{AUTHOR.name}</ExternalLink> et l'IA · © 2026
             </span>
-            <span>Aucune donnée personnelle ne quitte ton navigateur.</span>
+            <span>Ce que tu saisis reste dans ton navigateur.</span>
           </div>
         </div>
         <FooterWord />

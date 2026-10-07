@@ -110,7 +110,7 @@ Un [flux RSS](https://shredrgpd.fr/fuites.xml) annonce les nouvelles fuites. La 
 
 ShredRGPD est un site statique : il n'a pas de serveur à lui, et donc rien où stocker tes données.
 
-- **Aucune donnée personnelle ne quitte ton navigateur.** Pas de compte, pas de cookie, pas de mesure d'audience, pas de police ni de script chargés depuis un autre site.
+- **Ce que tu saisis reste dans ton navigateur.** Seule exception, le test de mot de passe, si tu le lances : il envoie les 5 premiers caractères de l'empreinte SHA-1 à Pwned Passwords. Comme tout hébergeur, Vercel voit ton adresse IP et les pages demandées. Pas de compte, pas de cookie, pas de mesure d'audience, pas de police ni de script chargés depuis un autre site.
 - **Ton e-mail ne passe jamais par ShredRGPD.** La recherche se fait sur Have I Been Pwned, que tu ouvres toi-même.
 - **Une seule requête externe, et seulement à ta demande** : le test de mot de passe vers `api.pwnedpasswords.com`, qui ne reçoit que 5 caractères de l'empreinte. La politique de sécurité du contenu (CSP) bloque toute autre connexion.
 - **Aucune base de fuites.** ShredRGPD n'embarque que les métadonnées publiques du catalogue Have I Been Pwned (nom, date, types de données), jamais les données fuitées.

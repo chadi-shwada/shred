@@ -115,7 +115,7 @@ export function Home() {
             </div>
             <ul className="hero__trust">
               <li>
-                <Icon name="check" size={14} />0 serveur
+                <Icon name="check" size={14} />0 serveur applicatif
               </li>
               <li>
                 <Icon name="check" size={14} />0 traceur
@@ -269,7 +269,7 @@ export function Home() {
           </div>
           <dl className="zeros">
             <div>
-              <dt>donnée personnelle envoyée</dt>
+              <dt>donnée saisie gardée par ShredRGPD</dt>
               <dd>0</dd>
             </div>
             <div>
@@ -289,7 +289,7 @@ export function Home() {
           </dl>
           <div className="bento">
             <article className="tile tile--wide">
-              <h3>Rien ne quitte ton navigateur</h3>
+              <h3>Ce que tu saisis reste dans ton navigateur</h3>
               <p>
                 La page déclare une politique de sécurité qui bloque toute requête réseau, sauf le test de mot de passe
                 par k-anonymat. Ce n'est pas une promesse : c'est ton navigateur qui l'applique.
