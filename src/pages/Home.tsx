@@ -104,13 +104,13 @@ export function Home() {
               et t'aide à relancer. Sans jamais voir tes données.
             </p>
             <div className="btn-row">
-              <a className="btn btn--primary btn--lg btn--glow" href={href('/lettre')}>
-                Écrire ma lettre
-                <Icon name="arrow" size={18} />
-              </a>
-              <a className="btn btn--outline btn--lg" href={href('/verifier')}>
+              <a className="btn btn--primary btn--lg btn--glow" href={href('/verifier')}>
                 <Icon name="search" size={18} />
                 Vérifier mes fuites
+              </a>
+              <a className="btn btn--outline btn--lg" href={href('/lettre')}>
+                Écrire ma lettre
+                <Icon name="arrow" size={18} />
               </a>
             </div>
             <ul className="hero__trust">
