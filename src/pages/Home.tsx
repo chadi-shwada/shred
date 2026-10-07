@@ -51,7 +51,7 @@ const STARTS: { icon: IconName; title: string; text: string; link: string; actio
 const FAQ = [
   {
     q: 'Est-ce que ShredRGPD voit mes données ?',
-    a: "Non. Tout se passe dans ton navigateur : il n'y a pas de serveur applicatif, pas de compte, pas de traceur. La page bloque toute requête réseau, sauf vers Pwned Passwords quand tu lances un test de mot de passe : seuls 5 caractères de son empreinte partent, jamais le mot de passe.",
+    a: "Non. Tout se passe dans ton navigateur : il n'y a pas de serveur applicatif, pas de compte, pas de traceur. La page bloque toute requête vers un autre site, sauf vers Pwned Passwords quand tu lances un test de mot de passe : seuls 5 caractères de son empreinte partent, jamais le mot de passe.",
   },
   {
     q: 'Est-ce que ShredRGPD vérifie si mes données ont fuité ?',
@@ -291,8 +291,8 @@ export function Home() {
             <article className="tile tile--wide">
               <h3>Ce que tu saisis reste dans ton navigateur</h3>
               <p>
-                La page déclare une politique de sécurité qui bloque toute requête réseau, sauf le test de mot de passe
-                par k-anonymat. Ce n'est pas une promesse : c'est ton navigateur qui l'applique.
+                La page déclare une politique de sécurité qui bloque toute requête vers un autre site, sauf le test de
+                mot de passe par k-anonymat. Ce n'est pas une promesse : c'est ton navigateur qui l'applique.
               </p>
               <div className="tile__visual">
                 <pre className="code-block" tabIndex={0} aria-label="Extrait de la politique de sécurité">

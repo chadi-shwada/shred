@@ -27,7 +27,8 @@ export function About() {
           <h2>Ce que ShredRGPD ne fera jamais</h2>
           <ul>
             <li>
-              Envoyer tes données à un serveur ou à un tiers. Le site est statique et n'a pas de serveur applicatif.
+              Envoyer ton e-mail, le contenu de tes lettres ou tes données de suivi à un serveur ou à un tiers. Le site
+              est statique et n'a pas de serveur applicatif.
             </li>
             <li>Héberger une base de fuites, même partielle, même hachée.</li>
             <li>Inventer le contact d'un responsable de traitement ou d'un DPO.</li>
@@ -37,8 +38,8 @@ export function About() {
           <h2>Vie privée</h2>
           <p>
             Pas de compte, pas de cookie, pas d'analytics, pas de police chargée depuis un CDN. La page déclare une
-            politique de sécurité du contenu : ton navigateur bloque toute requête réseau lancée par la page, avec une
-            seule exception, <code>api.pwnedpasswords.com</code>.
+            politique de sécurité du contenu : ton navigateur bloque toute requête de la page vers un autre site, avec
+            une seule exception, <code>api.pwnedpasswords.com</code>.
           </p>
           <p>
             Cette exception sert au test de mot de passe, et seulement quand tu le lances. ShredRGPD calcule l'empreinte

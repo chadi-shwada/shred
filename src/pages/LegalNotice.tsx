@@ -47,8 +47,8 @@ export function LegalNotice() {
 
           <h2>Données personnelles</h2>
           <p>
-            ShredRGPD ne collecte aucune donnée personnelle : pas de compte, pas de cookie, pas de mesure d'audience.
-            Les lettres sont générées dans ton navigateur.
+            L'application ShredRGPD ne collecte pas les données que tu saisis : pas de compte, pas de cookie, pas de
+            mesure d'audience. Les lettres sont générées dans ton navigateur.
           </p>
           <p>Le stockage local de ton navigateur garde seulement ce que tu demandes, et rien n'en sort :</p>
           <ul>

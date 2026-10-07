@@ -37,8 +37,9 @@ export const DPO_CONTACTS: Record<string, DpoContact> = {
     source: 'https://www.corporate.bouyguestelecom.fr/mentions-legales/politique-de-confidentialite/',
     verifiedOn: '2026-10-07',
   },
+  // Boulanger réserve dpo@boulanger.com aux autres demandes (« hors exercice de vos droits »).
   Boulanger: {
-    contact: 'dpo@boulanger.com',
+    contact: 'cil@boulanger.com',
     kind: 'email',
     source: 'https://www.boulanger.com/evenement/infos-legales',
     verifiedOn: '2026-10-07',
