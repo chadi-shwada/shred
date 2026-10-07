@@ -5412,8 +5412,9 @@ input[type='range'] {
 }
 
 .stats-filters .field {
+  flex: 1 1 9rem;
+  max-width: 15rem;
   margin: 0;
-  min-width: min(100%, 13rem);
 }
 
 .stats-empty {

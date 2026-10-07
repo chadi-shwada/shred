@@ -166,7 +166,7 @@ export function Stats() {
               <div className="field">
                 <label htmlFor={`${uid}-annee`}>Année</label>
                 <select id={`${uid}-annee`} className="select" value={filter.year ?? ''} onChange={onYear}>
-                  <option value="">Toutes les années</option>
+                  <option value="">Toutes</option>
                   {[...YEARS].reverse().map((y) => (
                     <option key={y} value={y}>
                       {y}
@@ -177,7 +177,7 @@ export function Stats() {
               <div className="field">
                 <label htmlFor={`${uid}-donnee`}>Donnée exposée</label>
                 <select id={`${uid}-donnee`} className="select" value={filter.dataClass ?? ''} onChange={onType}>
-                  <option value="">Toutes les données</option>
+                  <option value="">Toutes</option>
                   {TYPES.map((t) => (
                     <option key={t.key} value={t.key}>
                       {t.label} ({t.count})
@@ -232,7 +232,7 @@ export function Stats() {
               <h2 id="par-annee">Fuites par année</h2>
               <p className="stats-block__lead">
                 Selon l'année où la fuite a eu lieu, pas celle de sa découverte : les dernières années sont incomplètes.
-                Survole une année pour voir ses fuites, clique pour filtrer la page.
+                Clique sur une année pour filtrer la page ; au survol, la liste de ses fuites.
               </p>
               <ol className="colchart" data-filtered={filter.year !== undefined || undefined}>
                 {yearChart.map((y) => {
