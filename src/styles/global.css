@@ -5576,3 +5576,26 @@ input[type='range'] {
 h2[id] {
   scroll-margin-top: calc(var(--header-h) + 1.5rem);
 }
+
+/* Page « Nouvelles fuites » : adresse du flux à copier. */
+.feed-url {
+  display: grid;
+  gap: 0.4rem;
+  margin: 1rem 0 0.5rem;
+}
+
+.feed-url label {
+  font-weight: 600;
+}
+
+.feed-url__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.feed-url__row .input {
+  flex: 1 1 16rem;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+}

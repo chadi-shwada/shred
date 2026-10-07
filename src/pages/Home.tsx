@@ -176,9 +176,7 @@ export function Home() {
             <p className="recent-breaches__more">
               <a href={href('/verifier')}>Chercher parmi toutes les fuites</a>
               <a href={href('/chiffres')}>Les fuites en France, en chiffres</a>
-              <a href="/fuites.xml" type="application/atom+xml">
-                Suivre les nouvelles fuites (flux RSS)
-              </a>
+              <a href={href('/nouvelles-fuites')}>Suivre les nouvelles fuites</a>
             </p>
             <p className="hint recent-breaches__rule">
               {RISK_RULE} {LOGO_NOTICE}

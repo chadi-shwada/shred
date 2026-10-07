@@ -55,6 +55,12 @@ export const PAGES: PageMeta[] = [
       'Combien de fuites touchent des entreprises françaises, quelles données sont exposées, les plus grosses fuites : les chiffres du catalogue Have I Been Pwned, mis à jour chaque jour.',
   },
   {
+    path: '/nouvelles-fuites',
+    title: 'Suivre les nouvelles fuites en France · ShredRGPD',
+    description:
+      'Reçois chaque nouvelle fuite de données touchant la France dans ton lecteur de flux (RSS/Atom), sans compte ni e-mail. Adresse du flux et lecteurs gratuits.',
+  },
+  {
     path: '/a-propos',
     title: 'À propos · ShredRGPD',
     description:

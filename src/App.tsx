@@ -5,6 +5,7 @@ import { BreachPage } from './pages/BreachPage';
 import { Generator } from './pages/Generator';
 import { Home } from './pages/Home';
 import { LegalNotice } from './pages/LegalNotice';
+import { NewBreaches } from './pages/NewBreaches';
 import { NotFound } from './pages/NotFound';
 import { Resources } from './pages/Resources';
 import { Stats } from './pages/Stats';
@@ -33,6 +34,8 @@ function Page({ route }: { route: Route }) {
       return <Resources />;
     case '/chiffres':
       return <Stats />;
+    case '/nouvelles-fuites':
+      return <NewBreaches />;
     case '/a-propos':
       return <About />;
     case '/mentions-legales':

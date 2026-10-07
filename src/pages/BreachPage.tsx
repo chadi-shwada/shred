@@ -194,7 +194,7 @@ export function BreachPage({ slug }: { slug: string }) {
               ))}
             </ul>
             <p className="small">
-              <a href="/fuites.xml">Suivre les nouvelles fuites (flux RSS)</a>
+              <a href={href('/nouvelles-fuites')}>Suivre les nouvelles fuites</a>
             </p>
           </aside>
         </div>

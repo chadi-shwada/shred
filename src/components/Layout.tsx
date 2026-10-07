@@ -121,9 +121,7 @@ export function Layout({ path, children }: LayoutProps) {
                     <a href={href('/suivi')}>Suivi</a>
                   </li>
                   <li>
-                    <a href="/fuites.xml" type="application/atom+xml">
-                      Nouvelles fuites (flux RSS)
-                    </a>
+                    <a href={href('/nouvelles-fuites')}>Suivre les nouvelles fuites</a>
                   </li>
                 </ul>
               </div>
