@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import { breachStats, formatBigCount, formatDelay, formatShare } from './breachStats';
+import {
+  computeStats,
+  dataClassOptions,
+  filterBreaches,
+  formatBigCount,
+  formatDelay,
+  formatShare,
+  statsSource,
+  yearSpan,
+} from './breachStats';
 import { EMPTY_CATALOG, parseCatalog } from './breaches';
 
 const entry = (o: Record<string, unknown>) => ({
@@ -50,27 +59,83 @@ const CATALOG = parseCatalog({
   ],
 });
 
-describe('breachStats', () => {
-  const stats = breachStats(CATALOG);
+const SOURCE = statsSource(CATALOG);
 
-  it('ne garde que les fuites qui ont une page', () => {
+describe('statsSource', () => {
+  it('ne garde que les fuites qui ont une page, sans type en double', () => {
+    expect(SOURCE.fetchedOn).toBe('2026-10-05');
+    expect(SOURCE.breaches.map((b) => b.title).sort()).toEqual(['Bizarre', 'Deezer', 'Free', 'Pokébip']);
+    expect(SOURCE.breaches.find((b) => b.title === 'Deezer')?.dataClasses).toEqual(['Email addresses', 'Names']);
+    expect(SOURCE.breaches.find((b) => b.title === 'Free')).toEqual({
+      title: 'Free',
+      path: '/fuite/free',
+      date: '2024-10-17',
+      addedDate: '2025-05-27',
+      pwnCount: 13926173,
+      dataClasses: ['Bank account numbers', 'Names', 'Phone numbers'],
+    });
+  });
+});
+
+describe('filtres', () => {
+  it('par année et par type de données', () => {
+    expect(
+      filterBreaches(SOURCE.breaches, { year: 2024 })
+        .map((b) => b.title)
+        .sort(),
+    ).toEqual(['Bizarre', 'Free']);
+    expect(filterBreaches(SOURCE.breaches, { dataClass: 'Passwords' }).map((b) => b.title)).toEqual(['Pokébip']);
+    expect(filterBreaches(SOURCE.breaches, { year: 2024, dataClass: 'Passwords' })).toEqual([]);
+    expect(filterBreaches(SOURCE.breaches, {})).toHaveLength(4);
+  });
+
+  it('liste les types présents, du plus fréquent au moins fréquent', () => {
+    expect(dataClassOptions(SOURCE.breaches).slice(0, 2)).toEqual([
+      { key: 'Email addresses', label: 'adresses e-mail', count: 3 },
+      { key: 'Names', label: 'noms', count: 3 },
+    ]);
+  });
+
+  it('couvre toutes les années, vides comprises', () => {
+    expect(yearSpan(SOURCE.breaches)).toEqual([2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]);
+    expect(yearSpan([])).toEqual([]);
+  });
+});
+
+describe('computeStats', () => {
+  const stats = computeStats(SOURCE.breaches);
+
+  it("compte les fuites et celles de plus d'un million de comptes", () => {
     expect(stats.count).toBe(4);
     expect(stats.overMillion).toBe(2);
-    expect(stats.fetchedOn).toBe('2026-10-05');
+  });
+
+  it("garde l'axe des années demandé, même filtré", () => {
+    const years = yearSpan(SOURCE.breaches);
+    const pw = computeStats(filterBreaches(SOURCE.breaches, { dataClass: 'Passwords' }), { years });
+    expect(pw.byYear).toHaveLength(years.length);
+    expect(pw.byYear.find((y) => y.year === 2015)).toEqual({ year: 2015, count: 1, titles: ['Pokébip'] });
+    expect(pw.byYear.find((y) => y.year === 2024)?.count).toBe(0);
   });
 
   it('compte par année de la fuite, années vides comprises', () => {
     expect(stats.byYear.map((y) => y.year)).toEqual([2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]);
-    expect(stats.byYear.find((y) => y.year === 2024)).toEqual({ year: 2024, count: 2 });
-    expect(stats.byYear.find((y) => y.year === 2016)).toEqual({ year: 2016, count: 0 });
+    expect(stats.byYear.find((y) => y.year === 2024)).toMatchObject({ year: 2024, count: 2 });
+    expect(stats.byYear.find((y) => y.year === 2016)).toEqual({ year: 2016, count: 0, titles: [] });
   });
 
   it('classe les types de données, une fois par fuite, en français', () => {
     // Égalité à 3 : ordre alphabétique des libellés.
-    expect(stats.dataTypes[0]).toEqual({ label: 'adresses e-mail', count: 3, share: 0.75, risky: false });
+    expect(stats.dataTypes[0]).toEqual({
+      key: 'Email addresses',
+      label: 'adresses e-mail',
+      count: 3,
+      share: 0.75,
+      risky: false,
+    });
     expect(stats.dataTypes[1]).toMatchObject({ label: 'noms', count: 3 });
     expect(stats.dataTypes.find((d) => d.label === 'mots de passe')).toMatchObject({ count: 1, risky: true });
-    expect(breachStats(CATALOG, { dataTypes: 2 }).dataTypes).toHaveLength(2);
+    expect(computeStats(SOURCE.breaches, { dataTypes: 2 }).dataTypes).toHaveLength(2);
   });
 
   it('compte les fuites avec mots de passe et données bancaires', () => {
@@ -80,7 +145,7 @@ describe('breachStats', () => {
 
   it('liste les plus grosses fuites avec leur page, sans les fuites à 0 compte', () => {
     expect(stats.biggest.map((b) => b.title)).toEqual(['Deezer', 'Free', 'Pokébip']);
-    expect(stats.biggest[1]).toEqual({ title: 'Free', path: '/fuite/free', date: '2024-10-17', pwnCount: 13926173 });
+    expect(stats.biggest[1]).toMatchObject({ title: 'Free', path: '/fuite/free', pwnCount: 13926173 });
   });
 
   it('calcule le délai médian entre la fuite et son ajout à HIBP', () => {
@@ -90,7 +155,7 @@ describe('breachStats', () => {
   });
 
   it('reste cohérent sans catalogue', () => {
-    const empty = breachStats(EMPTY_CATALOG);
+    const empty = computeStats(statsSource(EMPTY_CATALOG).breaches);
     expect(empty).toMatchObject({ count: 0, overMillion: 0, byYear: [], dataTypes: [], biggest: [] });
     expect(empty.passwords.share).toBe(0);
     expect(empty.medianDelayDays).toBeNull();

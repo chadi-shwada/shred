@@ -4,8 +4,8 @@ declare module 'virtual:catalog-summary' {
   export default summary;
 }
 
-/** Module généré par vite.config.ts (catalogModules) : chiffres de la page /chiffres. */
+/** Module généré par vite.config.ts (catalogModules) : fuites de la page /chiffres. */
 declare module 'virtual:breach-stats' {
-  const stats: import('./lib/breachStats').BreachStats;
-  export default stats;
+  const source: import('./lib/breachStats').StatsSource;
+  export default source;
 }

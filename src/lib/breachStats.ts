@@ -20,12 +20,82 @@ export const BANK_DATA_CLASSES: ReadonlySet<string> = new Set([
   'Partial credit card data',
 ]);
 
+/** Fiche légère d'une fuite, embarquée dans la page /chiffres (module virtuel). */
+export interface StatBreach {
+  title: string;
+  path: string;
+  date: IsoDate;
+  addedDate: IsoDate | null;
+  pwnCount: number;
+  /** Types HIBP (noms anglais, sans doublon). */
+  dataClasses: string[];
+}
+
+export interface StatsSource {
+  fetchedOn: IsoDate | null;
+  breaches: StatBreach[];
+}
+
+/** Les fuites du périmètre, réduites à ce que la page affiche. */
+export function statsSource(catalog: BreachCatalog): StatsSource {
+  const paths = breachPathsByName(catalog.breaches);
+  return {
+    fetchedOn: catalog.fetchedOn,
+    breaches: pageBreaches(catalog.breaches).map((b) => ({
+      title: b.title,
+      path: paths.get(b.name)!,
+      date: b.date,
+      addedDate: b.addedDate,
+      pwnCount: b.pwnCount,
+      dataClasses: [...new Set(b.dataClasses)],
+    })),
+  };
+}
+
+export const yearOf = (b: StatBreach): number => Number(b.date.slice(0, 4));
+
+/** Toutes les années de la plus ancienne à la plus récente fuite, années vides comprises. */
+export function yearSpan(breaches: StatBreach[]): number[] {
+  if (breaches.length === 0) return [];
+  const years = breaches.map(yearOf);
+  const out: number[] = [];
+  for (let y = Math.min(...years); y <= Math.max(...years); y += 1) out.push(y);
+  return out;
+}
+
+export interface StatsFilter {
+  year?: number;
+  /** Type HIBP (nom anglais). */
+  dataClass?: string;
+}
+
+export function filterBreaches(breaches: StatBreach[], filter: StatsFilter): StatBreach[] {
+  return breaches.filter(
+    (b) =>
+      (filter.year === undefined || yearOf(b) === filter.year) &&
+      (filter.dataClass === undefined || b.dataClasses.includes(filter.dataClass)),
+  );
+}
+
+/** Types de données présents, du plus au moins fréquent (liste du filtre). */
+export function dataClassOptions(breaches: StatBreach[]): { key: string; label: string; count: number }[] {
+  const perType = new Map<string, number>();
+  for (const b of breaches) for (const dc of b.dataClasses) perType.set(dc, (perType.get(dc) ?? 0) + 1);
+  return [...perType]
+    .map(([key, count]) => ({ key, label: dataClassLabel(key), count }))
+    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, 'fr'));
+}
+
 export interface YearStat {
   year: number;
   count: number;
+  /** Titres des fuites de l'année, pour l'infobulle. */
+  titles: string[];
 }
 
 export interface DataTypeStat {
+  /** Type HIBP (nom anglais), pour le filtre. */
+  key: string;
   /** Libellé français. */
   label: string;
   /** Nombre de fuites qui contiennent ce type de données. */
@@ -36,16 +106,8 @@ export interface DataTypeStat {
   risky: boolean;
 }
 
-export interface BigBreach {
-  title: string;
-  path: string;
-  date: IsoDate;
-  pwnCount: number;
-}
-
 export interface BreachStats {
-  fetchedOn: IsoDate | null;
-  /** Nombre de fuites dans le périmètre. */
+  /** Nombre de fuites retenues. */
   count: number;
   /**
    * Fuites de plus d'un million de comptes. Pas de total des comptes : il serait
@@ -53,14 +115,14 @@ export interface BreachStats {
    * les mêmes personnes.
    */
   overMillion: number;
-  /** Une entrée par année, de la plus ancienne à la plus récente, années sans fuite comprises. */
+  /** Une entrée par année de `years` (toutes les années par défaut). */
   byYear: YearStat[];
   /** Types de données les plus fréquents, du plus au moins fréquent. */
   dataTypes: DataTypeStat[];
   passwords: { count: number; share: number };
   bank: { count: number; share: number };
   /** Les plus grosses fuites, en nombre de comptes. */
-  biggest: BigBreach[];
+  biggest: StatBreach[];
   /** Délai médian, en jours, entre la fuite et son ajout au catalogue HIBP. */
   medianDelayDays: number | null;
   /** Nombre de fuites dont les deux dates sont connues (base de la médiane). */
@@ -74,45 +136,29 @@ function median(values: number[]): number | null {
   return sorted.length % 2 ? sorted[mid]! : Math.round((sorted[mid - 1]! + sorted[mid]!) / 2);
 }
 
-export function breachStats(
-  catalog: BreachCatalog,
-  options: { dataTypes?: number; biggest?: number } = {},
+export function computeStats(
+  breaches: StatBreach[],
+  options: { dataTypes?: number; biggest?: number; years?: number[] } = {},
 ): BreachStats {
-  const breaches = pageBreaches(catalog.breaches);
   const count = breaches.length;
   const share = (n: number) => (count ? n / count : 0);
 
-  const years = new Map<number, YearStat>();
-  for (const b of breaches) {
-    const year = Number(b.date.slice(0, 4));
-    const entry = years.get(year) ?? { year, count: 0 };
-    entry.count += 1;
-    years.set(year, entry);
-  }
-  const byYear: YearStat[] = [];
-  if (years.size) {
-    const first = Math.min(...years.keys());
-    const last = Math.max(...years.keys());
-    for (let year = first; year <= last; year += 1) byYear.push(years.get(year) ?? { year, count: 0 });
-  }
+  const byYear = (options.years ?? yearSpan(breaches)).map((year) => {
+    const of = breaches.filter((b) => yearOf(b) === year);
+    return { year, count: of.length, titles: of.map((b) => b.title) };
+  });
 
-  // Une fuite compte une fois par type, même si HIBP le répète.
-  const perType = new Map<string, number>();
-  for (const b of breaches) for (const dc of new Set(b.dataClasses)) perType.set(dc, (perType.get(dc) ?? 0) + 1);
-  const dataTypes = [...perType]
-    .sort((a, b) => b[1] - a[1] || dataClassLabel(a[0]).localeCompare(dataClassLabel(b[0]), 'fr'))
+  const dataTypes = dataClassOptions(breaches)
     .slice(0, options.dataTypes ?? 10)
-    .map(([dc, n]) => ({ label: dataClassLabel(dc), count: n, share: share(n), risky: RISKY_DATA_CLASSES.has(dc) }));
+    .map((d) => ({ ...d, share: share(d.count), risky: RISKY_DATA_CLASSES.has(d.key) }));
 
   const withPasswords = breaches.filter((b) => b.dataClasses.includes('Passwords')).length;
   const withBank = breaches.filter((b) => b.dataClasses.some((dc) => BANK_DATA_CLASSES.has(dc))).length;
 
-  const paths = breachPathsByName(catalog.breaches);
-  const biggest = [...breaches]
+  const biggest = breaches
     .filter((b) => b.pwnCount > 0)
     .sort((a, b) => b.pwnCount - a.pwnCount)
-    .slice(0, options.biggest ?? 10)
-    .map((b) => ({ title: b.title, path: paths.get(b.name)!, date: b.date, pwnCount: b.pwnCount }));
+    .slice(0, options.biggest ?? 10);
 
   // Une date d'ajout antérieure à la fuite est une incohérence du catalogue : écartée.
   const delays = breaches
@@ -120,7 +166,6 @@ export function breachStats(
     .map((b) => daysBetween(b.date, b.addedDate!));
 
   return {
-    fetchedOn: catalog.fetchedOn,
     count,
     overMillion: breaches.filter((b) => b.pwnCount >= 1_000_000).length,
     byYear,

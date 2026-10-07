@@ -5209,10 +5209,90 @@ input[type='range'] {
 }
 
 .colchart li {
+  position: relative;
+  min-width: 0;
+}
+
+.colchart__hit {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 0;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  font: inherit;
+  color: inherit;
+  background: none;
+  cursor: pointer;
+}
+
+.colchart__hit:disabled {
+  cursor: default;
+}
+
+.colchart__hit:hover:not(:disabled) .colchart__bar,
+.colchart__hit:focus-visible .colchart__bar {
+  fill: var(--brand-text);
+}
+
+/* Année choisie : les autres colonnes passent en retrait. */
+.colchart[data-filtered] .colchart__hit[aria-pressed='false'] .colchart__bar {
+  fill: var(--line-strong);
+}
+
+.colchart__hit[aria-pressed='true'] .colchart__year {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* Infobulle : au survol et au clavier, sans JavaScript de positionnement. */
+.colchart__tip {
+  position: absolute;
+  top: 1.6rem;
+  left: 50%;
+  z-index: 5;
+  display: none;
+  width: max-content;
+  max-width: 15rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--ink-2);
+  background: var(--surface-2);
+  box-shadow: var(--shadow-md);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.colchart__tip strong {
+  color: var(--ink);
+}
+
+.colchart__tip-list {
+  display: block;
+  margin-top: 0.2rem;
+}
+
+.colchart li:hover .colchart__tip,
+.colchart__hit:focus-visible + .colchart__tip {
+  display: block;
+}
+
+/* Les infobulles des bords restent dans la page. */
+.colchart li:first-child .colchart__tip,
+.colchart li:nth-child(2) .colchart__tip {
+  left: 0;
+  transform: none;
+}
+
+.colchart li:last-child .colchart__tip,
+.colchart li:nth-last-child(2) .colchart__tip {
+  right: 0;
+  left: auto;
+  transform: none;
 }
 
 .colchart__value {
@@ -5319,5 +5399,160 @@ input[type='range'] {
 
   .barlist__label {
     grid-column: 1 / -1;
+  }
+}
+
+/* Filtres de la page « Chiffres » : une rangée au-dessus de tout ce qu'ils filtrent. */
+.stats-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.stats-filters .field {
+  margin: 0;
+  min-width: min(100%, 13rem);
+}
+
+.stats-empty {
+  margin-bottom: clamp(2.5rem, 6vw, 4rem);
+}
+
+.stats-filters__scope {
+  margin: 0 0 0.6rem;
+  font-size: 0.9375rem;
+  color: var(--ink-2);
+}
+
+/* Lignes de types de données : chaque ligne est un bouton de filtre. */
+.barlist--select li {
+  display: block;
+}
+
+.barlist--select button {
+  display: grid;
+  grid-template-columns: minmax(9rem, 14rem) minmax(0, 1fr) 6.5rem;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  width: 100%;
+  margin: -0.3rem -0.5rem;
+  padding: 0.3rem 0.5rem;
+  box-sizing: content-box;
+  border: 0;
+  border-radius: var(--radius);
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  background: none;
+  cursor: pointer;
+}
+
+.barlist--select button:hover,
+.barlist--select button[aria-pressed='true'] {
+  background: var(--surface);
+}
+
+.barlist--select button:hover .barlist__bar {
+  fill: var(--brand-text);
+}
+
+.barlist--select[data-filtered] button[aria-pressed='false'] .barlist__bar {
+  fill: var(--line-strong);
+}
+
+@media (max-width: 640px) {
+  .barlist--select button {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+
+/* Tableau de toutes les fuites, triable. */
+.table-scroll {
+  overflow-x: auto;
+  border-radius: var(--radius);
+}
+
+.stats-table {
+  width: 100%;
+  min-width: 36rem;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+}
+
+.stats-table th,
+.stats-table td {
+  padding: 0.6rem 0.75rem 0.6rem 0;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.stats-table thead th {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ink-2);
+  border-bottom-color: var(--line-strong);
+}
+
+.stats-table thead button {
+  padding: 0;
+  border: 0;
+  font: inherit;
+  color: inherit;
+  background: none;
+  cursor: pointer;
+}
+
+.stats-table thead button::after {
+  content: '';
+  display: inline-block;
+  width: 0.9em;
+}
+
+.stats-table th[aria-sort='descending'] button::after {
+  content: ' ↓';
+}
+
+.stats-table th[aria-sort='ascending'] button::after {
+  content: ' ↑';
+}
+
+.stats-table th[aria-sort] button {
+  color: var(--ink);
+}
+
+.stats-table tbody th {
+  min-width: 9rem;
+  font-weight: 500;
+}
+
+.stats-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.stats-table td:nth-child(2) {
+  white-space: nowrap;
+  color: var(--ink-2);
+}
+
+.stats-table__types {
+  min-width: 16rem;
+  font-size: 0.875rem;
+  color: var(--ink-2);
+}
+
+/* Sur mobile, les données exposées restent sur la page de chaque fuite. */
+@media (max-width: 640px) {
+  .stats-table {
+    min-width: 0;
+  }
+
+  .stats-table th:nth-child(4),
+  .stats-table td:nth-child(4) {
+    display: none;
   }
 }

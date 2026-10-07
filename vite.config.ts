@@ -4,7 +4,7 @@ import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { SITE_URL } from './src/config';
 import { allBreachPageMeta, breachFeed, catalogSummary } from './src/lib/breachPages';
-import { breachStats } from './src/lib/breachStats';
+import { statsSource } from './src/lib/breachStats';
 import { EMPTY_CATALOG, parseCatalog, type BreachCatalog } from './src/lib/breaches';
 import { headTags, htmlFileName, NOT_FOUND, pageMeta, PAGES, robotsTxt, sitemapXml } from './src/seo';
 import { CSP_META } from './src/security';
@@ -41,11 +41,12 @@ function readCatalog(): BreachCatalog {
 /**
  * Modules virtuels calculés au build à partir du catalogue, sans le charger en entier :
  * « virtual:catalog-summary » (chiffres et dernières fuites françaises pour l'accueil)
- * et « virtual:breach-stats » (page /chiffres).
+ * et « virtual:breach-stats » (fiches légères des fuites pour la page /chiffres,
+ * qui calcule ses chiffres dans le navigateur selon les filtres).
  */
 const VIRTUAL_MODULES: Record<string, () => unknown> = {
   'virtual:catalog-summary': () => catalogSummary(readCatalog()),
-  'virtual:breach-stats': () => breachStats(readCatalog()),
+  'virtual:breach-stats': () => statsSource(readCatalog()),
 };
 
 function catalogModules(): Plugin {
