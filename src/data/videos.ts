@@ -68,7 +68,7 @@ export const PRESENTATION: Video = {
     {
       start: 35.6,
       end: 40.1,
-      text: 'Tes données restent chez toi : 0 serveur, 0 traceur, 0 compte, 100 % dans ton navigateur.',
+      text: 'Tes données restent chez toi : 0 serveur applicatif, 0 traceur, 0 compte, 100 % dans ton navigateur.',
     },
     {
       start: 40.1,
