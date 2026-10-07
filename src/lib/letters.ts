@@ -48,6 +48,12 @@ export function isInitialKind(value: unknown): value is InitialKind {
 export type ReportTarget = 'hebergeur' | 'registrar' | 'cloudflare';
 export type LetterContext = 'exposition' | 'violation';
 
+/** Libellés des deux situations, partagés par le générateur et le suivi. */
+export const CONTEXT_LABELS: Record<LetterContext, { label: string; short: string }> = {
+  exposition: { label: "Un site publie mes données issues d'une fuite", short: 'Un site publie mes données' },
+  violation: { label: 'Une entreprise a subi une fuite de mes données', short: "Fuite chez l'entreprise" },
+};
+
 export const DATA_CATEGORIES = {
   nomPrenom: 'nom et prénom',
   email: 'adresse e-mail',

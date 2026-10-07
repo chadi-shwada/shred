@@ -17,6 +17,7 @@ import {
   type DataCategory,
   type InitialKind,
   type Letter,
+  CONTEXT_LABELS,
   type LetterContext,
   type ReportTarget,
   type LetterKind,
@@ -454,8 +455,11 @@ export function Generator({ route }: { route: Route }) {
                     <div className="field">
                       <label htmlFor={fieldId('context')}>Situation</label>
                       <select id={fieldId('context')} className="select" value={form.context} onChange={set('context')}>
-                        <option value="exposition">Un site publie mes données issues d'une fuite</option>
-                        <option value="violation">Une entreprise a subi une fuite de mes données</option>
+                        {(Object.keys(CONTEXT_LABELS) as LetterContext[]).map((c) => (
+                          <option key={c} value={c}>
+                            {CONTEXT_LABELS[c].label}
+                          </option>
+                        ))}
                       </select>
                     </div>
                   )}

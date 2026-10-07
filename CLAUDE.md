@@ -65,7 +65,7 @@ Fait :
 - accueil : section « Par où commencer ? » (4 cartes vers les parcours de Vérifier et Que faire ?), frise des étapes verticale sur mobile ; liste des fuites compacte (6 puis « Afficher plus », lien vers la fiche HIBP en icône) ; tous les types de données HIBP du catalogue traduits en français ;
 - pages ressources et à propos, logo, animation d'accueil (fiche et aperçu de recherche avec de vraies fuites du catalogue HIBP : Deezer, Free, La Poste Mobile, ActMobile ; personne fictive, valeurs masquées) ;
 - vidéo : une seule vidéo de présentation (principe en 45 s, sans la démo), en lecture automatique et en boucle sur l'accueil, avec contrôles sur la page Ressources ;
-- accueil « Les dernières fuites en France » (vrais chiffres du catalogue), pages par fuite française, flux Atom, lien « Une erreur, une idée ? » vers l'auteur ; suivi : demande satisfaite mise en avant, relance qui garde le contexte « violation » ;
+- accueil « Les dernières fuites en France » (vrais chiffres du catalogue), pages par fuite française, flux Atom, lien « Une erreur, une idée ? » vers l'auteur ; suivi : demande satisfaite mise en avant, relance qui garde le contexte « violation », y compris pour une demande ajoutée à la main (choix « Situation » du formulaire, libellés partagés `CONTEXT_LABELS` de `letters.ts`, affiché sur la fiche) ; les demandes ajoutées avant le 7 octobre 2026 sans contexte repartent en « exposition » ;
 - CI GitHub Actions ; déploiement Vercel depuis `main` (`vercel.json`). Mise à jour quotidienne du catalogue en service (hebdomadaire jusqu'au 6 octobre 2026) : secret `VERCEL_DEPLOY_HOOK` créé, premier lancement manuel le 6 octobre 2026 (redéploiement de production, log `[fetch-breaches] 1039 fuites enregistrées dont 30 françaises`). GitHub Pages abandonné au profit de Vercel. Dépôt public depuis le 6 octobre 2026 ; `README.md` présente le projet avec des captures du site dans `docs/images/` (WebP, personne et demandes fictives, vrais logos des fuites).
 - Ne jamais ajouter `@vercel/analytics` ni `@vercel/speed-insights` (règle 1).
 
@@ -76,7 +76,6 @@ Vérifié par l'auteur le 6 octobre 2026 (vrai navigateur) : test de mot de pass
 Non vérifié : lecteurs d'écran réels, appareils Android physiques.
 
 À faire :
-- Relance depuis le suivi : les demandes ajoutées à la main dans le suivi (sans passer par le générateur) n'ont pas de contexte et repartent en « exposition ».
 - Images d'aperçu des pages de fuite : générées le 6 octobre 2026 (27 fuites) ; les fuites ajoutées ensuite gardent `og.png` tant que `scripts/og-images.mjs` n'est pas relancé.
 - Référencement : Google Search Console validée le 6 octobre 2026 (propriété Domaine, TXT chez Hostinger) ; déclarer le sitemap et demander l'indexation, puis Bing Webmaster Tools (import depuis Search Console).
 - Faire relire les lettres par un juriste. Leur structure suit le modèle CNIL (art. 17.1, 12.3, 19), mais le texte complet du modèle n'a pas pu être consulté depuis l'environnement de développement.

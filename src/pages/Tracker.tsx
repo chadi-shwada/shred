@@ -10,7 +10,7 @@ import { CNIL_COMPLAINT_URL, cnilDossier, complaintSummary } from '../lib/compla
 import { formatLongFr, isValidIsoDate, todayIso } from '../lib/dates';
 import { buildIcs } from '../lib/ics';
 import { slugify } from '../lib/slug';
-import type { InitialKind } from '../lib/letters';
+import { CONTEXT_LABELS, type InitialKind, type LetterContext } from '../lib/letters';
 import {
   CHANNEL_LABELS,
   ImportError,
@@ -51,12 +51,20 @@ function urgencyText(state: RequestState): string {
 interface Draft {
   site: string;
   kind: InitialKind;
+  context: LetterContext;
   channel: Channel;
   sentOn: string;
   notes: string;
 }
 
-const emptyDraft = (): Draft => ({ site: '', kind: 'effacement', channel: 'email', sentOn: todayIso(), notes: '' });
+const emptyDraft = (): Draft => ({
+  site: '',
+  kind: 'effacement',
+  context: 'exposition',
+  channel: 'email',
+  sentOn: todayIso(),
+  notes: '',
+});
 
 type Feedback = { tone: 'ok' | 'warn' | 'danger'; text: string } | null;
 
@@ -99,6 +107,7 @@ export function Tracker() {
         id: newId(),
         site: draft.site.trim(),
         kind: draft.kind,
+        context: draft.context,
         channel: draft.channel,
         sentOn: draft.sentOn,
         status: 'envoyee',
@@ -206,7 +215,7 @@ export function Tracker() {
                 Ajouter une demande
               </h2>
               <div className="field">
-                <label htmlFor={fieldId('site')}>Site</label>
+                <label htmlFor={fieldId('site')}>Site ou entreprise</label>
                 <input
                   id={fieldId('site')}
                   className="input"
@@ -217,6 +226,25 @@ export function Tracker() {
                   spellCheck={false}
                   aria-invalid={draftError.startsWith('Indique le site') || undefined}
                 />
+              </div>
+              <div className="field">
+                <label htmlFor={fieldId('context')}>Situation</label>
+                <select
+                  id={fieldId('context')}
+                  className="select"
+                  value={draft.context}
+                  onChange={setField('context')}
+                  aria-describedby={fieldId('contextHint')}
+                >
+                  {(Object.keys(CONTEXT_LABELS) as LetterContext[]).map((c) => (
+                    <option key={c} value={c}>
+                      {CONTEXT_LABELS[c].label}
+                    </option>
+                  ))}
+                </select>
+                <p className="hint" id={fieldId('contextHint')}>
+                  La relance reprendra les articles adaptés à ta situation.
+                </p>
               </div>
               <div className="field-row">
                 <div className="field">
@@ -386,6 +414,12 @@ export function Tracker() {
                           <dt>Type</dt>
                           <dd>{KIND_LABELS[request.kind]}</dd>
                         </div>
+                        {request.context && (
+                          <div>
+                            <dt>Situation</dt>
+                            <dd>{CONTEXT_LABELS[request.context].short}</dd>
+                          </div>
+                        )}
                         <div>
                           <dt>Canal</dt>
                           <dd>{CHANNEL_LABELS[request.channel]}</dd>
