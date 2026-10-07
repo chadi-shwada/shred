@@ -11,6 +11,7 @@ const NAV: { path: RoutePath; label: string }[] = [
   { path: '/lettre', label: 'Écrire une lettre' },
   { path: '/suivi', label: 'Suivi' },
   { path: '/que-faire', label: 'Que faire ?' },
+  { path: '/chiffres', label: 'Chiffres' },
   { path: '/ressources', label: 'Ressources' },
 ];
 
