@@ -131,26 +131,58 @@ export function BreachPage({ slug }: { slug: string }) {
             </p>
 
             <h2>Que faire maintenant ?</h2>
-            <ActionPlan dataClasses={breach.dataClasses} />
+            <ActionPlan dataClasses={breach.dataClasses} write={breach.verified} />
             <p>
               Un message qui cite la fuite, un appel « de ta banque » ? Vois les bons réflexes sur{' '}
               <a href={href('/que-faire')}>Que faire ?</a>.
             </p>
 
-            <h2>Écris à {breach.title}</h2>
-            <p>
-              Le RGPD te permet de demander à l'entreprise ce qu'elle détient sur toi et ce qui a fuité (articles 15 et
-              34), ou d'effacer tes données (article 17). Elle a un mois pour te répondre (article 12.3).
-            </p>
-            <p className="btn-row">
-              <a className="btn btn--primary" href={href('/lettre', breachLetterQuery(breach, 'acces'))}>
-                Demander ce qui a fuité
-                <Icon name="arrow" size={18} />
-              </a>
-              <a className="btn" href={href('/lettre', breachLetterQuery(breach, 'effacement'))}>
-                Demander l'effacement
-              </a>
-            </p>
+            {breach.verified ? (
+              <>
+                <h2>Écris à {breach.title}</h2>
+                <p>
+                  Le RGPD te permet de demander à l'entreprise ce qu'elle détient sur toi et ce qui a fuité (articles 15
+                  et 34), ou d'effacer tes données (article 17). Elle a un mois pour te répondre (article 12.3).
+                </p>
+                <p className="btn-row">
+                  <a className="btn btn--primary" href={href('/lettre', breachLetterQuery(breach, 'acces'))}>
+                    Demander ce qui a fuité
+                    <Icon name="arrow" size={18} />
+                  </a>
+                  <a className="btn" href={href('/lettre', breachLetterQuery(breach, 'effacement'))}>
+                    Demander l'effacement
+                  </a>
+                </p>
+              </>
+            ) : (
+              <>
+                <h2>À qui écrire ?</h2>
+                <p>
+                  Have I Been Pwned n'a pas pu confirmer que ces données viennent de {breach.domain || breach.title}. Il
+                  n'y a donc peut-être pas d'entreprise responsable à qui écrire : une lettre risque de rester sans
+                  réponse.
+                </p>
+                {breach.dataClasses.includes('Passwords') && (
+                  <p>
+                    La priorité : change le mot de passe de chaque compte où tu utilisais celui qui a fui.{' '}
+                    <a href={href('/verifier', { parcours: 'mot-de-passe' })}>Teste tes mots de passe</a> sans les
+                    confier à personne.
+                  </p>
+                )}
+                <p>
+                  Si tu penses que {breach.domain || breach.title} détient bien tes données, tu peux quand même lui
+                  demander ce qu'il a sur toi (article 15 du RGPD) ou l'effacement (article 17).
+                </p>
+                <p className="btn-row">
+                  <a className="btn" href={href('/lettre', breachLetterQuery(breach, 'acces'))}>
+                    Demander ce qui a fuité
+                  </a>
+                  <a className="btn" href={href('/lettre', breachLetterQuery(breach, 'effacement'))}>
+                    Demander l'effacement
+                  </a>
+                </p>
+              </>
+            )}
             <p className="hint">
               {contact ? (
                 <>

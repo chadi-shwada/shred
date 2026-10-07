@@ -98,9 +98,22 @@ Chaque fuite française a sa page, par exemple [`/fuite/free`](https://shredrgpd
 - une lettre pré-remplie ;
 - une image de partage avec le logo de l'entreprise.
 
-Un [flux RSS](https://shredrgpd.fr/fuites.xml) annonce les nouvelles fuites. La liste se met à jour chaque jour.
+Quand Have I Been Pwned n'a pas pu confirmer qu'une fuite vient de l'entreprise nommée, la page le dit : il n'y a peut-être personne à qui écrire, alors elle met en avant le changement de mots de passe plutôt qu'une lettre.
+
+Pour être prévenu des nouvelles fuites françaises, sans compte ni e-mail, abonne-toi au flux depuis la page [Suivre les nouvelles fuites](https://shredrgpd.fr/nouvelles-fuites). La liste se met à jour chaque jour.
 
 <p align="center"><img src="docs/images/fuite.webp" alt="Page de la fuite Free" width="820"></p>
+
+### Les fuites en chiffres
+
+La page [Chiffres](https://shredrgpd.fr/chiffres) rassemble les fuites françaises connues de Have I Been Pwned :
+- les chiffres clés : nombre de fuites, fuites de plus d'un million de comptes, part avec des données bancaires, délai avant leur arrivée dans le catalogue ;
+- les fuites par année et les données les plus exposées, à filtrer d'un clic ;
+- les plus grosses fuites et le tableau de toutes les fuites, avec un lien vers chaque page.
+
+Les filtres restent dans l'adresse, pour partager une vue. La page rappelle aussi les limites de ces chiffres : « française » est une estimation, seules les fuites connues de Have I Been Pwned comptent, et ce sont des comptes, pas des personnes.
+
+<p align="center"><img src="docs/images/chiffres.webp" alt="Page Chiffres : chiffres clés, fuites par année et infobulle des fuites de 2024" width="820"></p>
 
 ### Sur mobile aussi
 
@@ -127,7 +140,7 @@ ShredRGPD est un site statique : il n'a pas de serveur à lui, et donc rien où 
 ```text
 src/
 ├── lib/          logique pure et testée : lettres, délais, fuites, k-anonymat…
-├── pages/        Accueil, Vérifier, Lettre, Suivi, Que faire ?, pages de fuite…
+├── pages/        Accueil, Vérifier, Lettre, Suivi, Que faire ?, Chiffres, pages de fuite…
 ├── components/   interface
 ├── data/         vidéos, contacts DPO et sites connus (sourcés et datés)
 └── styles/       thème sombre, jetons de couleur
@@ -151,7 +164,7 @@ Avant chaque commit :
 npm run typecheck && npm run lint && npm test && npm run build
 ```
 
-Sans accès réseau, le build continue sans catalogue : la page Vérifier affiche alors « liste indisponible ».
+Sans accès réseau, le build continue sans catalogue : la page Vérifier affiche alors « liste indisponible », et la page Chiffres « chiffres indisponibles ».
 
 ## Déployer ta copie
 

@@ -2,6 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { buildActionPlan, loadDone } from './actionPlan';
 
 describe('buildActionPlan', () => {
+  it("retire l'étape « écrire » sur demande (fuite non confirmée)", () => {
+    expect(buildActionPlan(['Passwords']).map((i) => i.id)).toContain('ecrire');
+    expect(buildActionPlan(['Passwords'], { write: false }).map((i) => i.id)).not.toContain('ecrire');
+  });
+
   it('adapte les actions aux données exposées, sans doublon', () => {
     const ids = buildActionPlan(['Email addresses', 'Passwords', 'Password hints', 'Credit cards']).map((i) => i.id);
     expect(ids).toEqual(['mdp-changer', 'mdp-2fa', 'mdp-unique', 'email-hameconnage', 'banque', 'ecrire']);

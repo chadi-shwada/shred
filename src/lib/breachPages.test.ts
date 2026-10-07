@@ -76,6 +76,12 @@ describe('pages de fuite', () => {
     expect(allBreachPageMeta(CATALOG.breaches).map((m) => m.path)).toHaveLength(4);
   });
 
+  it("ne promet pas de réponse de l'entreprise pour une fuite non vérifiée", () => {
+    const unverified = { ...CATALOG.breaches[0]!, verified: false };
+    expect(breachPageMeta(unverified, 'free').description).toContain("Fuite non confirmée par l'entreprise");
+    expect(breachPageMeta(unverified, 'free').description).not.toContain('demande à l');
+  });
+
   it('formate le mois en abrégé', () => {
     expect(formatMonthFr('2024-10-17')).toBe('oct. 2024');
     expect(formatMonthFr('2023-02-01')).toBe('févr. 2023');

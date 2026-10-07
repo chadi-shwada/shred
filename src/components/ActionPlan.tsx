@@ -4,10 +4,10 @@ import { buildActionPlan, loadDone, PLAN_STORAGE_KEY } from '../lib/actionPlan';
 import { Icon } from './Icon';
 
 /** Plan d'action à cocher, adapté aux données exposées ; progression gardée dans le navigateur. */
-export function ActionPlan({ dataClasses }: { dataClasses: string[] }) {
+export function ActionPlan({ dataClasses, write = true }: { dataClasses: string[]; write?: boolean }) {
   const id = useId();
   const [done, setDone] = useState<string[]>(() => loadDone(readStorage(PLAN_STORAGE_KEY)));
-  const items = buildActionPlan(dataClasses);
+  const items = buildActionPlan(dataClasses, { write });
   if (items.length === 0) return null;
   const count = items.filter((i) => done.includes(i.id)).length;
 

@@ -102,8 +102,11 @@ const WRITE: ActionItem = {
   detail: "Elles doivent te répondre dans un délai d'un mois (article 12.3 du RGPD).",
 };
 
-/** Actions à mener pour un ensemble de types de données exposées, sans doublon. */
-export function buildActionPlan(dataClasses: string[]): ActionItem[] {
+/**
+ * Actions à mener pour un ensemble de types de données exposées, sans doublon.
+ * `write: false` retire l'étape « écrire aux entreprises » (fuite non confirmée : peut-être personne à qui écrire).
+ */
+export function buildActionPlan(dataClasses: string[], { write = true } = {}): ActionItem[] {
   if (dataClasses.length === 0) return [];
   const items: ActionItem[] = [];
   for (const rule of RULES) {
@@ -111,7 +114,7 @@ export function buildActionPlan(dataClasses: string[]): ActionItem[] {
       for (const item of rule.items) if (!items.some((i) => i.id === item.id)) items.push(item);
     }
   }
-  items.push(WRITE);
+  if (write) items.push(WRITE);
   return items;
 }
 

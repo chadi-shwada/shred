@@ -83,7 +83,11 @@ export function breachPageMeta(breach: Breach, slug: string): BreachPageMeta {
   return {
     path: BREACH_PATH_PREFIX + slug,
     title: `Fuite ${breach.title} (${formatMonthFr(breach.date)}) : que faire ? · ShredRGPD`,
-    description: `Fuite de données ${breach.title} du ${formatLongFr(breach.date)} : ${accounts}${types}. Vérifie si tu es concerné et demande à l'entreprise ce qu'elle détient sur toi, avec une lettre RGPD gratuite.`,
+    description: `Fuite de données ${breach.title} du ${formatLongFr(breach.date)} : ${accounts}${types}. ${
+      breach.verified
+        ? "Vérifie si tu es concerné et demande à l'entreprise ce qu'elle détient sur toi, avec une lettre RGPD gratuite."
+        : "Fuite non confirmée par l'entreprise : vérifie si tu es concerné et protège tes comptes."
+    }`,
     ...(breach.addedDate ? { lastmod: breach.addedDate } : {}),
   };
 }
